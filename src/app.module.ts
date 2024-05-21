@@ -6,7 +6,6 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { JwtModule } from "@nestjs/jwt";
-import { JWT_SECRET } from "./constants/constants";
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { JWT_SECRET } from "./constants/constants";
     }),
     JwtModule.register({
       global: true,
-      secret: JWT_SECRET,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "5h" },
     }),
     OrganizationModule,
