@@ -22,7 +22,7 @@ export class CollaboratorController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.colaboratorService.findOne(+id);
+    return this.colaboratorService.findOneById(id);
   }
 
   @Patch(':id')

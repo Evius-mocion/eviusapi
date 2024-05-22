@@ -1,1 +1,1 @@
-export type CollaboratorRoll = "owner" | "admin" | "member"
+export type RoleType= "owner" | "admin" | "member"

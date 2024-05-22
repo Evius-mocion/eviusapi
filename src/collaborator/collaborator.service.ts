@@ -24,8 +24,12 @@ export class CollaboratorService {
     return `This action returns all colaborator`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} colaborator`;
+  async findOneById(id: string) {
+    try {
+      return this.colaboratorrRepository.findOneBy({user_id: id})
+    } catch (error) {
+      return null
+    }
   }
 
   update(id: number, updateColaboratorDto: UpdateCollaboratorDto) {

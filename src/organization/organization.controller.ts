@@ -5,6 +5,8 @@ import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { RoleEnum } from '../constants/constants';
 
 @ApiTags('organization')
 @ApiBearerAuth()
@@ -13,6 +15,7 @@ export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
 
   @Post('create')
+  @Role(RoleEnum.owner)
   create(
     @ActiveUser() user: UserContext,
     @Body() createOrganizationDto: CreateOrganizationDto) {

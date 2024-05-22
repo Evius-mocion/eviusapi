@@ -1,6 +1,6 @@
 import { IsString } from "class-validator";
 import { Organization } from "src/organization/entities/organization.entity";
-import { CollaboratorRoll } from "src/types/collaborator.types";
+import { RoleType } from "src/types/collaborator.types";
 
 export class CreateCollaboratorDto {
 
@@ -12,5 +12,5 @@ export class CreateCollaboratorDto {
 
 
     @IsString()
-    rol: CollaboratorRoll;
+    rol: RoleType;
 }

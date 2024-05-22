@@ -6,10 +6,13 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { JwtModule } from "@nestjs/jwt";
+import { RolesGuard } from "./common/guards/roles.guard";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: "postgres",
       url: process.env.DATABASE_URL,
@@ -17,10 +20,12 @@ import { JwtModule } from "@nestjs/jwt";
       synchronize: true,
       ssl: true,
     }),
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
+      useFactory: () => ({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "5h" },
+      }),
     }),
     OrganizationModule,
     EventModule,
@@ -31,6 +36,10 @@ import { JwtModule } from "@nestjs/jwt";
     {
       provide: "APP_GUARD",
       useClass: AuthGuard,
+    },
+    {
+      provide: "APP_GUARD",
+      useClass: RolesGuard,
     },
   ],
 })

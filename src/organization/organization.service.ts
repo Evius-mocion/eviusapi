@@ -5,7 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Organization } from "./entities/organization.entity";
 import { CollaboratorService } from "src/collaborator/collaborator.service";
-import { CollaboratorROlEnum } from "src/constants/constants";
+import { RoleEnum } from "src/constants/constants";
 import { UserContext } from "src/types/user.types";
 
 @Injectable()
@@ -26,7 +26,7 @@ export class OrganizationService {
       const organization = await this.organizationRepository.save(pre_org);
 
       const collaborator = await this.ColaboratorService.create({
-        rol: CollaboratorROlEnum.owner,
+        rol: RoleEnum.owner,
         organization,
         user_id: user.id,
       });

@@ -1,8 +1,8 @@
-import { CollaboratorRoll } from "src/types/collaborator.types"
+import { RoleType } from "src/types/collaborator.types"
 
 export const JWT_SECRET = 'asdadasdads'
 
-export const CollaboratorROlEnum : Record<CollaboratorRoll, CollaboratorRoll> ={
+export const RoleEnum : Record<RoleType, RoleType> ={
     owner: 'owner',
     admin: 'admin',
     member: 'member'
