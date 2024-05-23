@@ -9,34 +9,57 @@ import { Collaborator } from "./entities/collaborator.entity";
 export class CollaboratorService {
   constructor(
     @InjectRepository(Collaborator)
-    private readonly colaboratorrRepository: Repository<Collaborator>,
+    private readonly collaboratorRepository: Repository<Collaborator>,
   ) {}
-  async create(createColaboratorDto: CreateCollaboratorDto) {
+  async create(createCollaboratorDto: CreateCollaboratorDto) {
     try {
-      const Colaborator =
-        this.colaboratorrRepository.create(createColaboratorDto);
+      const Collaborator = this.collaboratorRepository.create(createCollaboratorDto);
 
-      return this.colaboratorrRepository.save(Colaborator);
+      return this.collaboratorRepository.save(Collaborator);
     } catch (error) {}
   }
 
   findAll() {
-    return `This action returns all colaborator`;
+    return `This action returns all collaborator`;
+  }
+
+ async  findAllByUserID(user_id: string) {
+    return this.collaboratorRepository.find({
+      where: {
+        user_id
+      },
+      relations: ['organization']
+    })
   }
 
   async findOneById(id: string) {
     try {
-      return this.colaboratorrRepository.findOneBy({user_id: id})
+      return this.collaboratorRepository.findOneBy({user_id: id})
+    } catch (error) {
+      return null
+    }
+  }
+  async findOneByIdAndOrganizationId(id: string,org_id: string) {
+    try {
+      return this.collaboratorRepository.findOne({
+        where: {
+          user_id: id,
+          organization: {
+            id: org_id
+          }
+        }
+      
+      })
     } catch (error) {
       return null
     }
   }
 
-  update(id: number, updateColaboratorDto: UpdateCollaboratorDto) {
-    return `This action updates a #${id} colaborator`;
+  update(id: number, updateCollaboratorDto: UpdateCollaboratorDto) {
+    return `This action updates a #${id} collaborator`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} colaborator`;
+    return `This action removes a #${id} collaborator`;
   }
 }

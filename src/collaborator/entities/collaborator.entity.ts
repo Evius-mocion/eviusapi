@@ -1,5 +1,5 @@
 import { Organization } from "src/organization/entities/organization.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoleType } from '../../types/collaborator.types';
 import { RoleEnum } from '../../constants/constants';
 
@@ -7,10 +7,10 @@ import { RoleEnum } from '../../constants/constants';
 @Entity('collaborator')
 
 export class Collaborator {
-    @Column({type: 'uuid', generated: "uuid"})
+    @PrimaryGeneratedColumn('uuid')
     id: string;
     
-    @PrimaryColumn()
+    @Column()
     user_id: string;
 
     @ManyToOne(() => Organization, organization => organization.collaborators,{

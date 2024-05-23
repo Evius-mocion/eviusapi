@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { JWT_SECRET } from 'src/constants/constants';
 
 /*
   This guard is responsible for checking if the request has a valid JWT token.
@@ -38,7 +37,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: process.env.JWT_SECRET,
+          secret: process.env.JWT_SECRET,  
         }
       );
       // 💡 We're assigning the payload to the request object here

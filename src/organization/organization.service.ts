@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +14,7 @@ export class OrganizationService {
     @InjectRepository(Organization)
     private readonly organizationRepository: Repository<Organization>,
 
-    private readonly ColaboratorService: CollaboratorService,
+    private readonly collaboratorService: CollaboratorService,
   ) {}
 
   async create(
@@ -25,7 +25,7 @@ export class OrganizationService {
       const pre_org = this.organizationRepository.create(createOrganizationDto);
       const organization = await this.organizationRepository.save(pre_org);
 
-      const collaborator = await this.ColaboratorService.create({
+      const collaborator = await this.collaboratorService.create({
         rol: RoleEnum.owner,
         organization,
         user_id: user.id,
@@ -39,12 +39,26 @@ export class OrganizationService {
     }
   }
 
-  findAll() {
-    return `This action returns all organization`;
+
+  async findAllByContributorId(userID: string) {
+    try {
+      const collaborator = await this.collaboratorService.findAllByUserID(userID);
+      return collaborator.map((c) => c.organization);
+    } catch (error) {
+      return []
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} organization`;
+  async findOne(userID: string,organizationID: string) {
+     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userID,organizationID);
+     console.log(!collaborator);
+     if (!collaborator) {
+       throw new ForbiddenException("You don't have permission to access this resource");
+     }
+     return {
+        organization: collaborator?.organization,
+        rol: collaborator?.rol,
+      }
   }
 
   update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
