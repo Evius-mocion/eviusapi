@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/common/decorators/roles.decorator';
 
 @ApiTags('organization')
 @ApiBearerAuth()
@@ -21,24 +22,26 @@ export class OrganizationController {
 
 
   @Get('all')
-  findAll(@ActiveUser() user: UserContext) {
-    return this.organizationService.findAllByContributorId(user.id);
+  findAll(@Query('userId') userId: string,) {
+    return this.organizationService.findAllByContributorId(userId);
   }
 
-  @Get(":id")
+  @Get(':id')
   findOne(
     @Param('id') id: string,
     @ActiveUser() user: UserContext
   ) {
-    console.log(user);
     return this.organizationService.findOne(user.id,id);
   }
 
+
+  @Role('owner')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto) {
-    return this.organizationService.update(+id, updateOrganizationDto);
+    return "This action updates a #${id} organization";
   }
 
+  @Role('owner')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.organizationService.remove(+id);

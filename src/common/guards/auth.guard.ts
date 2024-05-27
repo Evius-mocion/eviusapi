@@ -30,6 +30,8 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+    const orga = this.extractOrganizations(request)
+    
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -44,6 +46,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       
       request['user'] = payload;
+      request['user'].organizationId = orga
     } catch (error) {
       console.log(error);
       
@@ -55,5 +58,9 @@ export class AuthGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
+  }
+  private extractOrganizations(request: Request): string | undefined {
+    const organizationID = request.headers.organization_id as string
+    return organizationID ?? ''
   }
 }

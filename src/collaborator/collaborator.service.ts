@@ -39,9 +39,9 @@ export class CollaboratorService {
       return null
     }
   }
-  async findOneByIdAndOrganizationId(id: string,org_id: string) {
+  async findOneByIdAndOrganizationId(id: string,org_id: string = "")  {
     try {
-      return this.collaboratorRepository.findOne({
+      const collaborator =  await this.collaboratorRepository.findOne({
         where: {
           user_id: id,
           organization: {
@@ -50,6 +50,7 @@ export class CollaboratorService {
         }
       
       })
+      return collaborator
     } catch (error) {
       return null
     }
