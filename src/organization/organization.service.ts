@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -72,7 +72,8 @@ export class OrganizationService {
 
   controlDbErros(error: any) {
     if (error.code === "23505") {
-      throw new BadRequestException("Organization already exists");
+      throw new ConflictException("Organization already exists");
     }
+    throw new BadRequestException("Error creating organization");
   }
 }
