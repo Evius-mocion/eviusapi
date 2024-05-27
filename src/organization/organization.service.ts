@@ -43,7 +43,9 @@ export class OrganizationService {
   async findAllByContributorId(userID: string) {
     try {
       const collaborator = await this.collaboratorService.findAllByUserID(userID);
-      return collaborator.map((c) => c.organization);
+       return {
+        organizations: collaborator.map((c) => c.organization),
+       }
     } catch (error) {
       return []
     }
