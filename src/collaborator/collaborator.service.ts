@@ -4,7 +4,6 @@ import { UpdateCollaboratorDto } from "./dto/update-collaborator.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Collaborator } from "./entities/collaborator.entity";
-import { declare } from '../../dist/app.module';
 
 @Injectable()
 export class CollaboratorService {
