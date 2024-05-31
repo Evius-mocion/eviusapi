@@ -26,4 +26,7 @@ export class Collaborator {
 
     @Column({default: new Date()})
     updated_at: Date;
+
+    @Column({nullable: true})
+    deleteAt: Date;
 }

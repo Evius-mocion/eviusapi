@@ -44,7 +44,7 @@ export class OrganizationService {
     try {
       const collaborator = await this.collaboratorService.findAllByUserID(userID);
        return {
-        organizations: collaborator.map((c) => c.organization),
+        organizations: collaborator.map((c) => ({...c.organization, rol: c.rol})),
        }
     } catch (error) {
       return []
@@ -64,12 +64,14 @@ export class OrganizationService {
       }
   }
 
-  update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-    return `This action updates a #${id} organization`;
-  }
+ 
 
-  remove(id: number) {
-    return `This action removes a #${id} organization`;
+  remove(id: string) {
+    try {
+      this.organizationRepository.update(id, { deleted_at: new Date() });
+    } catch (error) {
+      
+    }
   }
 
   controlDbErros(error: any) {

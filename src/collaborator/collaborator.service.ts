@@ -4,6 +4,7 @@ import { UpdateCollaboratorDto } from "./dto/update-collaborator.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Collaborator } from "./entities/collaborator.entity";
+import { declare } from '../../dist/app.module';
 
 @Injectable()
 export class CollaboratorService {
@@ -26,7 +27,8 @@ export class CollaboratorService {
  async  findAllByUserID(user_id: string) {
     return this.collaboratorRepository.find({
       where: {
-        user_id
+        user_id,
+        deleteAt: null
       },
       relations: ['organization']
     })
@@ -45,7 +47,8 @@ export class CollaboratorService {
         where: {
           user_id: id,
           organization: {
-            id: org_id
+            id: org_id,
+            deleted_at: null
           }
         }
       

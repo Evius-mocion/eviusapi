@@ -22,4 +22,7 @@ export class Organization {
 
     @Column({default: new Date()})
     updated_at: Date;
+
+    @Column({nullable: true})
+    deleted_at: Date;
 }
