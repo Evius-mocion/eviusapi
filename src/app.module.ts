@@ -7,6 +7,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { JwtModule } from "@nestjs/jwt";
 import { RolesGuard } from "./common/guards/roles.guard";
+import { AssistantModule } from './assistant/assistant.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RolesGuard } from "./common/guards/roles.guard";
     OrganizationModule,
     EventModule,
     ColaboratorModule,
+    AssistantModule,
   ],
   controllers: [],
   providers: [

@@ -3,6 +3,8 @@ import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { UserContext } from 'src/types/user.types';
 
 
 @ApiTags('events')
@@ -11,14 +13,18 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.create(createEventDto);
+  @Post("create")
+  create(
+    @ActiveUser() user: UserContext,
+    @Body() createEventDto: CreateEventDto) {
+    return this.eventService.create(user,createEventDto);
   }
 
-  @Get()
-  findAll() {
-    return this.eventService.findAll();
+  @Get("all/:org")
+  findAll(
+    @Param('org') id: string,
+  ) {
+    return this.eventService.findAll(id);
   }
 
   @Get(':id')

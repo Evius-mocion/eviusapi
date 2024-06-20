@@ -1,4 +1,5 @@
 import { Collaborator } from "src/collaborator/entities/collaborator.entity";
+import { Event } from "src/event/entities/event.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -13,9 +14,12 @@ export class Organization {
 
     @Column()
     avatar: string;
-
+    
     @OneToMany(() => Collaborator, collaborator => collaborator.organization)
     collaborators: Collaborator[];
+
+    @OneToMany(() => Event, event => event.organization)
+    events: Event[];
 
     @Column({default: new Date()})
     created_at: Date;
