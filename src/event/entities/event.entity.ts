@@ -14,7 +14,7 @@ export class Event {
     name: string;
 
     @Column("text",{nullable: false, array: true, default:[new Date()]})
-    date: string[];
+    dates: string[];
 
     @Column({nullable: false, default: 'without description'})
     description: string;

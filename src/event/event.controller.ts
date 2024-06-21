@@ -5,6 +5,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
+import { Public } from 'src/common/decorators/public.decorator';
 
 
 @ApiTags('events')
@@ -27,9 +28,11 @@ export class EventController {
     return this.eventService.findAll(id);
   }
 
-  @Get(':id')
+
+  @Public()
+  @Get('landing/:id')
   findOne(@Param('id') id: string) {
-    return this.eventService.findOne(+id);
+    return this.eventService.findOne(id);
   }
 
   @Patch(':id')
