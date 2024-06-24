@@ -9,5 +9,6 @@ import { Organization } from './entities/organization.entity';
   imports: [TypeOrmModule.forFeature([Organization]),ColaboratorModule],
   controllers: [OrganizationController],
   providers: [OrganizationService],
+  exports: [OrganizationService],
 })
 export class OrganizationModule {}
