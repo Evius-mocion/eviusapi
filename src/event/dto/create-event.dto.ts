@@ -1,8 +1,9 @@
-import { IsArray, IsObject, IsOptional, IsString } from "class-validator";
-import { IEventAppearance, IEventSections } from "src/types/event.type";
+import { IsArray, IsIn, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
+import { IEventAppearance, IEventSections, typeEvent } from "src/types/event.type";
 
 export class CreateEventDto {
     @IsString()
+    @IsNotEmpty()
     name: string;
     
     @IsObject()
@@ -10,7 +11,14 @@ export class CreateEventDto {
 
     @IsArray()
     dates: string[];
-    
+
+    @IsString()
+    @IsNotEmpty()
+    description: string;
+
+    @IsIn(['virtual' , 'physical' , 'mixto'])
+    type: typeEvent;
+
     @IsObject()
     @IsOptional()
     eventSection?: Partial<IEventSections>;
