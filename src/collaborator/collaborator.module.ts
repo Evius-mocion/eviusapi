@@ -10,4 +10,4 @@ import { Collaborator } from './entities/collaborator.entity';
   providers: [CollaboratorService],
   exports: [CollaboratorService],
 })
-export class ColaboratorModule {}
+export class CollaboratorModule {}

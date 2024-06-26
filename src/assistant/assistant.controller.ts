@@ -19,7 +19,7 @@ export class AssistantController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.assistantService.findOne(+id);
+    return "this.assistantService.findOne(+id);"
   }
 
   @Patch(':id')

@@ -9,5 +9,6 @@ import { User } from './entities/user.entity';
   imports: [TypeOrmModule.forFeature([Assistant,User])],
   controllers: [AssistantController],
   providers: [AssistantService],
+  exports: [AssistantService]
 })
 export class AssistantModule {}

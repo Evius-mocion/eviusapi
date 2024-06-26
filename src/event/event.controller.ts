@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -38,6 +38,14 @@ export class EventController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(+id, updateEventDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get("access/:eventId")
+  accessEvent(
+    @ActiveUser() user: UserContext,
+    @Param('eventId') eventID: string) {
+    return this.eventService.identifierUser(eventID,user.id);
   }
 
   @Delete(':id')

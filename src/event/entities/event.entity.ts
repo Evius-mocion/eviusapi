@@ -12,9 +12,15 @@ export class Event {
 
     @Column({nullable: false})
     name: string;
+    
+    @Column({nullable: false, type: "simple-array", array: true, default:[new Date().toISOString()]})
+    dates: any[];
 
-    @Column("text",{nullable: false, array: true, default:[new Date()]})
-    dates: string[];
+    @Column({nullable: false, default: new Date().toISOString()})
+    initialDate: string;
+
+    @Column({nullable: false, default: new Date().toISOString()})
+    finishDate: string;
 
     @Column({nullable: false, default: 'without description'})
     description: string;
@@ -30,10 +36,10 @@ export class Event {
     @OneToMany(() => Assistant, assistant => assistant.event)
     assistants: Assistant[];
 
-    @Column({nullable: false, type: 'json', default: {textColor: '#000000', primaryColor: '#000000', bgColor: '#000000'}})
+    @Column({nullable: false, type: 'simple-json', default: {textColor: '#000000', primaryColor: '#000000', bgColor: '#000000'}})
     appearance: IEventAppearance;
 
-    @Column({nullable: false, type: 'json', default: {news: false, sponsors: false}})
+    @Column({nullable: false, type: 'simple-json', default: {news: false, sponsors: false}})
     eventSection?: Partial<IEventSections>;
 
     @CreateDateColumn()

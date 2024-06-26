@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
@@ -10,13 +11,16 @@ import { Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
-
+import { CollaboratorService } from "src/collaborator/collaborator.service";
+import { AssistantService } from "src/assistant/assistant.service";
 @Injectable()
 export class EventService {
   constructor(
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
     private readonly organizationService: OrganizationService,
+    private readonly collaboratorService: CollaboratorService,
+    private readonly assistantService: AssistantService,
   ) {}
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
@@ -27,6 +31,8 @@ export class EventService {
       );
       const newEvent = this.eventRepository.create({
         organization: org.organization,
+        initialDate: createEventDto.dates[0],
+        finishDate: createEventDto.dates[createEventDto.dates.length - 1],
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
@@ -66,6 +72,39 @@ export class EventService {
         
         }
       }
+  }
+  async identifierUser(eventId: string, userId: string) {
+    let collaboratorRol = null
+    
+    const event = await this.eventRepository.findOneBy({ id: eventId });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    console.log(event);
+    
+    const assistant = await this.assistantService.findOneByUserIdAndEventId(userId,event)
+    const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userId,event?.organization?.id);
+   
+    if (collaborator) {
+      collaboratorRol = collaborator.rol;
+    }
+    
+    return {
+      event: {
+        name: event.name,
+        dates: event.dates,
+        description: event.description,
+        initialDate : event.initialDate,
+        sections : event.eventSection,
+        appearance: event.appearance,
+        organization: {
+          id: event.organization.id,
+          name: event.organization.name,
+        },
+      },
+      isRegister: !!assistant?.user,
+      rol: collaboratorRol,
+    };
   }
 
   update(id: number, updateEventDto: UpdateEventDto) {

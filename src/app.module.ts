@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { OrganizationModule } from "./organization/organization.module";
 import { EventModule } from "./event/event.module";
-import { ColaboratorModule } from "./collaborator/collaborator.module";
+import { CollaboratorModule } from "./collaborator/collaborator.module";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "./common/guards/auth.guard";
@@ -30,7 +30,7 @@ import { AssistantModule } from './assistant/assistant.module';
     }),
     OrganizationModule,
     EventModule,
-    ColaboratorModule,
+    CollaboratorModule,
     AssistantModule,
   ],
   controllers: [],
