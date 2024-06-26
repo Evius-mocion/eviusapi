@@ -80,7 +80,6 @@ export class EventService {
     if (!event) {
       throw new NotFoundException('Event not found');
     }
-    console.log(event);
     
     const assistant = await this.assistantService.findOneByUserIdAndEventId(userId,event)
     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userId,event?.organization?.id);
