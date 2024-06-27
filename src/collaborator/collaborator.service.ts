@@ -29,13 +29,15 @@ export class CollaboratorService {
       where: { organization: { id } },
     });
 
-    return collaborators.map((collaborator) => ({
-      id: collaborator.user.id,
-      avatar: collaborator.user.avatar,
-      name : collaborator.user.fullName,
-      email: collaborator.user.email,
-      rol: collaborator.rol,
-    }));
+    return {
+      collaborators: collaborators.map((collaborator) => ({
+        id: collaborator.user.id,
+        avatar: collaborator.user.avatar,
+        name : collaborator.user.fullName,
+        email: collaborator.user.email,
+        rol: collaborator.rol,
+      }))
+    };
   }
 
   async findAllByUserID(user_id: string) {
