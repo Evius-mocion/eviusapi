@@ -5,6 +5,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { Public } from 'src/common/decorators/public.decorator';
+import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
 
 
 @ApiTags('events')
@@ -37,6 +38,10 @@ export class EventController {
   @Patch(':id')
   update(@Param('id') id: string, /* @Body() updateEventDto: UpdateEventDto */) {
     return this.eventService.update(+id);
+  }
+  @Post('register')
+  assistants(@Body() assistant: CreateAssistantDto) {
+    return this.eventService.register(assistant);
   }
 
   @HttpCode(HttpStatus.OK)
