@@ -1,6 +1,14 @@
 import { IsArray, IsIn, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
 import { IEventAppearance, IEventSections, typeEvent } from "src/types/event.type";
 
+class IDates {
+    @IsString()
+    startDate: string;
+    @IsString()
+    endDate: string;
+}
+
+
 export class CreateEventDto {
     @IsString()
     @IsNotEmpty()
@@ -10,7 +18,8 @@ export class CreateEventDto {
     appearance: IEventAppearance;
 
     @IsArray()
-    dates: string[];
+    @IsNotEmpty()
+    dates: IDates[];
 
     @IsString()
     @IsNotEmpty()
@@ -23,6 +32,3 @@ export class CreateEventDto {
     @IsOptional()
     eventSection?: Partial<IEventSections>;
 }
-
-
-

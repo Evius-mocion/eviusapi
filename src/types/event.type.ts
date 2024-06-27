@@ -1,13 +1,17 @@
 
+export interface IDates {
+    startDate: string;
+    endDate: string;
+}
 export interface IEvent {
     id: string;
     name: string;
     description: string;
+    dates: IDates,
     type: typeEvent;
     appearance: IEventAppearance;
     eventSection?: Partial<IEventSections>;
 }
-
 export interface IEventAppearance {
     textColor: string;
     primaryColor: string;

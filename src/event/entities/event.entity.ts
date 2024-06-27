@@ -1,6 +1,6 @@
 import { Assistant } from "src/assistant/entities/assistant.entity";
 import { Organization } from "src/organization/entities/organization.entity";
-import { IEventAppearance, IEventSections, typeEvent } from "src/types/event.type";
+import {  IDates, IEventAppearance, IEventSections, typeEvent } from "src/types/event.type";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 
 @Entity('events')
@@ -13,8 +13,8 @@ export class Event {
     @Column({nullable: false})
     name: string;
     
-    @Column({nullable: false, type: "simple-array", array: true, default:[new Date().toISOString()]})
-    dates: any[];
+    @Column({nullable: false, type: "jsonb", })
+    dates: IDates[];
 
     @Column({nullable: false, default: new Date().toISOString()})
     initialDate: string;

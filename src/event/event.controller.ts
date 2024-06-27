@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
@@ -36,8 +35,8 @@ export class EventController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(+id, updateEventDto);
+  update(@Param('id') id: string, /* @Body() updateEventDto: UpdateEventDto */) {
+    return this.eventService.update(+id);
   }
 
   @HttpCode(HttpStatus.OK)

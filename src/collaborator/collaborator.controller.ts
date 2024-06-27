@@ -15,9 +15,9 @@ export class CollaboratorController {
     return this.colaboratorService.create(createColaboratorDto);
   }
 
-  @Get()
-  findAll() {
-    return this.colaboratorService.findAll();
+  @Get("organization/:id")
+  findAll(@Param('id') id: string) {
+    return this.colaboratorService.findAll(id);
   }
 
   @Get(':id')

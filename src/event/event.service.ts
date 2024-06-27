@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
-import { UpdateEventDto } from "./dto/update-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
@@ -31,12 +30,14 @@ export class EventService {
       );
       const newEvent = this.eventRepository.create({
         organization: org.organization,
-        initialDate: createEventDto.dates[0],
-        finishDate: createEventDto.dates[createEventDto.dates.length - 1],
+        initialDate: createEventDto.dates[0]?.startDate,
+        finishDate: createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
     } catch (error) {
+      console.log(error);
+      
       throw new BadRequestException(error.message);
     }
   }
@@ -106,7 +107,7 @@ export class EventService {
     };
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
+  update(id: number) {
     return `This action updates a #${id} event`;
   }
 

@@ -13,48 +13,55 @@ export class CollaboratorService {
   ) {}
   async create(createCollaboratorDto: CreateCollaboratorDto) {
     try {
-      const Collaborator = this.collaboratorRepository.create(createCollaboratorDto);
+      const Collaborator = this.collaboratorRepository.create(
+        createCollaboratorDto,
+      );
 
       return this.collaboratorRepository.save(Collaborator);
     } catch (error) {}
   }
 
-  findAll() {
-    return `This action returns all collaborator`;
+  async findAll(id: string) {
+    const collaborators = await this.collaboratorRepository.find({
+      where: { organization: { id } },
+    });
+
+    return collaborators.map((collaborator) => {
+      name : ""
+    });
   }
 
- async  findAllByUserID(user_id: string) {
+  async findAllByUserID(user_id: string) {
     return this.collaboratorRepository.find({
       where: {
         user_id,
-        deleteAt: null
+        deleteAt: null,
       },
-      relations: ['organization']
-    })
+      relations: ["organization"],
+    });
   }
 
   async findOneById(id: string) {
     try {
-      return this.collaboratorRepository.findOneBy({user_id: id})
+      return this.collaboratorRepository.findOneBy({ user_id: id });
     } catch (error) {
-      return null
+      return null;
     }
   }
-  async findOneByIdAndOrganizationId(id: string,org_id: string = "")  {
+  async findOneByIdAndOrganizationId(id: string, org_id: string = "") {
     try {
-      const collaborator =  await this.collaboratorRepository.findOne({
+      const collaborator = await this.collaboratorRepository.findOne({
         where: {
           user_id: id,
           organization: {
             id: org_id,
-            deleted_at: null
-          }
-        }
-      
-      })
-      return collaborator
+            deleted_at: null,
+          },
+        },
+      });
+      return collaborator;
     } catch (error) {
-      return null
+      return null;
     }
   }
 
