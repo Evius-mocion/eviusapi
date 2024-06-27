@@ -12,8 +12,8 @@ import { User } from "src/common/entities/user.entity";
 export class OrganizationService {
   constructor(
     @InjectRepository(Organization)
-    
     private readonly organizationRepository: Repository<Organization>,
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly collaboratorService: CollaboratorService,
   ) {}

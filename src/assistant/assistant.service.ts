@@ -26,7 +26,9 @@ export class AssistantService {
       user: {
         id: userID,
       },
-      event,
+      event: {
+        id: event.id,
+      },
     });
   }
 
