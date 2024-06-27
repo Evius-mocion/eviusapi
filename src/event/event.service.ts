@@ -12,14 +12,20 @@ import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
 import { CollaboratorService } from "src/collaborator/collaborator.service";
 import { AssistantService } from "src/assistant/assistant.service";
+import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
+import { User } from "src/common/entities/user.entity";
+import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class EventService {
   constructor(
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private readonly organizationService: OrganizationService,
     private readonly collaboratorService: CollaboratorService,
     private readonly assistantService: AssistantService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
@@ -55,6 +61,7 @@ export class EventService {
       this.controlDbErros(error);
     }
   }
+ 
 
   async findOne(id: string) {
       const event = await this.eventRepository.findOneBy({id});
@@ -83,7 +90,7 @@ export class EventService {
       throw new NotFoundException('Event not found');
     }
     
-    const assistant = await this.assistantService.findOneByUserIdAndEventId(userId,event)
+    const assistant = await this.assistantService.findOneByUserIdAndEventId(userId,event.id)
     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userId,event?.organization?.id);
    
     if (collaborator) {
@@ -104,6 +111,48 @@ export class EventService {
       organization: {
         id: event.organization.id,
         name: event.organization.name,
+      },
+    };
+  }
+
+  async register(registerDto: CreateAssistantDto) {
+    let user = null;
+    let newAccount = false;
+
+    const event = await this.eventRepository.findOneBy({ id: registerDto.eventId });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    user = await this.userRepository.findOneBy({ email: registerDto.email });
+    if (!user) {
+      user =  this.userRepository.create({
+        ...registerDto,
+        type_account: 'assistant',
+      });
+      user = await this.userRepository.save(user);
+      newAccount = true;
+    }
+
+    if (!newAccount) {
+      const exist = await this.assistantService.findOneByUserIdAndEventId(user.id, event.id)
+      if (exist) throw new ConflictException('Assistant already registered');
+    }
+
+    const assistant = await this.assistantService.create({
+      user,
+      fullName: registerDto.fullName,
+      event,
+      TRM: registerDto.TRM,
+    });
+
+    const access_token = this.jwtService.sign({ id: assistant.id });
+    return {
+      access_token,
+      user: {
+        id:  assistant.id,
+        fullName: assistant.fullName,
+        email: user.email,
       },
     };
   }

@@ -6,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrganizationModule } from 'src/organization/organization.module';
 import { AssistantModule } from 'src/assistant/assistant.module';
 import { CollaboratorModule } from 'src/collaborator/collaborator.module';
+import { User } from 'src/common/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event]), OrganizationModule, AssistantModule,CollaboratorModule],
+  imports: [TypeOrmModule.forFeature([Event,User]), OrganizationModule, AssistantModule,CollaboratorModule],
   controllers: [EventController],
   providers: [EventService],
+  exports: [EventService],
 })
 export class EventModule {}
