@@ -17,7 +17,7 @@ export class CreateAssistantDto {
 
     @Transform(({ value }) => value.trim())
     @IsString()
-    event_id: string;
+    eventId: string;
     
     @IsBoolean()
     TRM: boolean;

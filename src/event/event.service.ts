@@ -119,7 +119,7 @@ export class EventService {
     let user = null;
     let newAccount = false;
 
-    const event = await this.eventRepository.findOneBy({ id: registerDto.event_id });
+    const event = await this.eventRepository.findOneBy({ id: registerDto.eventId });
     if (!event) {
       throw new NotFoundException('Event not found');
     }
