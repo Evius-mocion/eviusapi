@@ -1,6 +1,7 @@
+import { User } from "src/common/entities/user.entity";
 import { Event } from "src/event/entities/event.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
-import { User } from "./user.entity";
+
 
 @Entity('assistants')
 export class Assistant {
