@@ -36,7 +36,7 @@ export class Event {
     @OneToMany(() => Assistant, assistant => assistant.event)
     assistants: Assistant[];
 
-    @Column({nullable: false, type: 'simple-json', default: {textColor: '#000000', primaryColor: '#000000', bgColor: '#000000'}})
+    @Column({nullable: false, type: 'simple-json', default: {primaryColor: '#FFFFFF', textColor: '#352848', bgColor: '#F8F9FA',}})
     appearance: IEventAppearance;
 
     @Column({nullable: false, type: 'simple-json', default: {news: false, sponsors: false}})

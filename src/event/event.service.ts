@@ -63,8 +63,9 @@ export class EventService {
       return {
         event: {
           name: event.name,
-          date: event.dates,
+          dates: event.dates,
           description: event.description,
+          appearance: event.appearance,
         },
         organization: {
           id: event?.organization?.id,
@@ -96,13 +97,13 @@ export class EventService {
         initialDate : event.initialDate,
         sections : event.eventSection,
         appearance: event.appearance,
-        organization: {
-          id: event.organization.id,
-          name: event.organization.name,
-        },
       },
       isRegister: !!assistant?.user,
       rol: collaboratorRol,
+      organization: {
+        id: event.organization.id,
+        name: event.organization.name,
+      },
     };
   }
 
