@@ -146,10 +146,10 @@ export class EventService {
       TRM: registerDto.TRM,
     });
 
-    const access_token = this.jwtService.sign({ id: assistant.id });
+    const access_token = this.jwtService.sign({ id: user.id });
     return {
       access_token,
-      user: {
+      assistant: {
         id:  assistant.id,
         fullName: assistant.fullName,
         email: user.email,

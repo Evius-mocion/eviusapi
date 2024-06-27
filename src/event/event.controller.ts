@@ -39,6 +39,9 @@ export class EventController {
   update(@Param('id') id: string, /* @Body() updateEventDto: UpdateEventDto */) {
     return this.eventService.update(+id);
   }
+
+  
+  @Public()
   @Post('register')
   assistants(@Body() assistant: CreateAssistantDto) {
     return this.eventService.register(assistant);
