@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CreateCollaboratorDto } from "./dto/create-collaborator.dto";
 import { UpdateCollaboratorDto } from "./dto/update-collaborator.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -18,7 +18,10 @@ export class CollaboratorService {
       );
 
       return this.collaboratorRepository.save(Collaborator);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException("Error creating collaborator")
+    }
   }
 
   async findAll(id: string) {

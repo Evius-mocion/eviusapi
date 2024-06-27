@@ -6,28 +6,30 @@ import { Organization } from "./entities/organization.entity";
 import { CollaboratorService } from "src/collaborator/collaborator.service";
 import { RoleEnum } from "src/constants/constants";
 import { UserContext } from "src/types/user.types";
+import { User } from "src/common/entities/user.entity";
 
 @Injectable()
 export class OrganizationService {
   constructor(
     @InjectRepository(Organization)
+    
     private readonly organizationRepository: Repository<Organization>,
-
+    private readonly userRepository: Repository<User>,
     private readonly collaboratorService: CollaboratorService,
   ) {}
 
   async create(
-    user: UserContext,
+    ActiveUser: UserContext,
     createOrganizationDto: CreateOrganizationDto,
   ) {
     try {
       const pre_org = this.organizationRepository.create(createOrganizationDto);
       const organization = await this.organizationRepository.save(pre_org);
-
+      const user = await this.userRepository.findOneBy({id: ActiveUser.id});
       const collaborator = await this.collaboratorService.create({
         rol: RoleEnum.owner,
         organization,
-        user_id: user.id,
+        user
       });
       return {
         organization,
