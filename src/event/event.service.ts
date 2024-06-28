@@ -99,6 +99,7 @@ export class EventService {
     
     return {
       event: {
+        id:event.id,
         name: event.name,
         dates: event.dates,
         description: event.description,
@@ -146,10 +147,10 @@ export class EventService {
       TRM: registerDto.TRM,
     });
 
-    const access_token = this.jwtService.sign({ id: user.id });
+    const access_token = this.jwtService.sign({ id: assistant.id });
     return {
       access_token,
-      assistant: {
+      user: {
         id:  assistant.id,
         fullName: assistant.fullName,
         email: user.email,
