@@ -20,9 +20,6 @@ export class Assistant {
     })
     event: Event;
 
-    @Column({nullable: false, default: false})
-    TRM: boolean;
-
     @Column({nullable: false, default: new Date()})
     registerAt: Date;
 }

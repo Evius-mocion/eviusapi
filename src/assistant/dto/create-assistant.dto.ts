@@ -18,9 +18,7 @@ export class CreateAssistantDto {
     @Transform(({ value }) => value.trim())
     @IsString()
     eventId: string;
-    
-    @IsBoolean()
-    TRM: boolean;
+
 }
 export class AssistantDto {
 
@@ -29,7 +27,5 @@ export class AssistantDto {
     user: User;
 
     event: Event;
-
-    TRM: boolean;
 
 }

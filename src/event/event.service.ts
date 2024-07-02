@@ -117,7 +117,6 @@ export class EventService {
   }
 
   async register(registerDto: CreateAssistantDto) {
-    let user = null;
     let newAccount = false;
 
     const event = await this.eventRepository.findOneBy({ id: registerDto.eventId });
@@ -125,7 +124,7 @@ export class EventService {
       throw new NotFoundException('Event not found');
     }
 
-    user = await this.userRepository.findOneBy({ email: registerDto.email });
+    let user = await this.userRepository.findOneBy({ email: registerDto.email });
     if (!user) {
       user =  this.userRepository.create({
         ...registerDto,
@@ -144,16 +143,16 @@ export class EventService {
       user,
       fullName: registerDto.fullName,
       event,
-      TRM: registerDto.TRM,
     });
 
-    const access_token = this.jwtService.sign({ id: assistant.id });
+    const access_token = this.jwtService.sign({ id: user.id });
     return {
       access_token,
       user: {
-        id:  assistant.id,
+        id:  user.id,
         fullName: assistant.fullName,
         email: user.email,
+        gender: user.gender,
       },
     };
   }
