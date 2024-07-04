@@ -70,17 +70,20 @@ export class EventService {
         }
       return {
         event: {
+          id: event.id,
           name: event.name,
           dates: event.dates,
           description: event.description,
-          appearance: event.appearance,
+          finishDate: event.finishDate,
+          initialDate: event.initialDate,
+          sections: event.eventSection,
+          appearance: event.appearance, 
         },
         organization: {
           id: event?.organization?.id,
           name: event?.organization?.name,
-        
-        }
-      }
+        },
+      };
   }
   async identifierUser(eventId: string, userId: string) {
     let collaboratorRol = null
@@ -99,12 +102,13 @@ export class EventService {
     
     return {
       event: {
-        id:event.id,
+        id: event.id,
         name: event.name,
         dates: event.dates,
         description: event.description,
-        initialDate : event.initialDate,
-        sections : event.eventSection,
+        finishDate: event.finishDate,
+        initialDate: event.initialDate,
+        sections: event.eventSection,
         appearance: event.appearance,
       },
       isRegister: !!assistant?.user,
@@ -149,9 +153,13 @@ export class EventService {
     return {
       access_token,
       user: {
-        id:  user.id,
-        fullName: assistant.fullName,
+        id: user.id,
+        fullName: user.fullName,
         email: user.email,
+        phoneNumber: user.phoneNumber,
+        avatar: user.avatar,
+        birthDate: user.birthDate,
+        residenceCountry: user.residenceCountry,
         gender: user.gender,
       },
     };
