@@ -70,6 +70,7 @@ export class EventService {
         }
       return {
         event: {
+          id:event.id,
           name: event.name,
           dates: event.dates,
           description: event.description,
