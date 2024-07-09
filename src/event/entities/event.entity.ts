@@ -25,8 +25,6 @@ export class Event {
     @Column({nullable: false, default: 'without description'})
     description: string;
 
-    @Column({nullable: false, enum: ['virtual' , 'physical' , 'mixto'],default: 'virtual'})
-    type: typeEvent;
     
     @ManyToOne(() => Organization, org => org.events , {
         eager: true

@@ -8,7 +8,6 @@ export interface IEvent {
     name: string;
     description: string;
     dates: IDates,
-    type: typeEvent;
     appearance: IEventAppearance;
     eventSection?: Partial<IEventSections>;
 }
@@ -22,5 +21,3 @@ export interface IEventSections {
     news: boolean;
     sponsors: boolean;
 }
-
-export type typeEvent = 'virtual' | 'physical' | 'mixto';
