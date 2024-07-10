@@ -22,7 +22,6 @@ export class CreateEventDto {
     dates: IDates[];
 
     @IsString()
-    @IsNotEmpty()
     description: string;
 
 
