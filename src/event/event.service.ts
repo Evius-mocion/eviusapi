@@ -15,6 +15,7 @@ import { AssistantService } from "src/assistant/assistant.service";
 import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
+import { validateEmail } from '../common/utils/validations.util';
 @Injectable()
 export class EventService {
   constructor(
@@ -85,6 +86,34 @@ export class EventService {
         },
       };
   }
+
+  async confirmedEmailRegisterInEvent(email: string, eventId: string) {
+
+    if(!validateEmail(email)){
+      throw new BadRequestException('Invalid email');
+    }
+
+    const user = await this.userRepository.findOneBy({ email });
+    
+    const event = await this.eventRepository.findOneBy({id: eventId});
+    if (!event) {
+      throw new BadRequestException('Event not found');
+    }
+  
+    let assistant = null 
+    let collaborator = null
+    if(user){
+      assistant = await this.assistantService.findOneByUserIdAndEventId(user.id, event.id);
+      collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(user.id, event.organization.id);
+    }
+
+    return {
+      haveAccount: !!user?.id,
+      havePassword: !!user?.password,
+      isRegisteredInEvent: !!collaborator || !!assistant?.id,
+    };
+  }
+
   async identifierUser(eventId: string, userId: string) {
     let collaboratorRol = null
     

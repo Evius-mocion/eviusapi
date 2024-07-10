@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -54,7 +54,10 @@ export class EventController {
     @Param('eventId') eventID: string) {
     return this.eventService.identifierUser(eventID,user.id);
   }
-
+  @Get("isAssistant")
+  validateAssistants(@Query('email') email: string, @Query('eventId') eventId: string) {
+    return this.eventService.confirmedEmailRegisterInEvent(email,eventId);
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventService.remove(+id);

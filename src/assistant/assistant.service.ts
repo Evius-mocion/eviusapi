@@ -16,6 +16,8 @@ export class AssistantService {
     const assistant =  this.assistantRepository.create(createAssistantDto);
     return await this.assistantRepository.save(assistant);
   }
+
+  
   findAll() {
     return `This action returns all assistant`;
   }
