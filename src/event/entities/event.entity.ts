@@ -28,7 +28,7 @@ export class Event {
     
     @ManyToOne(() => Organization, org => org.events , {
         eager: true
-    })
+    }) 
     organization: Organization;
 
     @OneToMany(() => Assistant, assistant => assistant.event)

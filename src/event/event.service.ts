@@ -149,7 +149,7 @@ export class EventService {
       event,
     });
 
-    const access_token = this.jwtService.sign({ id: user.id });
+    const access_token = this.jwtService.sign({ id: user.id, type: user.type_account });
     return {
       access_token,
       user: {

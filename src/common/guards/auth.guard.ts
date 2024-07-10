@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { WITHOUT_ACCOUNT, WithoutAccount } from '../decorators/withoutAccount.decorator';
+import { typeAccount } from 'src/types/user.types';
 
 /*
   This guard is responsible for checking if the request has a valid JWT token.
@@ -24,6 +26,13 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+    const WithoutAccount = this.reflector.getAllAndOverride<boolean>(WITHOUT_ACCOUNT, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    const type_account_client : typeAccount =  "client"
+
     if (isPublic) {
       return true;
     }
@@ -50,6 +59,9 @@ export class AuthGuard implements CanActivate {
     } catch (error) {
       console.log(error);
       
+      throw new UnauthorizedException("Invalid token");
+    }
+    if(!WithoutAccount && request.user.type !== type_account_client ){
       throw new UnauthorizedException("Invalid token");
     }
     return true;

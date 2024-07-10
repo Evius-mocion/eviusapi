@@ -5,12 +5,12 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/roles.decorator';
-
 @ApiTags('organization')
 @ApiBearerAuth()
 @Controller('organization')
 export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
+
 
   @Post('create')
   create(
