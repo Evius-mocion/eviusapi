@@ -1,7 +1,8 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsIn, IsString, MinLength } from "class-validator";
 import { User } from "src/common/entities/user.entity";
 import { Event } from "src/event/entities/event.entity";
+import { genderType } from "src/types/user.types";
 
 
 export class CreateAssistantDto {
@@ -19,6 +20,9 @@ export class CreateAssistantDto {
     @IsString()
     eventId: string;
 
+    @IsString()
+    @IsIn(["male","female"])
+    gender: genderType;
 }
 export class AssistantDto {
 
