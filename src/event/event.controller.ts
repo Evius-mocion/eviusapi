@@ -6,6 +6,7 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { Public } from 'src/common/decorators/public.decorator';
 import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
+import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
 
 
 @ApiTags('events')
@@ -48,12 +49,14 @@ export class EventController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @WithoutAccount()
   @Get("access/:eventId")
   accessEvent(
     @ActiveUser() user: UserContext,
     @Param('eventId') eventID: string) {
     return this.eventService.identifierUser(eventID,user.id);
   }
+  @Public()
   @Get("isAssistant")
   validateAssistants(@Query('email') email: string, @Query('eventId') eventId: string) {
     return this.eventService.confirmedEmailRegisterInEvent(email,eventId);
