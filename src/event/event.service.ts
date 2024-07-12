@@ -69,6 +69,7 @@ export class EventService {
         if (!event) {
           throw new BadRequestException("Event not found");
         }
+
       return {
         event: {
           id:event.id,
@@ -77,8 +78,10 @@ export class EventService {
           description: event.description,
           finishDate: event.finishDate,
           initialDate: event.initialDate,
-          sections: event.eventSection,
+          eventSection: event.eventSection,
           appearance: event.appearance, 
+          capacity:20,
+          registrationFields:[]
         },
         organization: {
           id: event?.organization?.id,
@@ -137,8 +140,10 @@ export class EventService {
         description: event.description,
         finishDate: event.finishDate,
         initialDate: event.initialDate,
-        sections: event.eventSection,
+        eventSection: event.eventSection,
         appearance: event.appearance,
+        capacity:20,
+        registrationFields:[]
       },
       isRegister: !!assistant?.user,
       rol: collaboratorRol,
