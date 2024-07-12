@@ -190,6 +190,7 @@ export class EventService {
         birthDate: user.birthDate,
         residenceCountry: user.residenceCountry,
         gender: user.gender,
+        type_account: user.type_account,
       },
     };
   }
