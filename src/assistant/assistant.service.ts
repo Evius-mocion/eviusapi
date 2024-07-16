@@ -9,17 +9,25 @@ import { Repository } from 'typeorm';
 export class AssistantService {
   constructor(
     @InjectRepository(Assistant)
-    private assistantRepository: Repository<Assistant>
+    private assistantRepository: Repository<Assistant>,
   ) {}
 
   async create(createAssistantDto: AssistantDto) {
-    const assistant =  this.assistantRepository.create(createAssistantDto);
+    const assistant = this.assistantRepository.create(createAssistantDto);
     return await this.assistantRepository.save(assistant);
   }
 
-  
   findAll() {
     return `This action returns all assistant`;
+  }
+  async getTotalAssistantByEvent(eventId: string) {
+    return await this.assistantRepository.count({
+      where: {
+        event: {
+          id: eventId,
+        },
+      },
+    });
   }
 
   async findOneByUserIdAndEventId(userID: string, event: string) {
@@ -32,8 +40,6 @@ export class AssistantService {
       },
     });
   }
-
-
 
   update(id: number, updateAssistantDto: UpdateAssistantDto) {
     return `This action updates a #${id} assistant`;
