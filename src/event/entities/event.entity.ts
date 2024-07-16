@@ -16,6 +16,9 @@ export class Event {
     @Column({nullable: false, type: "jsonb", })
     dates: IDates[];
 
+    @Column({nullable: false, type: "numeric", default: 20 })
+    capacity: number;
+
     @Column({nullable: false, default: new Date().toISOString()})
     initialDate: string;
 

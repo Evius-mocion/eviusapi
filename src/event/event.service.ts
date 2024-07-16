@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -15,7 +16,7 @@ import { AssistantService } from "src/assistant/assistant.service";
 import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
-import { validateEmail } from '../common/utils/validations.util';
+import { validateEmail } from "../common/utils/validations.util";
 @Injectable()
 export class EventService {
   constructor(
@@ -38,13 +39,14 @@ export class EventService {
       const newEvent = this.eventRepository.create({
         organization: org.organization,
         initialDate: createEventDto.dates[0]?.startDate,
-        finishDate: createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
+        finishDate:
+          createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
     } catch (error) {
       console.log(error);
-      
+
       throw new BadRequestException(error.message);
     }
   }
@@ -55,83 +57,20 @@ export class EventService {
         where: {
           organization: {
             id: orgId,
-        }
-      }
-      })
+          },
+        },
+      });
     } catch (error) {
       this.controlDbErros(error);
     }
   }
- 
 
   async findOne(id: string) {
-      const event = await this.eventRepository.findOneBy({id});
-        if (!event) {
-          throw new BadRequestException("Event not found");
-        }
-
-      return {
-        event: {
-          id:event.id,
-          name: event.name,
-          dates: event.dates,
-          description: event.description,
-          finishDate: event.finishDate,
-          initialDate: event.initialDate,
-          eventSection: event.eventSection,
-          appearance: event.appearance, 
-          capacity:20,
-          registrationFields:[]
-        },
-        organization: {
-          id: event?.organization?.id,
-          name: event?.organization?.name,
-        },
-      };
-  }
-
-  async confirmedEmailRegisterInEvent(email: string, eventId: string) {
-
-    if(!validateEmail(email)){
-      throw new BadRequestException('Invalid email');
-    }
-
-    const user = await this.userRepository.findOneBy({ email });
-    
-    const event = await this.eventRepository.findOneBy({id: eventId});
+    const event = await this.eventRepository.findOneBy({ id });
     if (!event) {
-      throw new BadRequestException('Event not found');
-    }
-  
-    let assistant = null 
-    let collaborator = null
-    if(user){
-      assistant = await this.assistantService.findOneByUserIdAndEventId(user.id, event.id);
-      collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(user.id, event.organization.id);
+      throw new BadRequestException("Event not found");
     }
 
-    return {
-      haveAccount: !!user?.id,
-      havePassword: !!user?.password,
-      isRegisteredInEvent: !!collaborator || !!assistant?.id,
-    };
-  }
-
-  async identifierUser(eventId: string, userId: string) {
-    let collaboratorRol = null
-    
-    const event = await this.eventRepository.findOneBy({ id: eventId });
-    if (!event) {
-      throw new NotFoundException('Event not found');
-    }
-    
-    const assistant = await this.assistantService.findOneByUserIdAndEventId(userId,event.id)
-    const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userId,event?.organization?.id);
-   
-    if (collaborator) {
-      collaboratorRol = collaborator.rol;
-    }
-    
     return {
       event: {
         id: event.id,
@@ -142,8 +81,83 @@ export class EventService {
         initialDate: event.initialDate,
         eventSection: event.eventSection,
         appearance: event.appearance,
-        capacity:20,
-        registrationFields:[]
+        capacity: 20,
+        registrationFields: [],
+      },
+      organization: {
+        id: event?.organization?.id,
+        name: event?.organization?.name,
+      },
+    };
+  }
+
+  async confirmedEmailRegisterInEvent(email: string, eventId: string) {
+    if (!validateEmail(email)) {
+      throw new BadRequestException("Invalid email");
+    }
+
+    const user = await this.userRepository.findOneBy({ email });
+
+    const event = await this.eventRepository.findOneBy({ id: eventId });
+    if (!event) {
+      throw new BadRequestException("Event not found");
+    }
+
+    let assistant = null;
+    let collaborator = null;
+    if (user) {
+      assistant = await this.assistantService.findOneByUserIdAndEventId(
+        user.id,
+        event.id,
+      );
+      collaborator =
+        await this.collaboratorService.findOneByIdAndOrganizationId(
+          user.id,
+          event.organization.id,
+        );
+    }
+
+    return {
+      haveAccount: !!user?.id,
+      havePassword: !!user?.password,
+      isRegisteredInEvent: !!collaborator || !!assistant?.id,
+    };
+  }
+
+  async identifierUser(eventId: string, userId: string) {
+    let collaboratorRol = null;
+
+    const event = await this.eventRepository.findOneBy({ id: eventId });
+    if (!event) {
+      throw new NotFoundException("Event not found");
+    }
+
+    const assistant = await this.assistantService.findOneByUserIdAndEventId(
+      userId,
+      event.id,
+    );
+    const collaborator =
+      await this.collaboratorService.findOneByIdAndOrganizationId(
+        userId,
+        event?.organization?.id,
+      );
+
+    if (collaborator) {
+      collaboratorRol = collaborator.rol;
+    }
+
+    return {
+      event: {
+        id: event.id,
+        name: event.name,
+        dates: event.dates,
+        description: event.description,
+        finishDate: event.finishDate,
+        initialDate: event.initialDate,
+        eventSection: event.eventSection,
+        appearance: event.appearance,
+        capacity: event.capacity,
+        registrationFields: [],
       },
       isRegister: !!assistant?.user,
       rol: collaboratorRol,
@@ -157,33 +171,52 @@ export class EventService {
   async register(registerDto: CreateAssistantDto) {
     let newAccount = false;
 
-    const event = await this.eventRepository.findOneBy({ id: registerDto.eventId });
+    const event = await this.eventRepository.findOneBy({
+      id: registerDto.eventId,
+    });
+
     if (!event) {
-      throw new NotFoundException('Event not found');
+      throw new NotFoundException("Event not found");
+    }
+    const { totalAssistant } =
+      await this.assistantService.getTotalAssistantByEvent(registerDto.eventId);
+
+    if (totalAssistant >= event.capacity) {
+      throw new ForbiddenException("Event Capacity is full");
     }
 
-    let user = await this.userRepository.findOneBy({ email: registerDto.email });
+    let user = await this.userRepository.findOneBy({
+      email: registerDto.email,
+    });
+
     if (!user) {
-      user =  this.userRepository.create({
+      user = this.userRepository.create({
         ...registerDto,
-        type_account: 'assistant',
+        type_account: "assistant",
       });
       user = await this.userRepository.save(user);
       newAccount = true;
     }
 
     if (!newAccount) {
-      const exist = await this.assistantService.findOneByUserIdAndEventId(user.id, event.id)
-      if (exist) throw new ConflictException('Assistant already registered');
+      const exist = await this.assistantService.findOneByUserIdAndEventId(
+        user.id,
+        event.id,
+      );
+      if (exist) throw new ConflictException("Assistant already registered");
     }
 
-    const assistant = await this.assistantService.create({
+    await this.assistantService.create({
       user,
       fullName: registerDto.fullName,
       event,
     });
 
-    const access_token = this.jwtService.sign({ id: user.id, type: user.type_account });
+    const access_token = this.jwtService.sign({
+      id: user.id,
+      type: user.type_account,
+    });
+
     return {
       access_token,
       user: {
