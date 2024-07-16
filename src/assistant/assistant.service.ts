@@ -1,9 +1,9 @@
-import {  Injectable } from '@nestjs/common';
-import { AssistantDto } from './dto/create-assistant.dto';
-import { UpdateAssistantDto } from './dto/update-assistant.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Assistant } from './entities/assistant.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { AssistantDto } from "./dto/create-assistant.dto";
+import { UpdateAssistantDto } from "./dto/update-assistant.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Assistant } from "./entities/assistant.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AssistantService {
@@ -21,13 +21,14 @@ export class AssistantService {
     return `This action returns all assistant`;
   }
   async getTotalAssistantByEvent(eventId: string) {
-    return await this.assistantRepository.count({
+    const totalAssistant = await this.assistantRepository.count({
       where: {
         event: {
           id: eventId,
         },
       },
     });
+    return { totalAssistant };
   }
 
   async findOneByUserIdAndEventId(userID: string, event: string) {
