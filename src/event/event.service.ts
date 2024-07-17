@@ -161,6 +161,10 @@ export class EventService {
       },
       isRegister: !!assistant?.user,
       rol: collaboratorRol,
+      assistant: {
+        id: assistant?.id,
+        fullName: assistant?.fullName,
+      },
       organization: {
         id: event.organization.id,
         name: event.organization.name,
