@@ -10,6 +10,7 @@ export class CollaboratorService {
   constructor(
     @InjectRepository(Collaborator)
     private readonly collaboratorRepository: Repository<Collaborator>,
+   
   ) {}
   async create(createCollaboratorDto: CreateCollaboratorDto) {
     try {
@@ -23,6 +24,7 @@ export class CollaboratorService {
       throw new InternalServerErrorException("Error creating collaborator")
     }
   }
+ 
 
   async findAll(id: string) {
     const collaborators = await this.collaboratorRepository.find({

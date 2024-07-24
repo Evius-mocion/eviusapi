@@ -3,6 +3,8 @@ import { CollaboratorService } from './collaborator.service';
 import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
 import { UpdateCollaboratorDto } from './dto/update-collaborator.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { UserContext } from 'src/types/user.types';
 
 @ApiTags('collaborator')
 @ApiBearerAuth()
@@ -14,7 +16,7 @@ export class CollaboratorController {
   create(@Body() createColaboratorDto: CreateCollaboratorDto) {
     return this.colaboratorService.create(createColaboratorDto);
   }
-
+  
   @Get("organization/:id")
   findAll(@Param('id') id: string) {
     return this.colaboratorService.findAll(id);
@@ -24,7 +26,7 @@ export class CollaboratorController {
   findOne(@Param('id') id: string) {
     return this.colaboratorService.findOneById(id);
   }
-
+  
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateColaboratorDto: UpdateCollaboratorDto) {
     return this.colaboratorService.update(+id, updateColaboratorDto);

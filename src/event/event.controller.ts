@@ -56,11 +56,13 @@ export class EventController {
     @Param('eventId') eventID: string) {
     return this.eventService.identifierUser(eventID,user.id);
   }
+
   @Public()
   @Get("isAssistant")
   validateAssistants(@Query('email') email: string, @Query('eventId') eventId: string) {
     return this.eventService.confirmedEmailRegisterInEvent(email,eventId);
   }
+  
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventService.remove(+id);

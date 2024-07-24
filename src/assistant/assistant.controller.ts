@@ -20,15 +20,16 @@ export class AssistantController {
   }
 
   @Public()
-  @Get('countAssistantByEvent/:eventId')
+  @Get('all/:eventId')
+  getAssistant(@Param('eventId') eventId: string) {
+    return this.assistantService.getAssistantByEvent(eventId);
+  }
+  @Get('totalCount/:eventId')
   count(@Param('eventId') eventId: string) {
     return this.assistantService.getTotalAssistantByEvent(eventId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssistantDto: UpdateAssistantDto) {
-    return this.assistantService.update(+id, updateAssistantDto);
-  }
+ 
 
   @Delete(':id')
   remove(@Param('id') id: string) {

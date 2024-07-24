@@ -4,18 +4,24 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Organization } from "./entities/organization.entity";
 import { CollaboratorService } from "src/collaborator/collaborator.service";
-import { RoleEnum } from "src/constants/constants";
 import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
+import { inviteCollaborator } from "src/collaborator/entities/inviteCollaborator.entity";
+import { RoleType } from "src/types/collaborator.types";
 
 @Injectable()
 export class OrganizationService {
   constructor(
     @InjectRepository(Organization)
     private readonly organizationRepository: Repository<Organization>,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     private readonly collaboratorService: CollaboratorService,
+
+    @InjectRepository(inviteCollaborator)
+    private readonly inviteCollaboratorRepository: Repository<inviteCollaborator>,
   ) {}
 
   async create(
@@ -27,7 +33,7 @@ export class OrganizationService {
       const organization = await this.organizationRepository.save(pre_org);
       const user = await this.userRepository.findOneBy({id: ActiveUser.id});
       const collaborator = await this.collaboratorService.create({
-        rol: RoleEnum.owner,
+        rol: "owner",
         organization,
         user
       });
@@ -40,6 +46,38 @@ export class OrganizationService {
     }
   }
 
+  async register(user: UserContext, organizationId: string) {
+      const activeUser = await this.userRepository.findOneBy({id: user.id});
+     
+      const invitation = await this.inviteCollaboratorRepository.findOneBy({organizationId, email: activeUser.email, status: "pending"});
+
+      if (!invitation) {
+        throw new ForbiddenException("you don't have invitation to this organization");
+      }
+
+      const organization = await this.organizationRepository.findOne({
+        where: {id: organizationId},
+        relations: ["collaborators"],
+      });
+
+     const isCollaborator = organization.collaborators.map((collaborator) => (collaborator.user.id)).includes(activeUser.id);
+
+      if (isCollaborator) {
+        throw new ConflictException("You are already a member of this organization");
+      }
+
+      const Collaborator = await this.collaboratorService.create(
+        {
+          organization,
+          rol: invitation.role as RoleType,
+          user: activeUser,
+        }
+      );
+      return {
+        organization,
+        rol: Collaborator.rol,
+      }
+  }
 
   async findAllByContributorId(userID: string) {
     try {

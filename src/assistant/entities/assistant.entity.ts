@@ -11,6 +11,9 @@ export class Assistant {
     @Column({nullable: false})
     fullName: string;
 
+    @Column({nullable: false,default: false})
+    checking: boolean;
+
     @ManyToOne(() => User, user => user.assistants,{
         eager: true
     })

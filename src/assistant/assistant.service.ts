@@ -20,6 +20,24 @@ export class AssistantService {
   findAll() {
     return `This action returns all assistant`;
   }
+  async getAssistantByEvent(eventId: string) {
+    const assistants = await this.assistantRepository.find({
+      where: {
+        event: {
+          id: eventId,
+        },
+      },
+
+    });
+    
+    return { 
+      assistants : assistants.map(assistant => ({
+        id: assistant.id,
+        fullName: assistant.fullName,
+        checking: assistant.checking,
+      }))
+     };
+  }
   async getTotalAssistantByEvent(eventId: string) {
     const totalAssistant = await this.assistantRepository.count({
       where: {
@@ -42,9 +60,7 @@ export class AssistantService {
     });
   }
 
-  update(id: number, updateAssistantDto: UpdateAssistantDto) {
-    return `This action updates a #${id} assistant`;
-  }
+  
 
   remove(id: number) {
     return `This action removes a #${id} assistant`;

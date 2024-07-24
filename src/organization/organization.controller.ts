@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
@@ -19,7 +19,14 @@ export class OrganizationController {
     return this.organizationService.create(user,createOrganizationDto);
   }
 
-
+  @HttpCode(HttpStatus.CREATED)
+  @Post("register/:organizationId")
+  register(
+    @ActiveUser() user: UserContext,
+    @Param("organizationId") id: string) {
+    return this.organizationService.register(user, id);
+  }
+  
   @Get('all')
   findAll(@Query('userId') userId: string,) {
     return this.organizationService.findAllByContributorId(userId);

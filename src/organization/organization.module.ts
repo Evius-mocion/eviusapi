@@ -5,9 +5,10 @@ import { CollaboratorModule } from 'src/collaborator/collaborator.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { User } from 'src/common/entities/user.entity';
+import { inviteCollaborator } from 'src/collaborator/entities/inviteCollaborator.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Organization,User]),CollaboratorModule],
+  imports: [TypeOrmModule.forFeature([Organization,User,inviteCollaborator]),CollaboratorModule],
   controllers: [OrganizationController],
   providers: [OrganizationService],
   exports: [OrganizationService],
