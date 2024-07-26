@@ -1,4 +1,3 @@
-import { IsString } from "class-validator";
 import { User } from "src/common/entities/user.entity";
 import { Organization } from "src/organization/entities/organization.entity";
 import { RoleType } from "src/types/collaborator.types";

@@ -8,6 +8,7 @@ import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
 import { inviteCollaborator } from "src/collaborator/entities/inviteCollaborator.entity";
 import { RoleType } from "src/types/collaborator.types";
+import { Roles } from "src/constants/constants";
 
 @Injectable()
 export class OrganizationService {
@@ -33,7 +34,7 @@ export class OrganizationService {
       const organization = await this.organizationRepository.save(pre_org);
       const user = await this.userRepository.findOneBy({id: ActiveUser.id});
       const collaborator = await this.collaboratorService.create({
-        rol: "owner",
+        rol: Roles.owner,
         organization,
         user
       });

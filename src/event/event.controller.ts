@@ -7,6 +7,7 @@ import { UserContext } from 'src/types/user.types';
 import { Public } from 'src/common/decorators/public.decorator';
 import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
 import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
+import { Role } from 'src/common/decorators/roles.decorator';
 
 
 @ApiTags('events')
@@ -15,6 +16,7 @@ import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
+  @Role('admin')
   @Post("create")
   create(
     @ActiveUser() user: UserContext,

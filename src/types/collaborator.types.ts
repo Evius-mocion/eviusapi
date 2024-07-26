@@ -1,1 +1,1 @@
-export type RoleType= "owner" | "admin" | "member"
+export type RoleType= "owner" | "admin" | "editor" | "auditor"

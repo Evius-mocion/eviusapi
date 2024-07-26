@@ -1,7 +1,7 @@
 import { Organization } from "src/organization/entities/organization.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoleType } from '../../types/collaborator.types';
-import { RoleEnum } from '../../constants/constants';
+import { RoleEnum, Roles } from '../../constants/constants';
 import { User } from "src/common/entities/user.entity";
 
 
@@ -21,7 +21,7 @@ export class Collaborator {
     })
     organization: Organization;
 
-    @Column({default: RoleEnum.member})
+    @Column({default: Roles.auditor})
     rol: RoleType;
 
     @Column({default: new Date()})   
