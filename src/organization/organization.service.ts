@@ -47,17 +47,17 @@ export class OrganizationService {
     }
   }
 
-  async register(user: UserContext, organizationId: string) {
+  async register(user: UserContext, invitationId: string) {
       const activeUser = await this.userRepository.findOneBy({id: user.id});
      
-      const invitation = await this.inviteCollaboratorRepository.findOneBy({organizationId, email: activeUser.email, status: "pending"});
+      const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId, status: "pending"});
 
-      if (!invitation) {
+      if (!invitation || activeUser.email !== invitation.email) {
         throw new ForbiddenException("you don't have invitation to this organization");
       }
 
       const organization = await this.organizationRepository.findOne({
-        where: {id: organizationId},
+        where: {id: invitation.organizationId},
         relations: ["collaborators"],
       });
 
@@ -74,9 +74,17 @@ export class OrganizationService {
           user: activeUser,
         }
       );
+
+      await this.inviteCollaboratorRepository.update(invitationId, {status: "accepted"});
       return {
         organization,
         rol: Collaborator.rol,
+      }
+  }
+  async invitationStatus(user: UserContext, invitationId: string) {
+      const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
+      return {
+          status: invitation?.status,
       }
   }
 

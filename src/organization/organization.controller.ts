@@ -19,14 +19,21 @@ export class OrganizationController {
     return this.organizationService.create(user,createOrganizationDto);
   }
 
+  
   @HttpCode(HttpStatus.CREATED)
-  @Post("register/:organizationId")
-  register(
+  @Get("invitation/:id")
+  getInvitation(
     @ActiveUser() user: UserContext,
-    @Param("organizationId") id: string) {
+    @Param("id") id: string) {
     return this.organizationService.register(user, id);
   }
-  
+  @HttpCode(HttpStatus.CREATED)
+  @Post("register/:invitationId")
+  register(
+    @ActiveUser() user: UserContext,
+    @Param("invitationId") id: string) {
+    return this.organizationService.register(user, id);
+  }
   @Get('all')
   findAll(@Query('userId') userId: string,) {
     return this.organizationService.findAllByContributorId(userId);
