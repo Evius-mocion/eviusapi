@@ -5,6 +5,7 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/roles.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 @ApiTags('organization')
 @ApiBearerAuth()
 @Controller('organization')
@@ -27,6 +28,8 @@ export class OrganizationController {
     @Param("id") id: string) {
     return this.organizationService.register(user, id);
   }
+
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post("register/:invitationId")
   register(
