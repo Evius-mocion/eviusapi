@@ -84,7 +84,11 @@ export class OrganizationService {
   async invitationStatus( invitationId: string) {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
       return {
+          id: invitation?.id,
+          email: invitation?.email,
+          organization: invitation?.organizationName,
           status: invitation?.status,
+          role: invitation?.role,
       }
   }
 
