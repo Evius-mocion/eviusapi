@@ -82,6 +82,7 @@ export class OrganizationService {
       }
   }
   async invitationStatus( invitationId: string) {
+    try {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
       return {
           id: invitation?.id,
@@ -90,6 +91,10 @@ export class OrganizationService {
           status: invitation?.status,
           role: invitation?.role,
       }
+    } catch (error) {
+        console.log(error);
+        throw new BadRequestException("Error getting invitation");
+    }
   }
 
   async findAllByContributorId(userID: string) {
