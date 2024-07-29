@@ -81,7 +81,7 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   }
-  async invitationStatus(user: UserContext, invitationId: string) {
+  async invitationStatus( invitationId: string) {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
       return {
           status: invitation?.status,

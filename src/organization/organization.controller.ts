@@ -30,9 +30,8 @@ export class OrganizationController {
   @HttpCode(HttpStatus.CREATED)
   @Post("register/:invitationId")
   register(
-    @ActiveUser() user: UserContext,
     @Param("invitationId") id: string) {
-    return this.organizationService.register(user, id);
+    return this.organizationService.invitationStatus(id);
   }
   @Get('all')
   findAll(@Query('userId') userId: string,) {
