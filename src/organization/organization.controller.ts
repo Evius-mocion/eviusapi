@@ -26,7 +26,7 @@ export class OrganizationController {
   @Get("register/:invitationId")
   getInvitation(
     @ActiveUser() user: UserContext,
-    @Param("id") id: string) {
+    @Param("invitationId") id: string) {
     return this.organizationService.register(user, id);
   }
 
