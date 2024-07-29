@@ -29,12 +29,12 @@ export class OrganizationController {
     @Param("id") id: string) {
     return this.organizationService.register(user, id);
   }
-  
+
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post("invitation/:id")
   register(
-    @Param("invitationId") id: string) {
+    @Param("id") id: string) {
     return this.organizationService.invitationStatus(id);
   }
 
