@@ -26,13 +26,13 @@ export class OrganizationController {
   @Get("register/:invitationId")
   getInvitation(
     @ActiveUser() user: UserContext,
-    @Param("invitationId") id: string) {
-    return this.organizationService.register(user, id);
+    @Param("invitationId") invitationId: string) {
+    return this.organizationService.register(user, invitationId);
   }
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  @Post("invitation/:id")
+  @Get("invitation/:id")
   register(
     @Param("id") id: string) {
     return this.organizationService.invitationStatus(id);
