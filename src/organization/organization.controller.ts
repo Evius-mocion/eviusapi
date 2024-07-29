@@ -21,6 +21,7 @@ export class OrganizationController {
   }
 
   
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Get("invitation/:id")
   getInvitation(
@@ -29,7 +30,6 @@ export class OrganizationController {
     return this.organizationService.register(user, id);
   }
 
-  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post("register/:invitationId")
   register(
