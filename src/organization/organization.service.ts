@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -84,6 +84,9 @@ export class OrganizationService {
   async invitationStatus( invitationId: string) {
     try {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
+      if(!invitation){
+        throw new NotFoundException("Invitation not found");
+      }
       return {
           id: invitation?.id,
           email: invitation?.email,
