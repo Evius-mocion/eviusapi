@@ -9,6 +9,7 @@ import { User } from "src/common/entities/user.entity";
 import { inviteCollaborator } from "src/collaborator/entities/inviteCollaborator.entity";
 import { RoleType } from "src/types/collaborator.types";
 import { Roles } from "src/constants/constants";
+import { PaginationArgs } from "src/common/dto";
 
 @Injectable()
 export class OrganizationService {
@@ -81,6 +82,27 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   }
+  async getInvitations( orgId: string, pagination: PaginationArgs) {
+
+      const { offset, limit } = pagination;
+
+      
+     
+      
+      const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
+        where: {organizationId: orgId},
+        take: limit,
+        skip: (offset - 1) * limit,
+      });  
+
+      
+
+      return {
+          invitations,
+          total
+      }
+    
+  }
   async invitationStatus( invitationId: string) {
     try {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
@@ -100,6 +122,7 @@ export class OrganizationService {
     }
   }
 
+  
   async findAllByContributorId(userID: string) {
     try {
       const collaborator = await this.collaboratorService.findAllByUserID(userID);

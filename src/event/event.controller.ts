@@ -24,7 +24,7 @@ export class EventController {
     return this.eventService.create(user,createEventDto);
   }
 
-  @Get("all/:org")
+  @Get("all/:orgId")
   findAll(
     @Param('org') id: string,
   ) {

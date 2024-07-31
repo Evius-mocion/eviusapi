@@ -6,6 +6,8 @@ import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
+import { Roles } from 'src/constants/constants';
+import { PaginationArgs, UuidDto } from 'src/common/dto';
 @ApiTags('organization')
 @ApiBearerAuth()
 @Controller('organization')
@@ -30,10 +32,19 @@ export class OrganizationController {
     return this.organizationService.register(user, invitationId);
   }
 
+  @Role(Roles.auditor)
+  @HttpCode(HttpStatus.CREATED)
+  @Get(":orgId/invitations")
+  getAll(
+    @Query() pagination: PaginationArgs,
+    @Param() params: UuidDto) {
+    return this.organizationService.getInvitations(params.orgId,pagination);
+  }
+  
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Get("invitation/:id")
-  register(
+  invitation(
     @Param("id") id: string) {
     return this.organizationService.invitationStatus(id);
   }
@@ -43,17 +54,17 @@ export class OrganizationController {
     return this.organizationService.findAllByContributorId(userId);
   }
 
-  @Get(':id')
+  @Get(':orgId')
   findOne(
-    @Param('id') id: string,
+    @Param('orgId') id: string,
     @ActiveUser() user: UserContext
   ) {
     return this.organizationService.findOne(user.id,id);
   }
 
   @Role('owner')
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(':orgId')
+  remove(@Param('orgId') id: string) {
     return this.organizationService.remove(id);
   }
 }

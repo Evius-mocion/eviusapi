@@ -73,7 +73,7 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
   private extractOrganizations(request: Request): string | undefined {
-    const organizationID = request.headers.organization_id as string
+    const organizationID = request.params.orgId as string
     return organizationID ?? ''
   }
 }
