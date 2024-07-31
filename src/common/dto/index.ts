@@ -6,7 +6,7 @@ export class PaginationArgs {
     @Transform(({value}) => value && parseInt(value))
     @IsOptional()
     @Min(1)
-    offset: number = 0;
+    offset: number = 1;
 
     @Transform(({value}) => value && parseInt(value))
     @IsOptional()
