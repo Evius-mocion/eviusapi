@@ -8,6 +8,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
 import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
 import { Role } from 'src/common/decorators/roles.decorator';
+import { Roles } from 'src/constants/constants';
 
 
 @ApiTags('events')
@@ -16,14 +17,14 @@ import { Role } from 'src/common/decorators/roles.decorator';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Role('admin')
+  @Role(Roles.admin)
   @Post("create")
   create(
     @ActiveUser() user: UserContext,
     @Body() createEventDto: CreateEventDto) {
     return this.eventService.create(user,createEventDto);
   }
-
+  @Role(Roles.auditor)
   @Get("all/:orgId")
   findAll(
     @Param('orgId') id: string,
