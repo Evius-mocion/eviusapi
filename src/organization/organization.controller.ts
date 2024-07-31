@@ -41,6 +41,14 @@ export class OrganizationController {
     return this.organizationService.getInvitations(params.orgId,pagination);
   }
   
+
+  @HttpCode(HttpStatus.CREATED)
+  @Get("user/invitations")
+  invitationsUser(
+    @ActiveUser() user: UserContext) {
+    return this.organizationService.getInvitationsByUser(user);
+  }
+  
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Get("invitation/:id")

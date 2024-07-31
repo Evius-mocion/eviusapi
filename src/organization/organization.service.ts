@@ -103,6 +103,24 @@ export class OrganizationService {
       }
     
   }
+  async getInvitationsByUser( userContext: UserContext) {
+
+    const user = await this.userRepository.findOneBy({id: userContext.id});
+      
+      const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
+        where: {email: user.email},
+      });  
+
+      if (total === 0) {
+        throw new NotFoundException("You don't have invitations");
+      }
+
+      return {
+          invitations,
+          total
+      }
+    
+  }
   async invitationStatus( invitationId: string) {
     try {
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  

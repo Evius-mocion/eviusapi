@@ -26,7 +26,7 @@ export class EventController {
 
   @Get("all/:orgId")
   findAll(
-    @Param('org') id: string,
+    @Param('orgId') id: string,
   ) {
     return this.eventService.findAll(id);
   }
