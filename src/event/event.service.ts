@@ -32,10 +32,7 @@ export class EventService {
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
-      const org = await this.organizationService.findOne(
-        user.id,
-        user.organizationId,
-      );
+      const org = await this.organizationService.findOne( user.organizationId );
       const newEvent = this.eventRepository.create({
         organization: org.organization,
         initialDate: createEventDto.dates[0]?.startDate,

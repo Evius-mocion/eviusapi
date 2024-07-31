@@ -152,16 +152,11 @@ export class OrganizationService {
     }
   }
 
-  async findOne(userID: string,organizationID: string) {
-     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userID,organizationID);
-     
-     if (!collaborator) {
-       throw new ForbiddenException("You don't have permission to access this resource");
-     }
-     
+  async findOne(organizationID: string) {
+     const organization = await this.organizationRepository.findOneBy({ id: organizationID})
+      
      return {
-        organization: collaborator?.organization,
-        rol: collaborator?.rol,
+      organization
       }
   }
 

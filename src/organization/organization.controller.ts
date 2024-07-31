@@ -62,12 +62,12 @@ export class OrganizationController {
     return this.organizationService.findAllByContributorId(userId);
   }
 
+  @Role(Roles.auditor)
   @Get(':orgId')
   findOne(
     @Param('orgId') id: string,
-    @ActiveUser() user: UserContext
   ) {
-    return this.organizationService.findOne(user.id,id);
+    return this.organizationService.findOne(id);
   }
 
   @Role('owner')
