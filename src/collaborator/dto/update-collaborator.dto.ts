@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateCollaboratorDto } from './create-collaborator.dto';
 
-export class UpdateCollaboratorDto extends PartialType(CreateCollaboratorDto) {}
+import { RoleType } from 'src/types/collaborator.types';
+import { IsIn } from 'class-validator';
+import { Roles } from 'src/constants/constants';
+
+export class UpdateCollaboratorDto {
+    @IsIn(Object.values(Roles))
+    rol: RoleType;
+}

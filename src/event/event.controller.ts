@@ -18,7 +18,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Role(Roles.admin)
-  @Post("create")
+  @Post("create/:orgId")
   create(
     @ActiveUser() user: UserContext,
     @Body() createEventDto: CreateEventDto) {
