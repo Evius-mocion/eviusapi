@@ -154,11 +154,21 @@ export class OrganizationService {
 
   async findOne(organizationID: string) {
      const organization = await this.organizationRepository.findOneBy({ id: organizationID})
-      
+
      return {
       organization
       }
   }
+
+  async getAccessOrganization(organizationID: string, userID:string) {
+    const organization = await this.organizationRepository.findOneBy({ id: organizationID})
+    const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userID,organizationID);
+    return {
+     organization,
+     rol:collaborator.rol
+     }
+ }
+
 
  
 

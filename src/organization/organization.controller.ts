@@ -70,6 +70,17 @@ export class OrganizationController {
     return this.organizationService.findOne(id);
   }
 
+  @Role(Roles.auditor)
+  @Get(':orgId/accessToOrganization')
+  accessToOrganization(
+    @Param('orgId') id: string,
+    @ActiveUser() user: UserContext
+  ) {
+    return this.organizationService.getAccessOrganization(id, user.id);
+  }
+
+
+
   @Role('owner')
   @Delete(':orgId')
   remove(@Param('orgId') id: string) {
