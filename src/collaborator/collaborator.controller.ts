@@ -5,6 +5,8 @@ import { UpdateCollaboratorDto } from './dto/update-collaborator.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { Roles } from 'src/constants/constants';
 
 @ApiTags('collaborator')
 @ApiBearerAuth()
@@ -27,9 +29,10 @@ export class CollaboratorController {
     return this.colaboratorService.findOneById(id);
   }
   
-  @Patch(':id')
+  @Role(Roles.admin)
+  @Patch(':orgaId/:id')
   update(@Param('id') id: string, @Body() updateColaboratorDto: UpdateCollaboratorDto) {
-    return this.colaboratorService.update(+id, updateColaboratorDto);
+    return this.colaboratorService.update(id, updateColaboratorDto);
   }
 
   @Delete(':id')

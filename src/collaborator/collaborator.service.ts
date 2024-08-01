@@ -76,7 +76,10 @@ export class CollaboratorService {
     }
   }
 
-  update(id: number, updateCollaboratorDto: UpdateCollaboratorDto) {
+  async update(id: string, updateCollaboratorDto: UpdateCollaboratorDto) {
+
+    const collaborator = await this.collaboratorRepository.update(id, updateCollaboratorDto);
+    collaborator.affected
     return `This action updates a #${id} collaborator`;
   }
 
