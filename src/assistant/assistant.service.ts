@@ -35,6 +35,7 @@ export class AssistantService {
         id: assistant.id,
         fullName: assistant.fullName,
         checking: assistant.checking,
+        email: assistant.user.email
       }))
      };
   }
