@@ -12,7 +12,7 @@ export class Assistant {
     fullName: string;
 
     @Column({nullable: false,default: false})
-    checking: boolean;
+    checkIn: boolean;
 
     @ManyToOne(() => User, user => user.assistants,{
         eager: true

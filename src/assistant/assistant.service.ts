@@ -38,7 +38,7 @@ export class AssistantService {
       assistants : assistants.map(assistant => ({
         id: assistant.id,
         fullName: assistant.fullName,
-        checking: assistant.checking,
+        checkIn: assistant.checkIn,
       })),
       total
      };
