@@ -9,6 +9,7 @@ import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
 import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/constants/constants';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 
 @ApiTags('events')
@@ -39,9 +40,10 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, /* @Body() updateEventDto: UpdateEventDto */) {
-    return this.eventService.update(+id);
+  @Role(Roles.editor)
+  @Patch('update/:id/:orgId')
+  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+    return this.eventService.update(id,updateEventDto);
   }
 
   

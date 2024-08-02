@@ -28,4 +28,6 @@ export class CreateEventDto {
     @IsObject()
     @IsOptional()
     eventSection?: Partial<IEventSections>;
+
+    
 }
