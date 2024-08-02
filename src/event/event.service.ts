@@ -17,6 +17,7 @@ import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
+import { UpdateEventDto } from "./dto/update-event.dto";
 @Injectable()
 export class EventService {
   constructor(
@@ -234,8 +235,19 @@ export class EventService {
     };
   }
 
-  update(id: number) {
-    return `This action updates a #${id} event`;
+  async update(id: string, data : UpdateEventDto) {
+    if(Object.keys(data).length === 0){
+      throw new BadRequestException("No data to update");
+    }
+
+   try {
+    const event = await this.eventRepository.update(id, { ...data});
+     return {
+      message : `Event updated successfully`,
+     }
+   } catch (error) {
+      throw new BadRequestException("error updating event");
+   }
   }
 
   remove(id: number) {

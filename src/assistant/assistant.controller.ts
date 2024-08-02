@@ -1,7 +1,10 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AssistantService } from './assistant.service';
 import { UpdateAssistantDto } from './dto/update-assistant.dto';
 import { Public } from 'src/common/decorators/public.decorator';
+import { PaginationArgs } from 'src/common/dto';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { Roles } from 'src/constants/constants';
 
 @Controller('assistant')
 export class AssistantController {
@@ -18,12 +21,14 @@ export class AssistantController {
   findOne(@Param('id') id: string) {
     return "this.assistantService.findOne(+id);"
   }
-
-  @Public()
-  @Get('all/:eventId')
-  getAssistant(@Param('eventId') eventId: string) {
-    return this.assistantService.getAssistantByEvent(eventId);
+  @Role(Roles.auditor)
+  @Get(':orgId/all/:eventId')
+  getAssistant(
+    @Query() pagination: PaginationArgs,
+    @Param('eventId') eventId: string) {
+    return this.assistantService.getAssistantByEvent(eventId,pagination);
   }
+
   @Get('totalCount/:eventId')
   count(@Param('eventId') eventId: string) {
     return this.assistantService.getTotalAssistantByEvent(eventId);

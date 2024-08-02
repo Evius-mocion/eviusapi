@@ -1,6 +1,6 @@
 import { Assistant } from "src/assistant/entities/assistant.entity";
 import { Organization } from "src/organization/entities/organization.entity";
-import {  IDates, IEventAppearance, IEventSections } from "src/types/event.type";
+import {  DynamicField, IDates, IEventAppearance, IEventSections } from "src/types/event.type";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 
 @Entity('events')
@@ -37,11 +37,29 @@ export class Event {
     @OneToMany(() => Assistant, assistant => assistant.event)
     assistants: Assistant[];
 
-    @Column({nullable: false, type: 'simple-json', default: {primaryColor: '#FFFFFF', textColor: '#352848', bgColor: '#F8F9FA',}})
+    @Column({nullable: false, type: 'simple-json', default: {primaryColor: '#FFFFFF', textColor: '#352848', bgColor: '#F8F9FA', bannerImage: ''}})
     appearance: IEventAppearance;
 
     @Column({nullable: false, type: 'simple-json', default: {news: false, sponsors: false}})
     eventSection?: Partial<IEventSections>;
+    
+    @Column({nullable: false, type: "jsonb", default: []})
+    registrationFields?: DynamicField[];
+
+    @Column({nullable: true})
+    organizationAlias?: string;
+
+    @Column({nullable: true})
+    googleAnalyticsId?: string;
+
+    @Column({nullable: true})
+    googleTagManager?: string;
+
+    @Column({nullable: true})
+    faceBookPixelId?: string;
+
+    @Column({nullable: false, default: false})
+    hiddenEventDates?: boolean;
 
     @CreateDateColumn()
     createAt: string;

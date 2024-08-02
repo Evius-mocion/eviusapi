@@ -4,6 +4,7 @@ import { UpdateAssistantDto } from "./dto/update-assistant.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Assistant } from "./entities/assistant.entity";
 import { Repository } from "typeorm";
+import { PaginationArgs } from "src/common/dto";
 
 @Injectable()
 export class AssistantService {
@@ -20,23 +21,27 @@ export class AssistantService {
   findAll() {
     return `This action returns all assistant`;
   }
-  async getAssistantByEvent(eventId: string) {
-    const assistants = await this.assistantRepository.find({
+  async getAssistantByEvent(eventId: string, pagination: PaginationArgs) {
+    const { offset, limit } = pagination;
+
+    const [assistants,total] = await this.assistantRepository.findAndCount({
       where: {
         event: {
           id: eventId,
         },
       },
-
+      take: limit,
+      skip: (offset - 1) * limit,
     });
     
     return { 
       assistants : assistants.map(assistant => ({
         id: assistant.id,
         fullName: assistant.fullName,
-        checking: assistant.checking,
+        checkIn: assistant.checkIn,
         email: assistant.user.email
-      }))
+      })),
+      total
      };
   }
   async getTotalAssistantByEvent(eventId: string) {

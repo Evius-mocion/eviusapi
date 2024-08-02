@@ -25,8 +25,7 @@ export class RolesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
     const collaborator = await this.CollaboratoService.findOneByIdAndOrganizationId(user.id,user.organizationId);
     const rol = collaborator?.rol;
-
- 
+    
 
     if(RoleEnum[rol] >= RoleEnum[requiredRole]){
       return true;
