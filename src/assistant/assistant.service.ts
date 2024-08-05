@@ -1,6 +1,5 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { AssistantDto } from "./dto/create-assistant.dto";
-import { UpdateAssistantDto } from "./dto/update-assistant.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Assistant } from "./entities/assistant.entity";
 import { Repository } from "typeorm";
@@ -21,10 +20,19 @@ export class AssistantService {
   findAll() {
     return `This action returns all assistant`;
   }
+  async checkIn(id: string) {
+    try {
+      await this.assistantRepository.update(id, { checkIn: true });
+      return { message: "check in successfully" };
+    } catch (error) {
+      throw new InternalServerErrorException("error updating assistant");
+    }
+  }
+
   async getAssistantByEvent(eventId: string, pagination: PaginationArgs) {
     const { offset, limit } = pagination;
 
-    const [assistants,total] = await this.assistantRepository.findAndCount({
+    const [assistants, total] = await this.assistantRepository.findAndCount({
       where: {
         event: {
           id: eventId,
@@ -33,16 +41,16 @@ export class AssistantService {
       take: limit,
       skip: (offset - 1) * limit,
     });
-    
-    return { 
-      assistants : assistants.map(assistant => ({
+
+    return {
+      assistants: assistants.map((assistant) => ({
         id: assistant.id,
         fullName: assistant.fullName,
         checkIn: assistant.checkIn,
-        email: assistant.user.email
+        email: assistant.user.email,
       })),
-      total
-     };
+      total,
+    };
   }
   async getTotalAssistantByEvent(eventId: string) {
     const totalAssistant = await this.assistantRepository.count({
@@ -65,8 +73,6 @@ export class AssistantService {
       },
     });
   }
-
-  
 
   remove(id: number) {
     return `This action removes a #${id} assistant`;

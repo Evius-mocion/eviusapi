@@ -5,6 +5,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { PaginationArgs } from 'src/common/dto';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/constants/constants';
+import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
 
 @Controller('assistant')
 export class AssistantController {
@@ -21,6 +22,7 @@ export class AssistantController {
   findOne(@Param('id') id: string) {
     return "this.assistantService.findOne(+id);"
   }
+
   @Role(Roles.auditor)
   @Get(':orgId/all/:eventId')
   getAssistant(
@@ -34,8 +36,12 @@ export class AssistantController {
     return this.assistantService.getTotalAssistantByEvent(eventId);
   }
 
- 
-
+  @Patch('checkIn/:id')
+  update(
+    @Param('id') id: string) {
+    return this.assistantService.checkIn(id);
+  }
+  
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.assistantService.remove(+id);
