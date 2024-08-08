@@ -147,7 +147,9 @@ export class EventService {
     if (collaborator) {
       collaboratorRol = collaborator.rol;
     }
-
+    const isRegister = !!assistant?.user
+    delete assistant.event
+    delete assistant.user
     return {
       event: {
         id: event.id,
@@ -162,12 +164,9 @@ export class EventService {
         registrationFields: [],
       },
       totalAssistant,
-      isRegister: !!assistant?.user,
+      isRegister,
       rol: collaboratorRol,
-      assistant: {
-        id: assistant?.id,
-        fullName: assistant?.fullName,
-      },
+      assistant,
       organization: {
         id: event.organization.id,
         name: event.organization.name,
