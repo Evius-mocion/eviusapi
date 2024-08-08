@@ -22,7 +22,7 @@ export class AssistantService {
   }
   async checkIn(id: string) {
     try {
-      await this.assistantRepository.update(id, { checkIn: true });
+      await this.assistantRepository.update(id, { checkIn: true, checkInAt: new Date() });
       return { message: "check in successfully" };
     } catch (error) {
       throw new InternalServerErrorException("error updating assistant");
@@ -48,6 +48,7 @@ export class AssistantService {
         fullName: assistant.fullName,
         checkIn: assistant.checkIn,
         email: assistant.user.email,
+        checkInAt: assistant.checkInAt,
       })),
       total,
     };

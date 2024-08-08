@@ -14,6 +14,9 @@ export class Assistant {
     @Column({nullable: false,default: false})
     checkIn: boolean;
 
+    @Column({nullable: true,default: null})
+    checkInAt: Date;
+
     @ManyToOne(() => User, user => user.assistants,{
         eager: true
     })
