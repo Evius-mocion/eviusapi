@@ -133,7 +133,6 @@ export class EventService {
     if (!event) {
       throw new NotFoundException("Event not found");
     }
-
     const assistant = await this.assistantService.findOneByUserIdAndEventId(
       userId,
       event.id,
@@ -148,8 +147,10 @@ export class EventService {
       collaboratorRol = collaborator.rol;
     }
     const isRegister = !!assistant?.user
-    delete assistant.event
-    delete assistant.user
+    if(assistant){
+      delete assistant.event
+      delete assistant.user
+    }
     return {
       event: {
         id: event.id,
