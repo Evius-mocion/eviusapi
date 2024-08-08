@@ -35,7 +35,7 @@ export class AssistantController {
   count(@Param('eventId') eventId: string) {
     return this.assistantService.getTotalAssistantByEvent(eventId);
   }
-
+  @WithoutAccount()
   @Patch('checkIn/:id')
   update(
     @Param('id') id: string) {
