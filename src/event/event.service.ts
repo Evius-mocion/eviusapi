@@ -65,6 +65,7 @@ export class EventService {
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOneBy({ id });
+    const { totalAssistant }  = await this.assistantService.getTotalAssistantByEvent(id)
     if (!event) {
       throw new BadRequestException("Event not found");
     }
@@ -82,6 +83,7 @@ export class EventService {
         capacity: 20,
         registrationFields: [],
       },
+      totalAssistant,
       organization: {
         id: event?.organization?.id,
         name: event?.organization?.name,
@@ -126,6 +128,8 @@ export class EventService {
     let collaboratorRol = null;
 
     const event = await this.eventRepository.findOneBy({ id: eventId });
+    const { totalAssistant }  = await this.assistantService.getTotalAssistantByEvent(eventId)
+
     if (!event) {
       throw new NotFoundException("Event not found");
     }
@@ -157,6 +161,7 @@ export class EventService {
         capacity: event.capacity,
         registrationFields: [],
       },
+      totalAssistant,
       isRegister: !!assistant?.user,
       rol: collaboratorRol,
       assistant: {
