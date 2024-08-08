@@ -10,6 +10,7 @@ import { inviteCollaborator } from "src/collaborator/entities/inviteCollaborator
 import { RoleType } from "src/types/collaborator.types";
 import { Roles } from "src/constants/constants";
 import { PaginationArgs } from "src/common/dto";
+import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
 @Injectable()
 export class OrganizationService {
@@ -48,6 +49,18 @@ export class OrganizationService {
     }
   }
 
+  async rejectInvitation( invitationId: string) {
+    try {
+  
+      await this.inviteCollaboratorRepository.update(invitationId, {status: "rejected"});
+      return {
+        message: "Invitation rejected"
+      }
+    } catch (error) {
+        console.log(error);
+        throw new BadRequestException("Error rejecting invitation");
+    }
+  }
   async register(user: UserContext, invitationId: string) {
       const activeUser = await this.userRepository.findOneBy({id: user.id});
      
@@ -177,6 +190,16 @@ export class OrganizationService {
       this.organizationRepository.update(id, { deleted_at: new Date() });
     } catch (error) {
       
+    }
+  }
+
+  async update(id: string,data : UpdateOrganizationDto) {
+    try {
+     await this.organizationRepository.update(id, { ...data });
+
+      return await this.organizationRepository.findOneBy({ id });
+    } catch (error) {
+      throw new BadRequestException("Error updating organization");
     }
   }
 
