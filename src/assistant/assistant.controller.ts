@@ -31,6 +31,7 @@ export class AssistantController {
     return this.assistantService.getAssistantByEvent(eventId,pagination);
   }
 
+  @WithoutAccount()
   @Get('totalCount/:eventId')
   count(@Param('eventId') eventId: string) {
     return this.assistantService.getTotalAssistantByEvent(eventId);
