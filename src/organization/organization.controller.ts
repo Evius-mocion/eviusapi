@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
@@ -8,6 +8,7 @@ import { Role } from 'src/common/decorators/roles.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/constants/constants';
 import { PaginationArgs, UuidDto } from 'src/common/dto';
+import { UpdateOrganizationDto } from './dto/update-organization.dto';
 @ApiTags('organization')
 @ApiBearerAuth()
 @Controller('organization')
@@ -30,6 +31,13 @@ export class OrganizationController {
     @ActiveUser() user: UserContext,
     @Param("invitationId") invitationId: string) {
     return this.organizationService.register(user, invitationId);
+  }
+  
+  @HttpCode(HttpStatus.OK)
+  @Get("reject/:invitationId")
+  rejectInvitation(
+    @Param("invitationId") invitationId: string) {
+    return this.organizationService.rejectInvitation( invitationId);
   }
 
   @Role(Roles.auditor)
@@ -81,6 +89,14 @@ export class OrganizationController {
 
 
 
+  @Role('owner')
+  @Patch(':orgId')
+  update(
+    @Param('orgId') id: string,
+    @Body() updateOrganizationDto: UpdateOrganizationDto 
+  ) {
+    return this.organizationService.update(id,updateOrganizationDto);
+  }
   @Role('owner')
   @Delete(':orgId')
   remove(@Param('orgId') id: string) {
