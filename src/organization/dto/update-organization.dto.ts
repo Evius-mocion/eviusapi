@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateOrganizationDto } from './create-organization.dto';
-import { IsEmail, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEmail, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class IOrganizationSocialMedia {
@@ -23,13 +23,14 @@ export class IOrganizationSocialMedia {
 
 export class UpdateOrganizationDto extends PartialType(CreateOrganizationDto) {
 
+    @ValidateIf((o) => o.contactEmail !== '')
     @IsEmail()
     @IsOptional()
-    contactEmail: string;
+    contactEmail?: string;
 
-    @IsEmail()
+    @IsString()
     @IsOptional()
-    description: string;
+    description?: string;
 
     @IsString()
     @IsOptional()
