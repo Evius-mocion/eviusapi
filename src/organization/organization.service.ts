@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -157,7 +157,7 @@ export class OrganizationService {
         organizations: collaborator.map((c) => ({...c.organization, rol: c.rol})),
        }
     } catch (error) {
-      return []
+      throw new InternalServerErrorException("Error getting organization's user");
     }
   }
 

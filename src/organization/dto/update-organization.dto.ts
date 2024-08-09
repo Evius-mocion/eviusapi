@@ -24,7 +24,12 @@ export class IOrganizationSocialMedia {
 export class UpdateOrganizationDto extends PartialType(CreateOrganizationDto) {
 
     @IsEmail()
+    @IsOptional()
     contactEmail: string;
+
+    @IsEmail()
+    @IsOptional()
+    description: string;
 
     @IsString()
     @IsOptional()
