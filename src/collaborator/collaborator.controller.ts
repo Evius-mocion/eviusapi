@@ -31,8 +31,11 @@ export class CollaboratorController {
   
   @Role(Roles.admin)
   @Patch(':orgaId/:id')
-  update(@Param('id') id: string, @Body() updateColaboratorDto: UpdateCollaboratorDto) {
-    return this.colaboratorService.update(id, updateColaboratorDto);
+  update(
+    @ActiveUser() user: UserContext,
+    @Param('id') id: string, 
+    @Body() updateColaboratorDto: UpdateCollaboratorDto) {
+    return this.colaboratorService.update(id, updateColaboratorDto,user);
   }
 
   @Delete(':id')
