@@ -51,7 +51,7 @@ export class OrganizationController {
   
 
   @HttpCode(HttpStatus.CREATED)
-  @Get("user/invitations")
+  @Get("/invitations/user/invitations")
   invitationsUser(
     @ActiveUser() user: UserContext) {
     return this.organizationService.getInvitationsByUser(user);
