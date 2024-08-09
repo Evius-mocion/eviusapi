@@ -1,9 +1,11 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { ForbiddenException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CreateCollaboratorDto } from "./dto/create-collaborator.dto";
 import { UpdateCollaboratorDto } from "./dto/update-collaborator.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Collaborator } from "./entities/collaborator.entity";
+import { RoleEnum, Roles } from "src/constants/constants";
+import { UserContext } from "src/types/user.types";
 
 @Injectable()
 export class CollaboratorService {
@@ -76,10 +78,18 @@ export class CollaboratorService {
     }
   }
 
-  async update(id: string, updateCollaboratorDto: UpdateCollaboratorDto) {
+  async update(id: string, updateCollaboratorDto: UpdateCollaboratorDto, user: UserContext) {
 
-    const collaborator = await this.collaboratorRepository.update(id, updateCollaboratorDto);
-    collaborator.affected
+    if(RoleEnum[updateCollaboratorDto.rol] > RoleEnum[user.rol]) {
+      throw new ForbiddenException("You can't update a collaborator with a higher role than yours");
+    }
+
+    if(user.rol === Roles.owner && updateCollaboratorDto.rol === Roles.owner) {
+      await this.collaboratorRepository.update(user.id, {rol: Roles.admin});
+    }
+
+   await this.collaboratorRepository.update(id, {rol: updateCollaboratorDto.rol});
+    
     return `This action updates a #${id} collaborator`;
   }
 
