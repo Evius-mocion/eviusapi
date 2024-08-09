@@ -124,10 +124,6 @@ export class OrganizationService {
         where: {email: user.email},
       });  
 
-      if (total === 0) {
-        throw new NotFoundException("You don't have invitations");
-      }
-
       return {
           invitations,
           total
