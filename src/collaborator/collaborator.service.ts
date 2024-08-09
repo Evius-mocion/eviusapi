@@ -35,7 +35,7 @@ export class CollaboratorService {
 
     return {
       collaborators: collaborators.map((collaborator) => ({
-        id: collaborator.user.id,
+        id: collaborator.id,
         avatar: collaborator.user.avatar,
         name : collaborator.user.fullName,
         email: collaborator.user.email,
