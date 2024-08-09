@@ -95,7 +95,7 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   }
-  async getInvitations( orgId: string, pagination: PaginationArgs) {
+  async getInvitations( orgId: string, pagination: PaginationArgs,status?: string) {
 
       const { offset, limit } = pagination;
 
@@ -103,7 +103,7 @@ export class OrganizationService {
      
       
       const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
-        where: {organizationId: orgId},
+        where: {organizationId: orgId, status},
         take: limit,
         skip: (offset - 1) * limit,
       });  
@@ -116,12 +116,12 @@ export class OrganizationService {
       }
     
   }
-  async getInvitationsByUser( userContext: UserContext) {
+  async getInvitationsByUser( userContext: UserContext, status?: string) {
 
     const user = await this.userRepository.findOneBy({id: userContext.id});
       
       const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
-        where: {email: user.email},
+        where: {email: user.email, status},
       });  
 
       return {

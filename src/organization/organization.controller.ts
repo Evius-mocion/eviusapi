@@ -45,16 +45,20 @@ export class OrganizationController {
   @Get(":orgId/invitations")
   getAll(
     @Query() pagination: PaginationArgs,
-    @Param() params: UuidDto) {
-    return this.organizationService.getInvitations(params.orgId,pagination);
+    @Param() params: UuidDto,
+    @Query('status') status?: string,
+  ) {
+    return this.organizationService.getInvitations(params.orgId,pagination, status);
   }
   
 
   @HttpCode(HttpStatus.CREATED)
-  @Get("/invitations/user/invitations")
+  @Get('/invitations/user/invitations')
   invitationsUser(
-    @ActiveUser() user: UserContext) {
-    return this.organizationService.getInvitationsByUser(user);
+    @ActiveUser() user: UserContext,
+    @Query('status') status?: string,
+  ) {
+    return this.organizationService.getInvitationsByUser(user, status);
   }
   
   @Public()
