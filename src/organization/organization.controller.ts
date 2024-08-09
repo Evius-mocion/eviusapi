@@ -53,7 +53,7 @@ export class OrganizationController {
   
 
   @HttpCode(HttpStatus.CREATED)
-  @Get('/invitations/user')
+  @Get('invitations/user')
   invitationsUser(
     @ActiveUser() user: UserContext,
     @Query('status') status?: string,
