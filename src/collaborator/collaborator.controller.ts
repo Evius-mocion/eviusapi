@@ -30,7 +30,7 @@ export class CollaboratorController {
   }
   
   @Role(Roles.admin)
-  @Patch(':orgaId/:id')
+  @Patch(':orgId/:id')
   update(
     @ActiveUser() user: UserContext,
     @Param('id') id: string, 
