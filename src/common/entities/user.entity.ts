@@ -38,6 +38,9 @@ export class User {
     
     @Column({nullable: false, unique: true})
     email: string;
+
+    @Column({nullable: true,enum: ["admin","owner","user"], default:"user"})
+    rol: string;
     
     @Column({nullable: true})
     password: string;
