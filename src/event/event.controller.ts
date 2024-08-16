@@ -2,14 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
-import { Public } from 'src/common/decorators/public.decorator';
 import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
-import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
-import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/constants/constants';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
 
 
 @ApiTags('events')
@@ -25,12 +22,19 @@ export class EventController {
     @Body() createEventDto: CreateEventDto) {
     return this.eventService.create(user,createEventDto);
   }
+
   @Role(Roles.auditor)
   @Get("all/:orgId")
   findAll(
     @Param('orgId') id: string,
   ) {
     return this.eventService.findAll(id);
+  }
+
+  @SuperAdmin()
+  @Get("admin/all")
+  findAllEvents() {
+    return this.eventService.findAllEvents();
   }
 
 

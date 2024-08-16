@@ -1,11 +1,8 @@
-import { Controller, Get, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AssistantService } from './assistant.service';
-import { UpdateAssistantDto } from './dto/update-assistant.dto';
-import { Public } from 'src/common/decorators/public.decorator';
 import { PaginationArgs } from 'src/common/dto';
-import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/constants/constants';
-import { WithoutAccount } from 'src/common/decorators/withoutAccount.decorator';
+import { WithoutAccount, Role } from 'src/common/decorators';
 
 @Controller('assistant')
 export class AssistantController {

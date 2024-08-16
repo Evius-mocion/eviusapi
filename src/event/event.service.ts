@@ -11,7 +11,7 @@ import { Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
-import { CollaboratorService } from "src/collaborator/collaborator.service";
+import { CollaboratorService } from "src/collaborator";
 import { AssistantService } from "src/assistant/assistant.service";
 import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
@@ -58,6 +58,13 @@ export class EventService {
           },
         },
       });
+    } catch (error) {
+      this.controlDbErros(error);
+    }
+  }
+  async findAllEvents() {
+    try {
+      return await this.eventRepository.find();
     } catch (error) {
       this.controlDbErros(error);
     }

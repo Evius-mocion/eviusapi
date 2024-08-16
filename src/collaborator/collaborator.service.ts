@@ -1,9 +1,8 @@
 import { ForbiddenException, Injectable, InternalServerErrorException } from "@nestjs/common";
-import { CreateCollaboratorDto } from "./dto/create-collaborator.dto";
-import { UpdateCollaboratorDto } from "./dto/update-collaborator.dto";
+import { CreateCollaboratorDto, UpdateCollaboratorDto } from "./dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Collaborator } from "./entities/collaborator.entity";
+import { Collaborator } from "./entities";
 import { RoleEnum, Roles } from "src/constants/constants";
 import { UserContext } from "src/types/user.types";
 

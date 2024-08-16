@@ -1,11 +1,9 @@
 import { Controller, Get, Post, Body, Param, Delete, Query, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/decorators/roles.decorator';
-import { Public } from 'src/common/decorators/public.decorator';
+import { Public, Role , ActiveUser} from 'src/common/decorators';
 import { Roles } from 'src/constants/constants';
 import { PaginationArgs, UuidDto } from 'src/common/dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';

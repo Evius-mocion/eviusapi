@@ -1,12 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CollaboratorService } from './collaborator.service';
-import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
-import { UpdateCollaboratorDto } from './dto/update-collaborator.dto';
+import { CreateCollaboratorDto, UpdateCollaboratorDto } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { UserContext } from 'src/types/user.types';
-import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/constants/constants';
+import { ActiveUser, Role } from 'src/common/decorators'; 
 
 @ApiTags('collaborator')
 @ApiBearerAuth()

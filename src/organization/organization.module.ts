@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { OrganizationController } from './organization.controller';
-import { CollaboratorModule } from 'src/collaborator/collaborator.module';
+import { CollaboratorModule } from 'src/collaborator';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { User } from 'src/common/entities/user.entity';
-import { inviteCollaborator } from 'src/collaborator/entities/inviteCollaborator.entity';
+import { inviteCollaborator } from 'src/collaborator/entities';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Organization,User,inviteCollaborator]),CollaboratorModule],
