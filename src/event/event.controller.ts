@@ -44,6 +44,7 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
+  @SuperAdmin()
   @Role(Roles.editor)
   @Patch('update/:id/:orgId')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {

@@ -4,6 +4,8 @@ import { ROLES_KEY } from "../decorators/roles.decorator";
 import { RoleType } from "src/types/collaborator.types";
 import { RoleEnum } from "src/constants/constants";
 import { CollaboratorService } from "src/collaborator/collaborator.service";
+import { SUPER_ADMIN } from '../decorators';
+import { UserContext } from 'src/types/user.types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,12 +20,23 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
     
-    if (!requiredRole) {
+    const isAdmin = this.reflector.getAllAndOverride<RoleType>(SUPER_ADMIN, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    
+    if (!requiredRole && !isAdmin) {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
+    const { user } = context.switchToHttp().getRequest() as { user: UserContext };
+
+    if(user.isAdmin){
+        return true;
+    }
+
     const collaborator = await this.CollaboratoService.findOneByIdAndOrganizationId(user.id,user.organizationId);
+    
     const rol = collaborator?.rol;
     
 
