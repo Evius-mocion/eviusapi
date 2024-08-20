@@ -193,12 +193,9 @@ export class EventService {
     if (!event) {
       throw new NotFoundException("Event not found");
     }
-    const { totalAssistant } =
-      await this.assistantService.getTotalAssistantByEvent(registerDto.eventId);
 
-    if (totalAssistant >= event.capacity) {
-      throw new ForbiddenException("Event Capacity is full");
-    }
+    const { totalAssistant } = await this.assistantService.getTotalAssistantByEvent(registerDto.eventId);
+
 
     let user = await this.userRepository.findOneBy({
       email: registerDto.email,
@@ -219,6 +216,11 @@ export class EventService {
         event.id,
       );
       if (exist) throw new ConflictException("Assistant already registered");
+    }
+    
+
+    if (totalAssistant >= event.capacity) {
+      throw new ForbiddenException("Event Capacity is full");
     }
 
     await this.assistantService.create({
