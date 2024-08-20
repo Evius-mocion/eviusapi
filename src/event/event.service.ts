@@ -169,6 +169,7 @@ export class EventService {
         eventSection: event.eventSection,
         appearance: event.appearance,
         capacity: event.capacity,
+        organizationAlias: event.organizationAlias,
         registrationFields: [],
       },
       totalAssistant,
