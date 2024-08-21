@@ -1,5 +1,6 @@
 import { Assistant } from "src/assistant/entities/assistant.entity";
 import { Collaborator } from "src/collaborator/entities/collaborator.entity";
+import { Event } from "src/event/entities/event.entity";
 import { genderType, typeAccount } from "src/types/user.types";
 import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -35,7 +36,10 @@ export class User {
     
     @OneToMany(() => Collaborator, collaborator => collaborator.user)
     collaborators: Collaborator[];
-    
+
+    @OneToMany(() => Event, event => event.createdBy)
+    events: Event[];
+
     @Column({nullable: false, unique: true})
     email: string;
 

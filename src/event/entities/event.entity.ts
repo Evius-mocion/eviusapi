@@ -1,4 +1,5 @@
 import { Assistant } from "src/assistant/entities/assistant.entity";
+import { User } from "src/common/entities/user.entity";
 import { Organization } from "src/organization/entities/organization.entity";
 import {  DynamicField, IDates, IEventAppearance, IEventSections } from "src/types/event.type";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
@@ -45,6 +46,14 @@ export class Event {
     
     @Column({nullable: false, type: "jsonb", default: []})
     registrationFields?: DynamicField[];
+
+    @Column({nullable: true})
+	price?: string;
+    
+    @ManyToOne(() => User, user => user.events, {
+        eager: true
+    })
+    createdBy: User; 
 
     @Column({nullable: true})
     organizationAlias?: string;

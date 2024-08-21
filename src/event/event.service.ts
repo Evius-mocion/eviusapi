@@ -29,16 +29,16 @@ export class EventService {
     private readonly collaboratorService: CollaboratorService,
     private readonly assistantService: AssistantService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
-      const org = await this.organizationService.findOne( user.organizationId );
+      const org = await this.organizationService.findOne(user.organizationId);
       const newEvent = this.eventRepository.create({
+        createdBy: user,
         organization: org.organization,
         initialDate: createEventDto.dates[0]?.startDate,
-        finishDate:
-          createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
+        finishDate: createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
@@ -64,7 +64,13 @@ export class EventService {
   }
   async findAllEvents() {
     try {
-      return await this.eventRepository.find();
+      const events = await this.eventRepository.find();
+      events.forEach(async (event) => {
+        delete event.createdBy.password
+        delete event.createdBy.type_account
+        delete event.createdBy.rol
+      });
+      return events
     } catch (error) {
       this.controlDbErros(error);
     }
@@ -72,7 +78,7 @@ export class EventService {
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOneBy({ id });
-    const { totalAssistant }  = await this.assistantService.getTotalAssistantByEvent(id)
+    const { totalAssistant } = await this.assistantService.getTotalAssistantByEvent(id)
     if (!event) {
       throw new BadRequestException("Event not found");
     }
@@ -135,7 +141,7 @@ export class EventService {
     let collaboratorRol = null;
 
     const event = await this.eventRepository.findOneBy({ id: eventId });
-    const { totalAssistant }  = await this.assistantService.getTotalAssistantByEvent(eventId)
+    const { totalAssistant } = await this.assistantService.getTotalAssistantByEvent(eventId)
 
     if (!event) {
       throw new NotFoundException("Event not found");
@@ -154,7 +160,7 @@ export class EventService {
       collaboratorRol = collaborator.rol;
     }
     const isRegister = !!assistant?.user
-    if(assistant){
+    if (assistant) {
       delete assistant.event
       delete assistant.user
     }
@@ -217,7 +223,7 @@ export class EventService {
       );
       if (exist) throw new ConflictException("Assistant already registered");
     }
-    
+
 
     if (totalAssistant >= event.capacity) {
       throw new ForbiddenException("Event Capacity is full");
@@ -250,19 +256,19 @@ export class EventService {
     };
   }
 
-  async update(id: string, data : UpdateEventDto) {
-    if(Object.keys(data).length === 0){
+  async update(id: string, data: UpdateEventDto) {
+    if (Object.keys(data).length === 0) {
       throw new BadRequestException("No data to update");
     }
 
-   try {
-    const event = await this.eventRepository.update(id, { ...data});
-     return {
-      message : `Event updated successfully`,
-     }
-   } catch (error) {
+    try {
+      const event = await this.eventRepository.update(id, { ...data });
+      return {
+        message: `Event updated successfully`,
+      }
+    } catch (error) {
       throw new BadRequestException("error updating event");
-   }
+    }
   }
 
   remove(id: number) {
