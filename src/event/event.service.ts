@@ -18,6 +18,7 @@ import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
+import { ExperiencesService } from "src/experiences/experiences.service";
 @Injectable()
 export class EventService {
   constructor(
@@ -27,6 +28,7 @@ export class EventService {
     private userRepository: Repository<User>,
     private readonly organizationService: OrganizationService,
     private readonly collaboratorService: CollaboratorService,
+    private readonly experiencisService: ExperiencesService,
     private readonly assistantService: AssistantService,
     private readonly jwtService: JwtService,
   ) { }
@@ -34,11 +36,13 @@ export class EventService {
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
       const org = await this.organizationService.findOne(user.organizationId);
+      const experiences = await this.experiencisService.findByIds(createEventDto.experiencesId);
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
         initialDate: createEventDto.dates[0]?.startDate,
         finishDate: createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
+        experiences: experiences,
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
@@ -260,16 +264,34 @@ export class EventService {
     if (Object.keys(data).length === 0) {
       throw new BadRequestException("No data to update");
     }
-
     try {
-      const event = await this.eventRepository.update(id, { ...data });
-      return {
-        message: `Event updated successfully`,
+      const { experiencesId, ...othersFields } = data;
+      const event = await this.eventRepository.findOne({ where: { id }, relations: ['experiences'] });
+      if (!event) {
+        throw new NotFoundException("Event not found");
       }
+      
+      const newEvent = {
+      ...event,
+      ...othersFields
+      }
+
+      if(experiencesId && experiencesId.length > 0){
+        const experiencias = await this.experiencisService.findByIds(experiencesId);
+           
+        newEvent.experiences = experiencias;
+     
+      }
+
+      
+
+      return  await this.eventRepository.save(newEvent);
     } catch (error) {
+      console.log(error);
       throw new BadRequestException("error updating event");
     }
   }
+ 
 
   remove(id: number) {
     return `This action removes a #${id} event`;

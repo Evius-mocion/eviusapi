@@ -8,6 +8,8 @@ import { AuthGuard } from "./common/guards/auth.guard";
 import { JwtModule } from "@nestjs/jwt";
 import { RolesGuard } from "./common/guards/roles.guard";
 import { AssistantModule } from './assistant/assistant.module';
+import { ExperiencesModule } from './experiences/experiences.module';
+import { StationsModule } from './stations/stations.module';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { AssistantModule } from './assistant/assistant.module';
       type: "postgres",
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
       ssl: true,
     }),
     JwtModule.registerAsync({
@@ -32,6 +34,8 @@ import { AssistantModule } from './assistant/assistant.module';
     EventModule,
     CollaboratorModule,
     AssistantModule,
+    ExperiencesModule,
+    StationsModule,
   ],
   controllers: [],
   providers: [

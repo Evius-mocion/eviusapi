@@ -1,4 +1,5 @@
 import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
+import { Experience } from "src/experiences/entities/experience.entity";
 import { IEventAppearance, IEventSections } from "src/types/event.type";
 
 class IDates {
@@ -28,6 +29,10 @@ export class CreateEventDto {
     @IsObject()
     @IsOptional()
     eventSection?: Partial<IEventSections>;
+
+    @IsArray()
+    @IsOptional()
+    experiencesId: string[];
 
     
 }

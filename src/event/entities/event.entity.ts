@@ -1,8 +1,9 @@
 import { Assistant } from "src/assistant/entities/assistant.entity";
 import { User } from "src/common/entities/user.entity";
+import { Experience } from "src/experiences/entities/experience.entity";
 import { Organization } from "src/organization/entities/organization.entity";
 import {  DynamicField, IDates, IEventAppearance, IEventSections } from "src/types/event.type";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 
 @Entity('events')
 
@@ -29,6 +30,11 @@ export class Event {
     @Column({nullable: false, default: 'without description'})
     description: string;
 
+    @ManyToMany(() => Experience, exp => exp.events , {
+        eager: true
+    }) 
+    @JoinTable({name: 'events_experiences'})
+    experiences: Experience[];
     
     @ManyToOne(() => Organization, org => org.events , {
         eager: true
