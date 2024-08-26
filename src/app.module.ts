@@ -20,7 +20,7 @@ import { StationsModule } from './stations/stations.module';
       type: "postgres",
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       ssl: true,
     }),
     JwtModule.registerAsync({
