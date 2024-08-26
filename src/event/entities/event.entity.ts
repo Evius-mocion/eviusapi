@@ -2,6 +2,7 @@ import { Assistant } from "src/assistant/entities/assistant.entity";
 import { User } from "src/common/entities/user.entity";
 import { Experience } from "src/experiences/entities/experience.entity";
 import { Organization } from "src/organization/entities/organization.entity";
+import { Station } from "src/stations/entities/station.entity";
 import {  DynamicField, IDates, IEventAppearance, IEventSections } from "src/types/event.type";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 
@@ -43,6 +44,9 @@ export class Event {
 
     @OneToMany(() => Assistant, assistant => assistant.event)
     assistants: Assistant[];
+
+    @OneToMany(() => Station, station => station.event)
+    Stations: Station[];
 
     @Column({nullable: false, type: 'simple-json', default: {primaryColor: '#FFFFFF', textColor: '#352848', bgColor: '#F8F9FA', bannerImage: ''}})
     appearance: IEventAppearance;
