@@ -30,10 +30,14 @@ export class ExperiencesService {
       }
     });
   }
+  
   findByIds(ids: string[]) {
     return this.experiencesRepository.findBy({id: In(ids)});
   }
 
+  async findById(id: string) {
+    return this.experiencesRepository.findOneBy({id});
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} experience`;

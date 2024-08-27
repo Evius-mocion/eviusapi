@@ -52,7 +52,9 @@ export class EventService {
       throw new BadRequestException(error.message);
     }
   }
-
+  async findOneBy(id: string) {
+      return this.eventRepository.findOneBy({ id});
+  }
   async findAll(orgId: string) {
     try {
       return await this.eventRepository.find({

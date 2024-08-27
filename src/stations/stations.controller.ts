@@ -12,9 +12,11 @@ export class StationsController {
     return this.stationsService.create(createStationDto);
   }
 
-  @Get()
-  findAll() {
-    return this.stationsService.findAll();
+  @Get(":eventId")
+  findAll(
+    @Param('eventId') eventId: string,
+  ) {
+    return this.stationsService.findAll(eventId);
   }
 
   @Get(':id')
