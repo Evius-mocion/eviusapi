@@ -7,9 +7,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { JwtModule } from "@nestjs/jwt";
 import { RolesGuard } from "./common/guards/roles.guard";
-import { AssistantModule } from './assistant/assistant.module';
-import { ExperiencesModule } from './experiences/experiences.module';
-import { StationsModule } from './stations/stations.module';
+import { AssistantModule } from "./assistant/assistant.module";
+import { ExperiencesModule } from "./experiences/experiences.module";
+import { StationsModule } from "./stations/stations.module";
+import { LocationModule } from "./location/location.module";
 
 @Module({
   imports: [
@@ -20,14 +21,14 @@ import { StationsModule } from './stations/stations.module';
       type: "postgres",
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
       ssl: true,
     }),
     JwtModule.registerAsync({
       global: true,
       useFactory: () => ({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "5h" },
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: "5h" },
       }),
     }),
     OrganizationModule,
@@ -36,6 +37,7 @@ import { StationsModule } from './stations/stations.module';
     AssistantModule,
     ExperiencesModule,
     StationsModule,
+    LocationModule,
   ],
   controllers: [],
   providers: [

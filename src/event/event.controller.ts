@@ -43,7 +43,7 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
-  @Public()
+  @Role(Roles.editor)
   @Patch('update/:id/:orgId')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(id,updateEventDto);
