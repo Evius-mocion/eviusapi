@@ -6,14 +6,23 @@ import { Public } from "src/common/decorators";
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
-  @Get()
   @Public()
-  findAll() {
-    return this.locationService.findAll();
+  @Get("/countries")
+  findAllCountries() {
+    return this.locationService.findAllCountries();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.locationService.findOne(+id);
+  @Public()
+  @Get("countries/:countryKey/states")
+  findStatesByCountry(@Param("countryKey") countryKey: string) {
+    return this.locationService.findStatesByCountry(countryKey);
+  }
+  @Public()
+  @Get("countries/:countryKey/states/:stateKey/cities")
+  findCitiesByStateAndCountry(
+    @Param("countryKey") countryKey: string,
+    @Param("stateKey") stateKey: string,
+  ) {
+    return this.locationService.findCitiesByStateAndCountry(countryKey, stateKey);
   }
 }

@@ -21,9 +21,32 @@ import { LocationModule } from "./location/location.module";
       type: "postgres",
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       ssl: true,
     }),
+
+    /* TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: "postgres",
+        username: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE,
+        host: process.env.DATABASE_HOST,
+        port: parseInt(process.env.DATABASE_PORT),
+        autoLoadEntities: true, // load all entities from the entities folder
+        synchronize: false, // set to false in production (this option will auto-generate tables in the database, which can be dangerous in production)
+        logging: false,
+        ssl:
+          process.env.PRODUCTION === "true"
+            ? {
+                ca: fs
+                  .readFileSync(process.env.SSL_CERTIFICATE_PATH)
+                  .toString(), // read the SSL certificate from the file path, you need donwload the certificate from the database connection settings in digital ocean
+              }
+            : true,
+      }),
+    }), */
+
     JwtModule.registerAsync({
       global: true,
       useFactory: () => ({

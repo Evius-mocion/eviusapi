@@ -34,6 +34,7 @@ export class EventService {
   ) { }
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
+    
     try {
       const org = await this.organizationService.findOne(user.organizationId);
       const experiences = await this.experiencisService.findByIds(createEventDto.experiencesId);

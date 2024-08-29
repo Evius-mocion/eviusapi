@@ -28,10 +28,10 @@ export class Department {
   @Column({ nullable: true })
   type: string;
 
-  @Column({ type: "decimal", precision: 10, scale: 7, nullable: true })
+  @Column({ type: "varchar", nullable: true })
   latitude: string;
 
-  @Column({ type: "decimal", precision: 10, scale: 7, nullable: true })
+  @Column({ type: "varchar", nullable: true })
   longitude: string;
 
   @OneToMany(() => City, (city) => city.state)
