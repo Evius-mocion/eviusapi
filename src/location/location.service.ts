@@ -90,10 +90,10 @@ export class LocationService {
         `State with key ${stateKey} not found in country ${country.name}`,
       );
     }
-    console.log('country', country)
-    console.log("state", state);
 
-    const cities = await this.cityRepository.find();
+    const cities = await this.cityRepository.find({
+      where: { state: { id: state.id } },
+    });
     return cities;
   }
 }
