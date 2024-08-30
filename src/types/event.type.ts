@@ -57,6 +57,14 @@ export interface IEventSections {
   sponsors: boolean;
 }
 
+export enum LandingSectionTitles {
+  Counter = "counter",
+  Description = "description",
+  Speakers = "Conferencistas",
+  Activities = "activities",
+  Sponsors = "sponsors",
+}
+
 export interface ILandingSection {
   title: string;
   alias?: string;

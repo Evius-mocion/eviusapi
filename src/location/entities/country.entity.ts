@@ -22,6 +22,11 @@ export class Country {
   @Column({ length: 100, nullable: true })
   capital: string;
 
+  @Column({ nullable: true })
+  flag_png: string;
+  @Column({ nullable: true })
+  flag_svg: string;
+
   @Column()
   currency: string;
 
@@ -36,6 +41,4 @@ export class Country {
 
   @OneToMany(() => City, (city) => city.country)
   cities: City[];
-
- 
 }

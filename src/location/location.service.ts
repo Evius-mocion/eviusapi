@@ -98,12 +98,16 @@ export class LocationService {
   }
 
   async getCountriesWithPhoneCodes() {
-    const countries = await this.countryRepository.find();
+    const countries = await this.countryRepository.find({
+      order: { name: "ASC" },
+    });
     return countries.map((country) => {
       return {
         id: country.id,
         name: country.name,
         phonecode: country.phonecode,
+        flagPng: country.flag_png,
+        flagSvg: country.flag_svg,
       };
     });
   }
