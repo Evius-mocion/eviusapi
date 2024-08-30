@@ -71,6 +71,12 @@ export class Event {
   landingSections: ILandingSection[];
 
   @Column({
+    nullable: true,
+    default: "",
+  })
+  landingDescription?: string;
+
+  @Column({
     nullable: false,
     type: "simple-json",
     default: {

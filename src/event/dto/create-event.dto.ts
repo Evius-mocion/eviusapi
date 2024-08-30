@@ -1,43 +1,51 @@
-import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
+import {
+  IsArray,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from "class-validator";
 import { Experience } from "src/experiences/entities/experience.entity";
-import { IEventAppearance, IEventSections, ILandingSection } from "src/types/event.type";
+import {
+  IEventAppearance,
+  IEventSections,
+  ILandingSection,
+} from "src/types/event.type";
 
 class IDates {
-    @IsString()
-    startDate: string;
-    @IsString()
-    endDate: string;
+  @IsString()
+  startDate: string;
+  @IsString()
+  endDate: string;
 }
 
-
 export class CreateEventDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
-    
-    @IsObject()
-    appearance: IEventAppearance;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsArray()
-    @IsNotEmpty()
-    dates: IDates[];
+  @IsObject()
+  appearance: IEventAppearance;
 
-    @IsString()
-    description: string;
+  @IsArray()
+  @IsNotEmpty()
+  dates: IDates[];
 
+  @IsString()
+  description: string;
 
-    @IsObject()
-    @IsOptional()
-    eventSection?: Partial<IEventSections>;
+  @IsObject()
+  @IsOptional()
+  eventSection?: Partial<IEventSections>;
 
-    @IsArray()
-    @IsOptional()
-    experiencesId: string[];
+  @IsArray()
+  @IsOptional()
+  experiencesId: string[];
 
+  @IsOptional()
+  @IsArray()
+  landingSections?: ILandingSection[];
 
-    @IsOptional()
-    @IsArray()
-    landingSections?: ILandingSection[];
-
-    
+  @IsOptional()
+  landingDescription?: string;
 }

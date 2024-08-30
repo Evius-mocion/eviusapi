@@ -31,4 +31,7 @@ export class UpdateEventDto extends PartialType(CreateEventDto) {
   @IsOptional()
   @IsArray()
   landingSections?: ILandingSection[];
+
+  @IsOptional()
+  landingDescription?: string;
 }
