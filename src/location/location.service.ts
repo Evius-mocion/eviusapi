@@ -96,4 +96,15 @@ export class LocationService {
     });
     return cities;
   }
+
+  async getCountriesWithPhoneCodes() {
+    const countries = await this.countryRepository.find();
+    return countries.map((country) => {
+      return {
+        id: country.id,
+        name: country.name,
+        phonecode: country.phonecode,
+      };
+    });
+  }
 }

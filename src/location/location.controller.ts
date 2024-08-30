@@ -25,4 +25,13 @@ export class LocationController {
   ) {
     return this.locationService.findCitiesByStateAndCountry(countryKey, stateKey);
   }
+
+  
+  @Public()
+  @Get('countries/phonecodes')
+  async getCountriesWithPhoneCodes() {
+    return this.locationService.getCountriesWithPhoneCodes();
+  }
+
+
 }

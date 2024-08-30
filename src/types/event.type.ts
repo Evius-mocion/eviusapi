@@ -56,3 +56,9 @@ export interface IEventSections {
   news: boolean;
   sponsors: boolean;
 }
+
+export interface ILandingSection {
+  title: string;
+  alias?: string;
+  visible: boolean;
+}
