@@ -30,10 +30,17 @@ export class EventController {
   ) {
     return this.eventService.findAll(id);
   }
+
   @SuperAdmin()
   @Get("admin/all")
   findAllEvents() {
     return this.eventService.findAllEvents();
+  }
+
+  @SuperAdmin()
+  @Get("admin/:id")
+  getOne(@Param('id') id: string) {
+    return this.eventService.getOne(id);
   }
 
 

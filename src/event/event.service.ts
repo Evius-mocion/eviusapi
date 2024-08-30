@@ -104,6 +104,19 @@ export class EventService {
       },
     };
   }
+  async getOne(id: string) {
+    const event = await this.eventRepository.findOneBy({ id });
+    const { totalAssistant } =
+      await this.assistantService.getTotalAssistantByEvent(id);
+    if (!event) {
+      throw new BadRequestException("Event not found");
+    }
+    
+    return {
+      event,
+      totalAssistant,
+    };
+  }
 
   async confirmedEmailRegisterInEvent(email: string, eventId: string) {
     if (!validateEmail(email)) {
