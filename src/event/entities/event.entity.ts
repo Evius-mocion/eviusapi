@@ -98,8 +98,8 @@ export class Event {
   @Column({ nullable: false, type: "jsonb", default: [] })
   registrationFields?: DynamicField[];
 
-  @Column({ nullable: true })
-  price?: string;
+  @Column({ nullable: false,default : 0 })
+  price: number;
 
   @ManyToOne(() => User, (user) => user.events, {
     eager: true,
