@@ -148,7 +148,7 @@ export class EventService {
       haveAccount: !!user?.id,
       havePassword: !!user?.password,
       isRegisteredInEvent: !!collaborator || !!assistant?.id,
-      collaborator: !!collaborator,
+      isCollaborator: !!collaborator,
     };
   }
 
