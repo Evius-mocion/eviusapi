@@ -111,7 +111,7 @@ export class EventService {
     if (!event) {
       throw new BadRequestException("Event not found");
     }
-    
+
     return {
       event,
       totalAssistant,
@@ -148,6 +148,7 @@ export class EventService {
       haveAccount: !!user?.id,
       havePassword: !!user?.password,
       isRegisteredInEvent: !!collaborator || !!assistant?.id,
+      collaborator: !!collaborator,
     };
   }
 
