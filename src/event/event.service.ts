@@ -287,6 +287,8 @@ export class EventService {
         throw new NotFoundException("Event not found");
       }
 
+    
+
       const newEvent = {
         ...event,
         ...othersFields,
@@ -297,6 +299,11 @@ export class EventService {
           await this.experiencisService.findByIds(experiencesId);
 
         newEvent.experiences = experiencias;
+      }
+
+      if(data.dates){
+        newEvent.initialDate = data.dates[0]?.startDate;
+        newEvent.finishDate = data.dates[data.dates.length - 1]?.endDate;
       }
 
       return await this.eventRepository.save(newEvent);
