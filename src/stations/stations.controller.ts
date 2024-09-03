@@ -28,11 +28,11 @@ export class StationsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStationDto: UpdateStationDto) {
-    return this.stationsService.update(+id, updateStationDto);
+    return this.stationsService.update(id, updateStationDto);
   }
-
+  @SuperAdmin()
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.stationsService.remove(+id);
+    return this.stationsService.remove(id);
   }
 }

@@ -15,42 +15,42 @@ export class StationsService {
     private readonly stationRepository: Repository<Station>,
     private readonly eventService: EventService,
     private readonly experiencesService: ExperiencesService,
-  ) {}
-  
+  ) { }
+
   async create(createStationDto: CreateStationDto) {
 
-     const {eventId, experienceId , ...stationFields} = createStationDto;
+    const { eventId, experienceId, ...stationFields } = createStationDto;
 
-     const event = await this.eventService.findOneBy(eventId);
+    const event = await this.eventService.findOneBy(eventId);
 
-     if (!event) {
-       throw new NotFoundException("event not found");
-     }
+    if (!event) {
+      throw new NotFoundException("event not found");
+    }
 
-     const newstation =  this.stationRepository.create({
-       event: event,
-       type: experienceId ? "experience" : "station",
+    const newstation = this.stationRepository.create({
+      event: event,
+      type: experienceId ? "experience" : "station",
       ...stationFields
     });
 
-     if (experienceId) {
-        const exp = await this.experiencesService.findById(experienceId);
+    if (experienceId) {
+      const exp = await this.experiencesService.findById(experienceId);
 
-        if (!exp) throw new NotFoundException("experience not found");
+      if (!exp) throw new NotFoundException("experience not found");
 
-        newstation.experience = exp;
-     }
+      newstation.experience = exp;
+    }
 
-     return this.stationRepository.save(newstation);
+    return this.stationRepository.save(newstation);
 
   }
 
   async findAll(eventId: string) {
     try {
-     return  this.stationRepository.find({
+      return this.stationRepository.find({
         where: {
           event: {
-            id:  eventId 
+            id: eventId
           }
         }
       })
@@ -63,11 +63,34 @@ export class StationsService {
     return `This action returns a #${id} station`;
   }
 
-  update(id: number, updateStationDto: UpdateStationDto) {
-    return `This action updates a #${id} station`;
+  async update(id: string, updateStationDto: UpdateStationDto) {
+      const { experienceId, ...othersFields } = updateStationDto
+      const station = await this.stationRepository.findOneBy({ id });
+
+      if (!station) {
+        throw new NotFoundException("station not found");
+      }
+
+      if (experienceId) {
+        const exp = await this.experiencesService.findById(experienceId);
+  
+        if (!exp) throw new NotFoundException("experience not found");
+  
+        station.experience = exp;
+      }
+
+      const updateStation = {
+        ...station,
+        ...othersFields
+      }
+      return this.stationRepository.save(updateStation);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} station`;
+  async remove(id: string) {
+    const data = await this.stationRepository.delete(id);
+    if (data.affected === 0) {
+      throw new BadRequestException("station not found");
+    }
+    return { message: "station deleted" };
   }
 }
