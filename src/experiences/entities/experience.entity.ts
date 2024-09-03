@@ -23,6 +23,6 @@ export class Experience {
     @OneToMany(() => Station, station => station.experience, {
         nullable: true
     })
-    Stations?: Station[];
+    stations?: Station[];
 
 }

@@ -9,10 +9,6 @@ export class CreateStationDto {
     description: string;
 
     @IsString()
-    @IsIn(['event', 'experience'])
-    type: string;
-
-    @IsString()
     representative: string;
 
     @IsString()

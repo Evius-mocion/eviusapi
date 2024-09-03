@@ -92,7 +92,7 @@ export class EventService {
     if (!event) {
       throw new BadRequestException("Event not found");
     }
-    const { Stations, price, assistants, experiences, ...restOfEvent } = event;
+    const { stations, price, assistants, experiences, ...restOfEvent } = event;
     return {
       event: {
         ...restOfEvent,

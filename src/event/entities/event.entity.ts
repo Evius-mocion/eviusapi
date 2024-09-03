@@ -60,8 +60,10 @@ export class Event {
   @OneToMany(() => Assistant, (assistant) => assistant.event)
   assistants: Assistant[];
 
-  @OneToMany(() => Station, (station) => station.event)
-  Stations: Station[];
+  @OneToMany(() => Station, (station) => station.event, {
+    eager: true,
+  })
+  stations: Station[];
 
   @Column({
     type: "jsonb",

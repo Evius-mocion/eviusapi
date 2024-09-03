@@ -21,12 +21,10 @@ export class Station {
     @Column({nullable: false})
     location: string;
     
-    @ManyToOne(() => Event, event => event.Stations , {
-        eager: true
-    })
+    @ManyToOne(() => Event, event => event.stations)
     event: Event;
 
-    @ManyToOne(() => Experience, exp => exp.Stations , {
+    @ManyToOne(() => Experience, exp => exp.stations , {
         eager: true,
         nullable: true
     })

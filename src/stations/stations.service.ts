@@ -29,6 +29,7 @@ export class StationsService {
 
      const newstation =  this.stationRepository.create({
        event: event,
+       type: experienceId ? "experience" : "station",
       ...stationFields
     });
 
