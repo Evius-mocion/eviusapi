@@ -31,7 +31,7 @@ export class ExperiencesService {
     });
   }
   
-  findByIds(ids: string[]) {
+  findByIds(ids: string[] = []) {
     return this.experiencesRepository.findBy({id: In(ids)});
   }
 
