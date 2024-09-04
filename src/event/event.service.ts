@@ -42,9 +42,9 @@ export class EventService {
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
-        initialDate: createEventDto.dates[0]?.startDate,
+        initialDate: new Date(createEventDto.dates[0]?.startDate),
         finishDate:
-          createEventDto.dates[createEventDto.dates.length - 1]?.endDate,
+          new Date(createEventDto.dates[createEventDto.dates.length - 1]?.endDate),
         experiences: experiences,
         ...createEventDto,
       });

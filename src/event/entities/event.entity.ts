@@ -37,11 +37,11 @@ export class Event {
   @Column({ nullable: false, type: "numeric", default: 20 })
   capacity: number;
 
-  @Column({ nullable: false, default: new Date().toISOString() })
-  initialDate: string;
+  @Column({ nullable: false, default: new Date() })
+  initialDate: Date;
 
-  @Column({ nullable: false, default: new Date().toISOString() })
-  finishDate: string;
+  @Column({ nullable: false, default: new Date() })
+  finishDate: Date;
 
   @Column({ nullable: false, default: "without description" })
   description: string;
