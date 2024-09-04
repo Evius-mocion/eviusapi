@@ -124,7 +124,7 @@ export class Event {
   hiddenEventDates?: boolean;
 
   @CreateDateColumn()
-  createAt: string;
+  createAt: Date;
 
   @DeleteDateColumn()
   deletedAt: Date;

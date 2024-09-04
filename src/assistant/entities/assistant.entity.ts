@@ -1,6 +1,6 @@
 import { User } from "src/common/entities/user.entity";
 import { Event } from "src/event/entities/event.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 
 
 @Entity('assistants')
@@ -26,6 +26,6 @@ export class Assistant {
     })
     event: Event;
 
-    @Column({nullable: false, default: new Date()})
-    registerAt: Date;
+    @CreateDateColumn()
+    createAt: Date;
 }
