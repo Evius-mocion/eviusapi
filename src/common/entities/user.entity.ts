@@ -2,7 +2,7 @@ import { Assistant } from "src/assistant/entities/assistant.entity";
 import { Collaborator } from "src/collaborator/entities/collaborator.entity";
 import { Event } from "src/event/entities/event.entity";
 import { genderType, typeAccount } from "src/types/user.types";
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
 
@@ -48,6 +48,9 @@ export class User {
     
     @Column({nullable: true})
     password: string;
+
+    @CreateDateColumn()
+    createAt: Date;
 
     @DeleteDateColumn()
     deletedAt: Date;
