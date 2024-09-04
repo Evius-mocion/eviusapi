@@ -1,8 +1,8 @@
 import { Organization } from "src/organization/entities/organization.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoleType } from '../../types/collaborator.types';
-import { RoleEnum, Roles } from '../../constants/constants';
 import { User } from "src/common/entities/user.entity";
+import { Roles } from "src/constants/constants";
 
 
 @Entity('collaborator')

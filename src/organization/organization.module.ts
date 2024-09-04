@@ -4,7 +4,7 @@ import { OrganizationController } from './organization.controller';
 import { CollaboratorModule } from 'src/collaborator';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
-import { User } from 'src/common/entities/user.entity';
+import { User } from 'src/common/entities';
 import { inviteCollaborator } from 'src/collaborator/entities';
 
 @Module({

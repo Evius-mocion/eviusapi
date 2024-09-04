@@ -5,7 +5,6 @@ import { Station } from './entities/station.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventService } from 'src/event';
-import { Event } from 'src/event/entities/event.entity';
 import { ExperiencesService } from 'src/experiences/experiences.service';
 
 @Injectable()
