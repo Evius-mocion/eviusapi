@@ -301,8 +301,8 @@ export class EventService {
 			}
 
       if(data.dates){
-        newEvent.initialDate = data.dates[0]?.startDate;
-        newEvent.finishDate = data.dates[data.dates.length - 1]?.endDate;
+        newEvent.initialDate = new Date(data.dates[0]?.startDate);
+        newEvent.finishDate = new Date(data.dates[data.dates.length - 1]?.endDate);
       }
 
       return await this.eventRepository.save(newEvent);
