@@ -294,12 +294,11 @@ export class EventService {
         ...othersFields,
       };
 
-      if (experiencesId && experiencesId.length > 0) {
-        const experiencias =
-          await this.experiencisService.findByIds(experiencesId);
+      if (Array.isArray(experiencesId)) {
+				const experiencias = await this.experiencisService.findByIds(experiencesId);
 
-        newEvent.experiences = experiencias;
-      }
+				newEvent.experiences = experiencias;
+			}
 
       if(data.dates){
         newEvent.initialDate = data.dates[0]?.startDate;

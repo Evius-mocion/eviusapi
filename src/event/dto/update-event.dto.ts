@@ -1,7 +1,14 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateEventDto } from "./create-event.dto";
 import { DynamicField, ILandingSection } from "src/types/event.type";
-import { IsArray, IsBoolean, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import {
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from "class-validator";
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
   @IsOptional()
@@ -44,4 +51,8 @@ export class UpdateEventDto extends PartialType(CreateEventDto) {
 
   @IsOptional()
   landingDescription?: string;
+
+  @IsOptional()
+  @IsArray()
+  experiencesId?: string[];
 }
