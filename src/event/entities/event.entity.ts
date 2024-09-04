@@ -37,10 +37,10 @@ export class Event {
   @Column({ nullable: false, type: "numeric", default: 20 })
   capacity: number;
 
-  @Column({ nullable: false, default: new Date() })
+  @Column({ nullable: false })
   initialDate: Date;
 
-  @Column({ nullable: false, default: new Date() })
+  @Column({ nullable: false})
   finishDate: Date;
 
   @Column({ nullable: false, default: "without description" })
@@ -100,7 +100,7 @@ export class Event {
   @Column({ nullable: false, type: "jsonb", default: [] })
   registrationFields?: DynamicField[];
 
-  @Column({ nullable: false,default : 0 })
+  @Column({ nullable: false })
   price: number;
 
   @ManyToOne(() => User, (user) => user.events, {
