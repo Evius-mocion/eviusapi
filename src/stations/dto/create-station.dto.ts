@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID, ValidateIf } from 'class-validator';
 
 export class CreateStationDto {
 	@IsString()
@@ -19,6 +19,7 @@ export class CreateStationDto {
 
 	@IsString()
 	@IsOptional()
+	@ValidateIf((o) => o.experienceId !== '')
 	@IsUUID()
 	experienceId?: string;
 
