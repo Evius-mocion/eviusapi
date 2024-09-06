@@ -17,7 +17,7 @@ export class StationsService {
   ) { }
 
   async create(createStationDto: CreateStationDto) {
-
+console.log('createStationDto', createStationDto)
     const { eventId, experienceId, ...stationFields } = createStationDto;
 
     const event = await this.eventService.findOneBy(eventId);

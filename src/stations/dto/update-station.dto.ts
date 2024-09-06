@@ -25,4 +25,11 @@ export class UpdateStationDto extends PartialType(CreateStationDto) {
     @IsOptional()
     @IsUUID()
     experienceId?: string;
+
+    @IsString()
+	country: string;
+	@IsString()
+	department: string;
+	@IsString()
+	city: string;
 }
