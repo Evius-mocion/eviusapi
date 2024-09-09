@@ -1,25 +1,32 @@
-import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID, ValidateIf } from 'class-validator';
 
 export class CreateStationDto {
+	@IsString()
+	name: string;
 
-    @IsString()
-    name: string;
+	@IsString()
+	description: string;
 
-    @IsString()
-    description: string;
+	@IsString()
+	representative: string;
 
-    @IsString()
-    representative: string;
+	@IsString()
+	location: string;
 
-    @IsString()
-    location: string;
+	@IsString()
+	@IsUUID()
+	eventId: string;
 
-    @IsString()
-    @IsUUID()
-    eventId: string;
+	@IsString()
+	@IsOptional()
+	@ValidateIf((o) => o.experienceId !== '')
+	@IsUUID()
+	experienceId?: string;
 
-    @IsString()
-    @IsOptional()
-    @IsUUID()
-    experienceId?: string;
+	@IsString()
+	country: string;
+	@IsString()
+	department: string;
+	@IsString()
+	city: string;
 }
