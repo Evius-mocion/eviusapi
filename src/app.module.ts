@@ -26,6 +26,7 @@ import * as fs from 'fs';
         database: process.env.DATABASE,
         host: process.env.DATABASE_HOST,
         port: parseInt(process.env.DATABASE_PORT),
+        synchronize: false, // set to false in production
         autoLoadEntities: true, // load all entities from the entities folder
         logging: false,
         ssl: process.env.PRODUCTION === "true" ? {
