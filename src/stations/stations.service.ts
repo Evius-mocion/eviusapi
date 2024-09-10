@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
 import { Station } from './entities/station.entity';
@@ -6,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventService } from 'src/event';
 import { ExperiencesService } from 'src/experiences/experiences.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class StationsService {
@@ -13,7 +20,8 @@ export class StationsService {
 		@InjectRepository(Station)
 		private readonly stationRepository: Repository<Station>,
 		private readonly eventService: EventService,
-		private readonly experiencesService: ExperiencesService
+		private readonly experiencesService: ExperiencesService,
+		private readonly jwtService: JwtService
 	) {}
 
 	async create(createStationDto: CreateStationDto) {
@@ -89,4 +97,50 @@ export class StationsService {
 		}
 		return { message: 'station deleted' };
 	}
+	async stationLogin(id: string) {
+		const { event, ...station } = await this.stationRepository.findOne({ where: { id }, relations: ['event'] });
+
+		if (!station) {
+			throw new NotFoundException('Station not found');
+		}
+
+		const access_token = this.jwtService.sign(
+			{
+				id: station.id,
+			},
+			{ expiresIn: '24h' }
+		);
+
+		return { station, access_token, event };
+	}
+	async revalidateToken(token: string) {
+		const payload = await this.decryptToken(token);
+
+		const stationId = payload.id;
+
+		const { event, ...station } = await this.stationRepository.findOne({ where: { id: stationId }, relations: ['event'] });
+
+		if (!station) {
+			throw new NotFoundException('Station not found');
+		}
+
+		const access_token = this.jwtService.sign(
+			{
+				id: station.id,
+			},
+			{ expiresIn: '24h' }
+		);
+
+		return { station, access_token, event };
+	}
+
+	decryptToken = async (token: string) => {
+		try {
+			return await this.jwtService.verifyAsync(token, {
+				secret: process.env.JWT_SECRET,
+			});
+		} catch (error) {
+			throw new UnauthorizedException('Invalid token fff');
+		}
+	};
 }
