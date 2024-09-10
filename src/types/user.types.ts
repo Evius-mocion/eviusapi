@@ -5,6 +5,6 @@ export interface UserContext {
     isAdmin?: boolean
 }
 
-export type typeAccount = 'client' | 'assistant';
+export type typeAccount = 'client' | 'attendee';
 
 export type genderType = "male" | "female"

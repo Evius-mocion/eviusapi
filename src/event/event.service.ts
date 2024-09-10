@@ -12,8 +12,8 @@ import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
 import { CollaboratorService } from "src/collaborator";
-import { AssistantService } from "src/assistant/assistant.service";
-import { CreateAssistantDto } from "src/assistant/dto/create-assistant.dto";
+import { AttendeeService } from "src/attendee/attendee.service";
+import { CreateAssistantDto } from "src/attendee/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
@@ -29,7 +29,7 @@ export class EventService {
     private readonly organizationService: OrganizationService,
     private readonly collaboratorService: CollaboratorService,
     private readonly experiencisService: ExperiencesService,
-    private readonly assistantService: AssistantService,
+    private readonly attendeeService: AttendeeService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -88,17 +88,17 @@ export class EventService {
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOneBy({ id });
-    const { totalAssistant } =
-      await this.assistantService.getTotalAssistantByEvent(id);
+    const { totalAttendee } =
+      await this.attendeeService.getTotalAttendeesByEvent(id);
     if (!event) {
       throw new BadRequestException("Event not found");
     }
-    const { stations, price, assistants, experiences, ...restOfEvent } = event;
+    const { stations, price, attendees, experiences, ...restOfEvent } = event;
     return {
       event: {
         ...restOfEvent,
       },
-      totalAssistant,
+      totalAttendee,
       organization: {
         id: event?.organization?.id,
         name: event?.organization?.name,
@@ -107,15 +107,15 @@ export class EventService {
   }
   async getOne(id: string) {
     const event = await this.eventRepository.findOneBy({ id });
-    const { totalAssistant } =
-      await this.assistantService.getTotalAssistantByEvent(id);
+    const { totalAttendee } =
+      await this.attendeeService.getTotalAttendeesByEvent(id);
     if (!event) {
       throw new BadRequestException("Event not found");
     }
 
     return {
       event,
-      totalAssistant,
+      totalAttendee,
     };
   }
 
@@ -131,10 +131,10 @@ export class EventService {
       throw new BadRequestException("Event not found");
     }
 
-    let assistant = null;
+    let attendee = null;
     let collaborator = null;
     if (user) {
-      assistant = await this.assistantService.findOneByUserIdAndEventId(
+      attendee = await this.attendeeService.findOneByUserIdAndEventId(
         user.id,
         event.id,
       );
@@ -148,7 +148,7 @@ export class EventService {
     return {
       haveAccount: !!user?.id,
       havePassword: !!user?.password,
-      isRegisteredInEvent: !!collaborator || !!assistant?.id,
+      isRegisteredInEvent: !!collaborator || !!attendee?.id,
       isCollaborator: !!collaborator,
     };
   }
@@ -157,13 +157,13 @@ export class EventService {
     let collaboratorRol = null;
 
     const event = await this.eventRepository.findOneBy({ id: eventId });
-    const { totalAssistant } =
-      await this.assistantService.getTotalAssistantByEvent(eventId);
+    const { totalAttendee } =
+      await this.attendeeService.getTotalAttendeesByEvent(eventId);
 
     if (!event) {
       throw new NotFoundException("Event not found");
     }
-    const assistant = await this.assistantService.findOneByUserIdAndEventId(
+    const attendee = await this.attendeeService.findOneByUserIdAndEventId(
       userId,
       event.id,
     );
@@ -176,10 +176,10 @@ export class EventService {
     if (collaborator) {
       collaboratorRol = collaborator.rol;
     }
-    const isRegister = !!assistant?.user;
-    if (assistant) {
-      delete assistant.event;
-      delete assistant.user;
+    const isRegister = !!attendee?.user;
+    if (attendee) {
+      delete attendee.event;
+      delete attendee.user;
     }
     return {
       event: {
@@ -197,10 +197,10 @@ export class EventService {
         landingSections: event.landingSections,
         landingDescription: event.landingDescription,
       },
-      totalAssistant,
+      totalAttendee,
       isRegister,
       rol: collaboratorRol,
-      assistant,
+      attendee,
       organization: {
         id: event.organization.id,
         name: event.organization.name,
@@ -219,8 +219,8 @@ export class EventService {
       throw new NotFoundException("Event not found");
     }
 
-    const { totalAssistant } =
-      await this.assistantService.getTotalAssistantByEvent(registerDto.eventId);
+    const { totalAttendee } =
+      await this.attendeeService.getTotalAttendeesByEvent(registerDto.eventId);
 
     let user = await this.userRepository.findOneBy({
       email: registerDto.email,
@@ -229,25 +229,25 @@ export class EventService {
     if (!user) {
       user = this.userRepository.create({
         ...registerDto,
-        type_account: "assistant",
+        type_account: "attendee",
       });
       user = await this.userRepository.save(user);
       newAccount = true;
     }
 
     if (!newAccount) {
-      const exist = await this.assistantService.findOneByUserIdAndEventId(
+      const exist = await this.attendeeService.findOneByUserIdAndEventId(
         user.id,
         event.id,
       );
       if (exist) throw new ConflictException("Assistant already registered");
     }
 
-    if (totalAssistant >= event.capacity) {
+    if (totalAttendee >= event.capacity) {
       throw new ForbiddenException("Event Capacity is full");
     }
 
-    await this.assistantService.create({
+    await this.attendeeService.create({
       user,
       fullName: registerDto.fullName,
       event,

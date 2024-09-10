@@ -1,4 +1,4 @@
-import { Assistant } from "src/assistant/entities/assistant.entity";
+import { Attendee } from "src/attendee/entities/attendee.entity";
 import { Collaborator } from "src/collaborator/entities/collaborator.entity";
 import { Event } from "src/event/entities/event.entity";
 import { genderType, typeAccount } from "src/types/user.types";
@@ -28,11 +28,11 @@ export class User {
     @Column({nullable: true})
     gender:  genderType;
 
-    @Column({nullable: false, enum: ["assistant","client"], default:"assistant"})
+    @Column({nullable: false, enum: ["attendee","client"], default:"attendee"})
     type_account: typeAccount;
 
-    @OneToMany(() => Assistant, assistant => assistant.user)
-    assistants: Assistant[];
+    @OneToMany(() => Attendee, attendee => attendee.user)
+    attendees: Attendee[];
     
     @OneToMany(() => Collaborator, collaborator => collaborator.user)
     collaborators: Collaborator[];

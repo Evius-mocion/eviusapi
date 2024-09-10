@@ -1,4 +1,4 @@
-import { Assistant } from "src/assistant/entities/assistant.entity";
+import { Attendee } from "src/attendee/entities/attendee.entity";
 import { User } from "src/common/entities/user.entity";
 import { Experience } from "src/experiences/entities/experience.entity";
 import { Organization } from "src/organization/entities/organization.entity";
@@ -57,8 +57,8 @@ export class Event {
   })
   organization: Organization;
 
-  @OneToMany(() => Assistant, (assistant) => assistant.event)
-  assistants: Assistant[];
+  @OneToMany(() => Attendee, (attendee) => attendee.event)
+  attendees: Attendee[];
 
   @OneToMany(() => Station, (station) => station.event, {
     eager: true,
