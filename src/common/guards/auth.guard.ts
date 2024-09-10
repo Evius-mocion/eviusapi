@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const type_account_client : typeAccount =  "client"
+    const type_account_client : typeAccount =  "attendee"
 
     if (isPublic) {
       return true;

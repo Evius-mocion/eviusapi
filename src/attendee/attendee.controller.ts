@@ -1,23 +1,23 @@
 import { Controller, Get, Patch, Param, Delete, Query } from '@nestjs/common';
-import { AssistantService } from './assistant.service';
+import { AttendeeService } from './attendee.service';
 import { PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
 import { WithoutAccount, Role } from 'src/common/decorators';
 
-@Controller('assistant')
-export class AssistantController {
-  constructor(private readonly assistantService: AssistantService) {}
+@Controller('attendee')
+export class AttendeeController {
+  constructor(private readonly attendeeService: AttendeeService) {}
 
   
 
   @Get()
   findAll() {
-    return this.assistantService.findAll();
+    return this.attendeeService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return "this.assistantService.findOne(+id);"
+    return "this.AttendeeService.findOne(+id);"
   }
 
   @Role(Roles.auditor)
@@ -25,23 +25,23 @@ export class AssistantController {
   getAssistant(
     @Query() pagination: PaginationArgs,
     @Param('eventId') eventId: string) {
-    return this.assistantService.getAssistantByEvent(eventId,pagination);
+    return this.attendeeService.getAttendeeByEvent(eventId,pagination);
   }
 
   @WithoutAccount()
   @Get('totalCount/:eventId')
   count(@Param('eventId') eventId: string) {
-    return this.assistantService.getTotalAssistantByEvent(eventId);
+    return this.attendeeService.getTotalAttendeesByEvent(eventId);
   }
   @WithoutAccount()
   @Patch('checkIn/:id')
   update(
     @Param('id') id: string) {
-    return this.assistantService.checkIn(id);
+    return this.attendeeService.checkIn(id);
   }
   
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.assistantService.remove(+id);
+    return this.attendeeService.remove(+id);
   }
 }

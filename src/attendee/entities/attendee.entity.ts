@@ -3,8 +3,8 @@ import { Event } from "src/event/entities/event.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 
 
-@Entity('assistants')
-export class Assistant {
+@Entity('attendees')
+export class Attendee {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
@@ -17,11 +17,11 @@ export class Assistant {
     @Column({nullable: true,default: null})
     checkInAt: Date;
 
-    @ManyToOne(() => User, user => user.assistants,{
+    @ManyToOne(() => User, user => user.attendees,{
         eager: true
     })
     user: User;
-    @ManyToOne(() => Event, event => event.assistants, {
+    @ManyToOne(() => Event, event => event.attendees, {
         eager: true
     })
     event: Event;

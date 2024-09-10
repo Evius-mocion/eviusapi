@@ -3,7 +3,7 @@ import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserContext } from 'src/types/user.types';
-import { CreateAssistantDto } from 'src/assistant/dto/create-assistant.dto';
+import { CreateAssistantDto } from 'src/attendee/dto/create-assistant.dto';
 import { Roles } from 'src/constants/constants';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
@@ -59,8 +59,8 @@ export class EventController {
   
   @Public()
   @Post('register')
-  assistants(@Body() assistant: CreateAssistantDto) {
-    return this.eventService.register(assistant);
+  assistants(@Body() attendee: CreateAssistantDto) {
+    return this.eventService.register(attendee);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -73,8 +73,8 @@ export class EventController {
   }
 
   @Public()
-  @Get("isAssistant")
-  validateAssistants(@Query('email') email: string, @Query('eventId') eventId: string) {
+  @Get("isAttendee")
+  validateAttendees(@Query('email') email: string, @Query('eventId') eventId: string) {
     return this.eventService.confirmedEmailRegisterInEvent(email,eventId);
   }
   
