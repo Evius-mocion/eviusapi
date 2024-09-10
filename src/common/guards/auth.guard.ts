@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const type_account_client : typeAccount =  "attendee"
+    const type_account_client : typeAccount =  "client"
 
     if (isPublic) {
       return true;
@@ -62,6 +62,7 @@ export class AuthGuard implements CanActivate {
       
       throw new UnauthorizedException("Invalid token");
     }
+    console.log(request.user)
     if(!WithoutAccount && request.user.type !== type_account_client ){
       throw new UnauthorizedException("Invalid token");
     }
