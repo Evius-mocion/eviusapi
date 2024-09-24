@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  ValidateIf,
 } from "class-validator";
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
@@ -27,6 +28,7 @@ export class UpdateEventDto extends PartialType(CreateEventDto) {
   @IsString()
   googleTagManager?: string;
 
+  @ValidateIf((o) => o.price !== 0)
   @IsOptional()
   @IsNumber()
   @IsPositive()
