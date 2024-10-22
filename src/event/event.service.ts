@@ -47,6 +47,7 @@ export class EventService {
           new Date(createEventDto.dates[createEventDto.dates.length - 1]?.endDate),
         experiences: experiences,
         price: 0,
+        organizationAlias:org.organization.name,
         ...createEventDto,
       });
       return await this.eventRepository.save(newEvent);
