@@ -108,8 +108,8 @@ export class Event {
   })
   createdBy: User;
 
-  @Column({ nullable: true })
-  organizationAlias?: string;
+  @Column({ nullable: false })
+  organizationAlias: string;
 
   @Column({ nullable: true })
   googleAnalyticsId?: string;
