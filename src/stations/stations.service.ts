@@ -98,6 +98,23 @@ export class StationsService {
 		}
 		return { message: 'station deleted' };
 	}
+	async getQR(stationId: string) {
+		const station = await this.stationRepository.findOne({ where: { id: stationId }, relations: ['event'] });
+
+		if (!station) {
+			throw new NotFoundException('Station not found');
+		}
+		const generatedAt = new Date();
+
+		const qrToken = this.jwtService.sign(
+			{
+				id: station.id,
+			},
+			{ expiresIn: '1h' }
+		);
+
+		return { qrToken, generatedAt: generatedAt.toISOString() };
+	}
 	async stationLogin(id: string) {
 		const { event, ...station } = await this.stationRepository.findOne({ where: { id }, relations: ['event'] });
 
