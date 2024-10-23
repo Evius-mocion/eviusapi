@@ -35,6 +35,12 @@ export class StationsController {
 	}
 
 	@Public()
+	@Get('getQR/:stationId')
+	getQr(@Param('stationId') stationId: string) {
+		return this.stationsService.getQR(stationId);
+	}
+
+	@Public()
 	@Get('stationLogin/:id')
 	stationLogin(@Param('id') id: string) {
 		console.log('id', id);
