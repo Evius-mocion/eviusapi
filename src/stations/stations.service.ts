@@ -86,6 +86,7 @@ export class StationsService {
 		const updateStation = {
 			...station,
 			...othersFields,
+			experienceId,
 		};
 		return this.stationRepository.save(updateStation);
 	}
