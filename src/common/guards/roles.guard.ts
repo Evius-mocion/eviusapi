@@ -32,7 +32,7 @@ export class RolesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest() as { user: UserContext };
 
     if(user.isAdmin){
-        return true;
+      return true;
     }
 
     const collaborator = await this.CollaboratoService.findOneByIdAndOrganizationId(user.id,user.organizationId);

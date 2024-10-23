@@ -12,6 +12,7 @@ import { ExperiencesModule } from "./experiences/experiences.module";
 import { StationsModule } from "./stations/stations.module";
 import { LocationModule } from "./location/location.module";
 import * as fs from 'fs';
+import { originGuard } from "./common/guards/origin.guard";
 
 @Module({
   imports: [
@@ -59,6 +60,10 @@ import * as fs from 'fs';
     {
       provide: "APP_GUARD",
       useClass: RolesGuard,
+    },
+    {
+      provide: "APP_GUARD",
+      useClass: originGuard,
     },
   ],
 })

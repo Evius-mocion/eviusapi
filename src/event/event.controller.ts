@@ -7,6 +7,8 @@ import { CreateAssistantDto } from 'src/attendee/dto/create-assistant.dto';
 import { Roles } from 'src/constants/constants';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
+import { DataOrigin } from 'src/common/decorators/data-origin.decorator';
+import { ISystem } from 'src/types/system.type';
 
 
 @ApiTags('events')
@@ -59,8 +61,10 @@ export class EventController {
   
   @Public()
   @Post('register')
-  assistants(@Body() attendee: CreateAssistantDto) {
-    return this.eventService.register(attendee);
+  assistants(
+    @DataOrigin() dataOrigin: ISystem,
+    @Body() attendee: CreateAssistantDto) {
+    return this.eventService.register(attendee,dataOrigin);
   }
 
   @HttpCode(HttpStatus.OK)
