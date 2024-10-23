@@ -43,7 +43,7 @@ export class AttendeeService {
     });
 
     return {
-      assistants: attendees.map((attendee) => ({
+      attendees: attendees.map((attendee) => ({
         id: attendee.id,
         fullName: attendee.fullName,
         checkIn: attendee.checkIn,
