@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { StationsService } from './stations.service';
 import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
-import { Public, SuperAdmin } from 'src/common/decorators';
+import { ActiveUser, SuperAdmin } from 'src/common/decorators';
+import { UserContext } from 'src/types/user.types';
 
 @Controller('stations')
 export class StationsController {
@@ -34,21 +35,9 @@ export class StationsController {
 		return this.stationsService.remove(id);
 	}
 
-	@Public()
 	@Get('getQR/:stationId')
-	getQr(@Param('stationId') stationId: string) {
-		return this.stationsService.getQR(stationId);
-	}
-
-	@Public()
-	@Get('stationLogin/:qrToken')
-	stationLogin(@Param('qrToken') qrToken: string) {
-		return this.stationsService.stationLogin(qrToken);
-	}
-
-	@Public()
-	@Get('revalidateToken/:token')
-	revalidateToken(@Param('token') token: string) {
-		return this.stationsService.revalidateToken(token);
+	getQr(@Param('stationId') stationId: string, @ActiveUser() user: UserContext) {
+		console.log('user', user);
+		return this.stationsService.getQR(stationId, user.id);
 	}
 }

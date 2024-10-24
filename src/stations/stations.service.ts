@@ -98,7 +98,7 @@ export class StationsService {
 		}
 		return { message: 'station deleted' };
 	}
-	async getQR(stationId: string) {
+	async getQR(stationId: string, userId: string) {
 		const station = await this.stationRepository.findOne({ where: { id: stationId }, relations: ['event'] });
 
 		if (!station) {
@@ -109,51 +109,12 @@ export class StationsService {
 		const qrToken = this.jwtService.sign(
 			{
 				id: station.id,
+				userId,
 			},
 			{ expiresIn: '1h' }
 		);
 
 		return { qrToken, generatedAt: generatedAt.toISOString() };
-	}
-	async stationLogin(qrToken: string) {
-		let token = await this.decryptToken(qrToken);
-
-		const { id } = token;
-
-		const { event, ...station } = await this.stationRepository.findOne({ where: { id }, relations: ['event'] });
-
-		if (!station) {
-			throw new NotFoundException('Station not found');
-		}
-
-		const access_token = this.jwtService.sign(
-			{
-				id: station.id,
-			},
-			{ expiresIn: '24h' }
-		);
-
-		return { station, access_token, event };
-	}
-	async revalidateToken(token: string) {
-		const payload = await this.decryptToken(token);
-
-		const stationId = payload.id;
-
-		const { event, ...station } = await this.stationRepository.findOne({ where: { id: stationId }, relations: ['event'] });
-
-		if (!station) {
-			throw new NotFoundException('Station not found');
-		}
-
-		const access_token = this.jwtService.sign(
-			{
-				id: station.id,
-			},
-			{ expiresIn: '24h' }
-		);
-
-		return { station, access_token, event };
 	}
 
 	decryptToken = async (token: string) => {

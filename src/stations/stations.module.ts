@@ -7,8 +7,8 @@ import { EventModule } from 'src/event';
 import { ExperiencesModule } from 'src/experiences/experiences.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Station]), EventModule,ExperiencesModule],
-  controllers: [StationsController],
-  providers: [StationsService],
+	imports: [TypeOrmModule.forFeature([Station]), EventModule, ExperiencesModule],
+	controllers: [StationsController],
+	providers: [StationsService],
 })
 export class StationsModule {}
