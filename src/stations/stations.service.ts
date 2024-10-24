@@ -115,7 +115,11 @@ export class StationsService {
 
 		return { qrToken, generatedAt: generatedAt.toISOString() };
 	}
-	async stationLogin(id: string) {
+	async stationLogin(qrToken: string) {
+		let token = await this.decryptToken(qrToken);
+
+		const { id } = token;
+
 		const { event, ...station } = await this.stationRepository.findOne({ where: { id }, relations: ['event'] });
 
 		if (!station) {
@@ -158,7 +162,7 @@ export class StationsService {
 				secret: process.env.JWT_SECRET,
 			});
 		} catch (error) {
-			throw new UnauthorizedException('Invalid token fff');
+			throw new UnauthorizedException('Invalid token');
 		}
 	};
 }

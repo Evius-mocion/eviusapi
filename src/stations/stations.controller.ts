@@ -41,10 +41,9 @@ export class StationsController {
 	}
 
 	@Public()
-	@Get('stationLogin/:id')
-	stationLogin(@Param('id') id: string) {
-		console.log('id', id);
-		return this.stationsService.stationLogin(id);
+	@Get('stationLogin/:qrToken')
+	stationLogin(@Param('qrToken') qrToken: string) {
+		return this.stationsService.stationLogin(qrToken);
 	}
 
 	@Public()
