@@ -3,4 +3,5 @@ export interface ISystem {
     plataform : string 
     origin: string
     navigator: string
+    country: string
 }

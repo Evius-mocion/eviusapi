@@ -211,7 +211,7 @@ export class EventService {
     };
   }
 
-  async register(registerDto: CreateAssistantDto, origin: ISystem) {
+  async register(registerDto: CreateAssistantDto, data: ISystem) {
     let newAccount = false;
 
     const event = await this.eventRepository.findOneBy({
@@ -254,6 +254,9 @@ export class EventService {
       user,
       fullName: registerDto.fullName,
       event,
+      country: data.country,
+      navigator: data.navigator,
+      plataform : data.plataform,
     });
 
     const access_token = this.jwtService.sign({

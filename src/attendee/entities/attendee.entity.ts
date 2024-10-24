@@ -26,6 +26,15 @@ export class Attendee {
     })
     event: Event;
 
+    @Column({nullable: true})
+    country: string;
+
+    @Column({nullable: true})
+    plataform: string;
+
+    @Column({nullable: true})
+    navigator: string;
+
     @CreateDateColumn()
     createAt: Date;
 }

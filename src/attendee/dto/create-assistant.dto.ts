@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsIn, IsString, MinLength } from "class-validator";
+import { IsEmail, IsIn, IsString, MinLength } from "class-validator";
 import { User } from "src/common/entities/user.entity";
 import { Event } from "src/event/entities/event.entity";
 import { genderType } from "src/types/user.types";
@@ -32,4 +32,10 @@ export class AssistantDto {
 
     event: Event;
 
+    country: string;
+
+    navigator: string;
+
+    plataform: string;
+ 
 }

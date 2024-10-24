@@ -2,6 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { validateNavigator } from '../utils/validations.util';
 import { NavigatorEnum } from 'src/constants/constants';
+import * as geoip from 'geoip-country'
+
 
 @Injectable()
 export class originGuard implements CanActivate {
@@ -10,8 +12,8 @@ export class originGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
 
     // Obtener la IP del cliente
-    const ip = request.ip
-
+    const ip = request.socket.remoteAddress
+    const geo = geoip.lookup(ip)
     // Obtener el User Agent (navegador)
     const userAgent = request.headers['user-agent'];
 
@@ -22,18 +24,14 @@ export class originGuard implements CanActivate {
     // Otros headers útiles que puedes obtener
     const origin = request.headers['origin'] || 'Desconocido';
 
-    // Información que puedes loguear o guardar
-    console.log('IP:', ip);
-    console.log('userAgent:', userAgent);
-    console.log('Plataforma:', plataform);
-    console.log('Origin:', origin);
-    console.log('navegator:', navigator );
+
 
     request["dataOrigin"] = {
         ip,
         plataform,
         origin,
-        navigator
+        navigator,
+        country:  geo?.name || 'Desconocido'
     }
     // Retorna true para permitir el acceso al controlador
     return true;
