@@ -15,3 +15,13 @@ export const Roles  : Record<RoleType, RoleType> = {
     editor: "editor",
     auditor: "auditor",
 }
+
+export const NavigatorEnum = {
+    chorme : "Google Chrome",
+    firefox : "Mozilla Firefox",
+    safari : "Apple Safari",
+    edge : "Microsoft Edge",
+    opera : "Opera",
+    postman: "Postman",
+    unknown : "Desconoicdo"
+}

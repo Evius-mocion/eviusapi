@@ -19,6 +19,7 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ExperiencesService } from "src/experiences/experiences.service";
+import { ISystem } from "src/types/system.type";
 @Injectable()
 export class EventService {
   constructor(
@@ -94,6 +95,7 @@ export class EventService {
     if (!event) {
       throw new BadRequestException("Event not found");
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { stations, price, attendees, experiences, ...restOfEvent } = event;
     return {
       event: {
@@ -209,7 +211,7 @@ export class EventService {
     };
   }
 
-  async register(registerDto: CreateAssistantDto) {
+  async register(registerDto: CreateAssistantDto, origin: ISystem) {
     let newAccount = false;
 
     const event = await this.eventRepository.findOneBy({
