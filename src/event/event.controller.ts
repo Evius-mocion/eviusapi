@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, Ip } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -7,8 +7,7 @@ import { CreateAssistantDto } from 'src/attendee/dto/create-assistant.dto';
 import { Roles } from 'src/constants/constants';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
-import { DataOrigin } from 'src/common/decorators/data-origin.decorator';
-import { ISystem } from 'src/types/system.type';
+import { ClientInfo, GetClientInfo } from 'nest-request-ip';
 
 
 @ApiTags('events')
@@ -48,7 +47,9 @@ export class EventController {
 
   @Public()
   @Get('landing/:id')
-  findOne(@Param('id') id: string) {
+  findOne(
+    @Param('id') id: string) {
+      
     return this.eventService.findOne(id);
   }
 
@@ -62,17 +63,20 @@ export class EventController {
   @Public()
   @Post('register')
   assistants(
-    @DataOrigin() dataOrigin: ISystem,
+    @GetClientInfo() info: ClientInfo,
     @Body() attendee: CreateAssistantDto) {
-    return this.eventService.register(attendee,dataOrigin);
+    return this.eventService.register(attendee,info);
   }
 
   @HttpCode(HttpStatus.OK)
   @WithoutAccount()
   @Get("access/:eventId")
   accessEvent(
+    @Ip() ip: string,
     @ActiveUser() user: UserContext,
     @Param('eventId') eventID: string) {
+      
+    console.log("ip comonm nest",ip);
     return this.eventService.identifierUser(eventID,user.id);
   }
 

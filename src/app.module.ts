@@ -12,7 +12,7 @@ import { ExperiencesModule } from "./experiences/experiences.module";
 import { StationsModule } from "./stations/stations.module";
 import { LocationModule } from "./location/location.module";
 import * as fs from 'fs';
-import { originGuard } from "./common/guards/origin.guard";
+import { RequestIpModule } from "nest-request-ip";
 
 @Module({
   imports: [
@@ -43,6 +43,9 @@ import { originGuard } from "./common/guards/origin.guard";
         signOptions: { expiresIn: "5h" },
       }),
     }),
+    RequestIpModule.forRoot({
+      localIpAddress: "167.0.239.51", // this ip is used when the request is local
+    }),
     OrganizationModule,
     EventModule,
     CollaboratorModule,
@@ -60,10 +63,6 @@ import { originGuard } from "./common/guards/origin.guard";
     {
       provide: "APP_GUARD",
       useClass: RolesGuard,
-    },
-    {
-      provide: "APP_GUARD",
-      useClass: originGuard,
     },
   ],
 })

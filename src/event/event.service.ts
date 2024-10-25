@@ -19,7 +19,7 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ExperiencesService } from "src/experiences/experiences.service";
-import { ISystem } from "src/types/system.type";
+import { ClientInfo } from "nest-request-ip";
 @Injectable()
 export class EventService {
   constructor(
@@ -211,7 +211,7 @@ export class EventService {
     };
   }
 
-  async register(registerDto: CreateAssistantDto, data: ISystem) {
+  async register(registerDto: CreateAssistantDto, data: ClientInfo) {
     let newAccount = false;
 
     const event = await this.eventRepository.findOneBy({
@@ -254,9 +254,9 @@ export class EventService {
       user,
       fullName: registerDto.fullName,
       event,
-      country: data.country,
-      navigator: data.navigator,
-      plataform : data.plataform,
+      country: data.ipInfo.country,
+      navigator: data.browser,
+      plataform : data.os,
     });
 
     const access_token = this.jwtService.sign({
