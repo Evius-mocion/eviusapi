@@ -255,7 +255,7 @@ export class EventService {
       fullName: registerDto.fullName,
       event,
       country: data.ipInfo.country,
-      navigator: data.browser,
+      browser: data.browser,
       plataform : data.os,
     });
 

@@ -15,8 +15,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -46,10 +44,9 @@ export class Event {
   @Column({ nullable: false, default: "without description" })
   description: string;
 
-  @ManyToMany(() => Experience, (exp) => exp.events, {
+  @OneToMany(() => Experience, (exp) => exp.event, {
     eager: true,
   })
-  @JoinTable({ name: "events_experiences" })
   experiences: Experience[];
 
   @ManyToOne(() => Organization, (org) => org.events, {

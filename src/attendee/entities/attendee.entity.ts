@@ -33,7 +33,7 @@ export class Attendee {
     plataform: string;
 
     @Column({nullable: true})
-    navigator: string;
+    browser: string;
 
     @CreateDateColumn()
     createAt: Date;

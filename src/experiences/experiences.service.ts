@@ -24,7 +24,7 @@ export class ExperiencesService {
   findByEventId(eventId: string) {
     return this.experiencesRepository.find({
       where: {
-        events: {
+        event: {
           id: eventId
         }
       }
