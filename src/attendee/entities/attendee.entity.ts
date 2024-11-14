@@ -28,6 +28,9 @@ export class Attendee {
     country: string;
 
     @Column({nullable: true})
+    city: string;
+
+    @Column({nullable: true})
     plataform: string;
 
     @Column({nullable: true})

@@ -75,8 +75,6 @@ export class EventController {
     @Ip() ip: string,
     @ActiveUser() user: UserContext,
     @Param('eventId') eventID: string) {
-      
-    console.log("ip comonm nest",ip);
     return this.eventService.identifierUser(eventID,user.id);
   }
 

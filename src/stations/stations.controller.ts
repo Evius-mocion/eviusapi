@@ -34,10 +34,9 @@ export class StationsController {
 	remove(@Param('id') id: string) {
 		return this.stationsService.remove(id);
 	}
-
+	
 	@Get('getQR/:stationId')
 	getQr(@Param('stationId') stationId: string, @ActiveUser() user: UserContext) {
-		console.log('user', user);
 		return this.stationsService.getQR(stationId, user.id);
 	}
 }

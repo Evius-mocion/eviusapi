@@ -34,6 +34,8 @@ export class AssistantDto {
 
     country: string;
 
+    city?: string;
+
     browser: string;
 
     plataform: string;

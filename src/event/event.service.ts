@@ -254,6 +254,7 @@ export class EventService {
       user,
       fullName: registerDto.fullName,
       event,
+      city : data.ipInfo.city,
       country: data.ipInfo.country,
       browser: data.browser,
       plataform : data.os,
