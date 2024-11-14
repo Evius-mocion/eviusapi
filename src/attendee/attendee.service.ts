@@ -4,12 +4,16 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Attendee } from "./entities/attendee.entity";
 import { Repository } from "typeorm";
 import { PaginationArgs } from "src/common/dto";
+import { CheckIn } from './entities/checkIn.entity';
+import { checkInDto } from "./dto/check-in.dto";
 
 @Injectable()
 export class AttendeeService {
   constructor(
     @InjectRepository(Attendee)
     private attendeeRepository: Repository<Attendee>,
+    @InjectRepository(CheckIn)
+    private CheckInRepository: Repository<CheckIn>,
   ) {}
 
   async create(createAssistantDto: AssistantDto) {
@@ -20,9 +24,17 @@ export class AttendeeService {
   findAll() {
     return `This action returns all assistant`;
   }
-  async checkIn(id: string) {
+  async checkIn(id: string, checkinData: checkInDto) {
     try {
-      await this.attendeeRepository.update(id, { checkIn: true, checkInAt: new Date() });
+      const {type,experienceID,stationID} = checkinData
+      const Attendee = await this.attendeeRepository.findOneBy({id});
+      const newCheckIn = this.CheckInRepository.create({
+        Attendee,
+        type,
+        experienceID,
+        stationID
+      })
+      await this.CheckInRepository.save(newCheckIn);
       return { message: "check in successfully" };
     } catch (error) {
       throw new InternalServerErrorException("error updating assistant");
@@ -48,7 +60,7 @@ export class AttendeeService {
         fullName: attendee.fullName,
         checkIn: attendee.checkIn,
         email: attendee.user.email,
-        checkInAt: attendee.checkInAt,
+        checkInAt: attendee.checkIn,
       })),
       total,
     };

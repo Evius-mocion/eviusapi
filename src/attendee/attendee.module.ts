@@ -4,9 +4,10 @@ import { AttendeeController } from './attendee.controller';
 import { Attendee } from './entities/attendee.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/common/entities';
+import { CheckIn } from './entities/checkIn.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Attendee,User])],
+  imports: [TypeOrmModule.forFeature([Attendee,User,CheckIn])],
   controllers: [AttendeeController],
   providers: [AttendeeService],
   exports: [AttendeeService]

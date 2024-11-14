@@ -1,8 +1,9 @@
-import { Controller, Get, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Delete, Query, Body } from '@nestjs/common';
 import { AttendeeService } from './attendee.service';
 import { PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
 import { WithoutAccount, Role } from 'src/common/decorators';
+import { checkInDto } from './dto/check-in.dto';
 
 @Controller('attendee')
 export class AttendeeController {
@@ -36,8 +37,9 @@ export class AttendeeController {
   @WithoutAccount()
   @Patch('checkIn/:id')
   update(
-    @Param('id') id: string) {
-    return this.attendeeService.checkIn(id);
+    @Param('id') id: string,
+    @Body() CheckInDto: checkInDto) {
+    return this.attendeeService.checkIn(id,CheckInDto);
   }
   
   @Delete(':id')

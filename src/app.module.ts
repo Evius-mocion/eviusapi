@@ -13,6 +13,7 @@ import { StationsModule } from "./stations/stations.module";
 import { LocationModule } from "./location/location.module";
 import * as fs from 'fs';
 import { RequestIpModule } from "nest-request-ip";
+import { ParticipationModule } from './participation/participation.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { RequestIpModule } from "nest-request-ip";
     ExperiencesModule,
     StationsModule,
     LocationModule,
+    ParticipationModule,
   ],
   controllers: [],
   providers: [

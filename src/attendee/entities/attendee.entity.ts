@@ -1,6 +1,7 @@
 import { User } from "src/common/entities/user.entity";
 import { Event } from "src/event/entities/event.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { CheckIn } from "./checkIn.entity";
 
 
 @Entity('attendees')
@@ -11,12 +12,6 @@ export class Attendee {
     @Column({nullable: false})
     fullName: string;
 
-    @Column({nullable: false,default: false})
-    checkIn: boolean;
-
-    @Column({nullable: true,default: null})
-    checkInAt: Date;
-
     @ManyToOne(() => User, user => user.attendees,{
         eager: true
     })
@@ -25,6 +20,9 @@ export class Attendee {
         eager: true
     })
     event: Event;
+
+    @OneToMany(() => CheckIn, checkIn => checkIn.Attendee)
+    checkIn: CheckIn[];
 
     @Column({nullable: true})
     country: string;

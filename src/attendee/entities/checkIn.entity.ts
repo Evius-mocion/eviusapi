@@ -1,38 +1,27 @@
-import { User } from "src/common/entities/user.entity";
-import { Event } from "src/event/entities/event.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Check, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Attendee } from "./attendee.entity"
 
 
 @Entity('checkIn')
-export class Attendee {
+@Check(`("stationID" IS NOT NULL AND "experienceID" IS NULL) OR ("stationID" IS NULL AND "experienceID" IS NOT NULL)`)
+export class CheckIn {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    @Column({nullable: false, enum: ['station','cms', 'landing'] ,default: 'landing'})
+    type: string;
 
-    @Column({nullable: false,default: false})
-    type: boolean;
-
-    @Column({nullable: true,default: null})
-    checkInAt: Date;
-
-    @ManyToOne(() => User, user => user.attendees,{
+    @ManyToOne(() => Attendee, attendee => attendee.checkIn ,{
         eager: true
     })
-    user: User;
-    @ManyToOne(() => Event, event => event.attendees, {
-        eager: true
-    })
-    event: Event;
+    Attendee: Attendee;
+   
+    @Column({nullable: true,})
+    stationID: string;
 
-    @Column({nullable: true})
-    country: string;
-
-    @Column({nullable: true})
-    plataform: string;
-
-    @Column({nullable: true})
-    browser: string;
-
+    @Column({nullable: true,})
+    experienceID: string;
+   
     @CreateDateColumn()
-    createAt: Date;
+    date: Date;
 }

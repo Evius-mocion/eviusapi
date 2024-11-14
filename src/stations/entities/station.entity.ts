@@ -1,6 +1,7 @@
 import { Event } from 'src/event/entities/event.entity';
 import { Experience } from 'src/experiences/entities/experience.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Participation } from 'src/participation/entities/participation.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('stations')
 export class Station {
@@ -38,4 +39,10 @@ export class Station {
 		nullable: true,
 	})
 	experience?: Experience;
+
+	@OneToMany(() => Participation, participation => participation.station, {
+        nullable: true
+    })
+    participations?: Participation[];
+
 }
