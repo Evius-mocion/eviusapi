@@ -249,7 +249,8 @@ export class EventService {
     if (totalAttendee >= event.capacity) {
       throw new ForbiddenException("Event Capacity is full");
     }
-
+    console.log(data);
+    
     await this.attendeeService.create({
       user,
       fullName: registerDto.fullName,
