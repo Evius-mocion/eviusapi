@@ -26,8 +26,11 @@ export class AttendeeService {
 	}
 
 	async findOneById(attendeeId: string) {
-		const attendee = await this.attendeeRepository.findOneBy({
-			id: attendeeId,
+		const attendee = await this.attendeeRepository.findOne({
+			where: {
+				id: attendeeId,
+			},
+			relations: ['checkIn'],
 		});
 		return { attendee };
 	}
@@ -44,9 +47,9 @@ export class AttendeeService {
 
 		return { attendee };
 	}
-	async checkIn(id: string, checkinData: checkInDto) {
+	async checkIn(id: string, checkInData: checkInDto) {
 		try {
-			const { type, experienceID, stationID } = checkinData;
+			const { type, experienceID, stationID } = checkInData;
 			const Attendee = await this.attendeeRepository.findOneBy({ id });
 			const newCheckIn = this.CheckInRepository.create({
 				Attendee,
