@@ -24,6 +24,15 @@ export class AttendeeService {
   findAll() {
     return `This action returns all assistant`;
   }
+
+  async findOneByEmail(email: string) {
+    const attendee = await this.attendeeRepository.findOneBy({
+      user: {
+        email,
+      },
+    });
+    return attendee;
+  }
   async checkIn(id: string, checkinData: checkInDto) {
     try {
       const {type,experienceID,stationID} = checkinData

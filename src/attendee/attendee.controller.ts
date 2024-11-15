@@ -15,10 +15,11 @@ export class AttendeeController {
   findAll() {
     return this.attendeeService.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return "this.AttendeeService.findOne(+id);"
+  
+  @WithoutAccount()
+  @Get('find/:email')
+  findOne(@Param('email') email: string) {
+    return this.attendeeService.findOneByEmail(email);
   }
 
   @Role(Roles.auditor)
@@ -34,6 +35,7 @@ export class AttendeeController {
   count(@Param('eventId') eventId: string) {
     return this.attendeeService.getTotalAttendeesByEvent(eventId);
   }
+  
   @WithoutAccount()
   @Patch('checkIn/:id')
   update(
