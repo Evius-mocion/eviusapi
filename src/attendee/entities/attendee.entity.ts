@@ -41,7 +41,7 @@ export class Attendee {
 	checkInAt: string;
 
 	@ManyToOne(() => Station, (station) => station.attendees, {
-		nullable: false,
+		nullable: true,
 	})
 	station?: Station;
 
