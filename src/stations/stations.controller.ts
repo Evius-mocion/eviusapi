@@ -22,7 +22,7 @@ export class StationsController {
 
 	@Get(':id')
 	findOne(@Param('id') id: string) {
-		return this.stationsService.findOne(+id);
+		return this.stationsService.findOne(id);
 	}
 
 	@Patch(':id')

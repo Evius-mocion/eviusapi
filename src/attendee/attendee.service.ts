@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
-import { StationsService } from 'src/stations/stations.service';
+import { Station } from 'src/stations/entities/station.entity';
 
 @Injectable()
 export class AttendeeService {
@@ -15,7 +15,8 @@ export class AttendeeService {
 		private attendeeRepository: Repository<Attendee>,
 		@InjectRepository(CheckInActivity)
 		private CheckInRepository: Repository<CheckInActivity>,
-		private readonly stationService: StationsService
+		@InjectRepository(Station)
+		private readonly stationRepository: Repository<Station>
 	) {}
 
 	async create(createAssistantDto: AssistantDto) {
@@ -55,7 +56,7 @@ export class AttendeeService {
 			let station = null;
 
 			if (stationID) {
-				station = await this.stationService.findOne(stationID);
+				station = await this.stationRepository.findOneBy({ id: stationID });
 				if (!station) throw new NotFoundException();
 			}
 			await this.attendeeRepository.update(id, {
