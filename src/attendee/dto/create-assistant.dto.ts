@@ -21,7 +21,7 @@ export class CreateAssistantDto {
     eventId: string;
 
     @IsString()
-    @IsIn(["male","female"])
+    @IsIn(["male","female",'other'])
     gender: genderType;
 }
 export class AssistantDto {
