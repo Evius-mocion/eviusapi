@@ -48,7 +48,7 @@ export class Station {
     participations?: Participation[];
 
     @OneToMany(() => Attendee, attendee => attendee.station, {
-        nullable: true
+        nullable: false
     })
     attendees?: Attendee[];
 }

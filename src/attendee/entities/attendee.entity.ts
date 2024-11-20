@@ -41,9 +41,10 @@ export class Attendee {
 	checkInAt: string;
 
 	@ManyToOne(() => Station, (station) => station.attendees, {
-		nullable: true,
+		nullable: false,
 	})
 	station?: Station;
+
 	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
 	checkInActivity: CheckInActivity[];
 
