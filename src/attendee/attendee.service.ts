@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
 import { Repository } from 'typeorm';
 import { PaginationArgs } from 'src/common/dto';
-import { CheckIn } from './entities/checkIn.entity';
+import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class AttendeeService {
 	constructor(
 		@InjectRepository(Attendee)
 		private attendeeRepository: Repository<Attendee>,
-		@InjectRepository(CheckIn)
-		private CheckInRepository: Repository<CheckIn>
+		@InjectRepository(CheckInActivity)
+		private CheckInRepository: Repository<CheckInActivity>
 	) {}
 
 	async create(createAssistantDto: AssistantDto) {
@@ -81,9 +81,9 @@ export class AttendeeService {
 			attendees: attendees.map((attendee) => ({
 				id: attendee.id,
 				fullName: attendee.fullName,
-				checkIn: attendee.checkIn,
+				checkIn: attendee.checkInActivity,
 				email: attendee.user.email,
-				checkInAt: attendee.checkIn,
+				checkInAt: attendee.checkInActivity,
 			})),
 			total,
 		};

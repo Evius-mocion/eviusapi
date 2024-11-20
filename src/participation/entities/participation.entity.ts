@@ -23,7 +23,7 @@ export class Participation {
       })
       extra: object;
 
-    @ManyToOne(() => Attendee, attendee => attendee.checkIn ,{
+    @ManyToOne(() => Attendee, attendee => attendee.checkInActivity ,{
         eager: true
     })
     Attendee: Attendee;
