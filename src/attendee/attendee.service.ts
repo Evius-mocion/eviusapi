@@ -33,7 +33,6 @@ export class AttendeeService {
 			where: {
 				id: attendeeId,
 			},
-			relations: ['checkIn'],
 		});
 		return { attendee };
 	}
