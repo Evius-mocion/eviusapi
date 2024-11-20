@@ -64,8 +64,8 @@ export class StationsService {
 		}
 	}
 
-	findOne(id: number) {
-		return `This action returns a #${id} station`;
+	async findOne(id: string) {
+		return this.stationRepository.findOneBy({ id });
 	}
 
 	async update(id: string, updateStationDto: UpdateStationDto) {

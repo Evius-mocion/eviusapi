@@ -10,5 +10,6 @@ import { ExperiencesModule } from 'src/experiences/experiences.module';
 	imports: [TypeOrmModule.forFeature([Station]), EventModule, ExperiencesModule],
 	controllers: [StationsController],
 	providers: [StationsService],
+	exports: [StationsService],
 })
 export class StationsModule {}

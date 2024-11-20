@@ -43,7 +43,7 @@ export class Attendee {
 	@ManyToOne(() => Station, (station) => station.attendees, {
 		nullable: true,
 	})
-	station: Station;
+	station?: Station;
 	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
 	checkInActivity: CheckInActivity[];
 

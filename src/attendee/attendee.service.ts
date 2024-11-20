@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
+import { StationsService } from 'src/stations/stations.service';
 
 @Injectable()
 export class AttendeeService {
@@ -13,7 +14,8 @@ export class AttendeeService {
 		@InjectRepository(Attendee)
 		private attendeeRepository: Repository<Attendee>,
 		@InjectRepository(CheckInActivity)
-		private CheckInRepository: Repository<CheckInActivity>
+		private CheckInRepository: Repository<CheckInActivity>,
+		private readonly stationService: StationsService
 	) {}
 
 	async create(createAssistantDto: AssistantDto) {
@@ -49,15 +51,18 @@ export class AttendeeService {
 	}
 	async checkIn(id: string, checkInData: checkInDto) {
 		try {
-			const { type, experienceID, stationID } = checkInData;
-			const Attendee = await this.attendeeRepository.findOneBy({ id });
-			const newCheckIn = this.CheckInRepository.create({
-				Attendee,
-				type,
-				experienceID,
-				stationID,
+			const { date, stationID, type } = checkInData;
+			let station = null;
+
+			if (stationID) {
+				station = await this.stationService.findOne(stationID);
+				if (!station) throw new NotFoundException();
+			}
+			await this.attendeeRepository.update(id, {
+				checkInAt: date ?? new Date().toString(),
+				station: station,
+				checkInType: type,
 			});
-			await this.CheckInRepository.save(newCheckIn);
 			return { message: 'check in successfully' };
 		} catch (error) {
 			throw new InternalServerErrorException('error updating assistant');

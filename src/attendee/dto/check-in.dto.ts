@@ -1,20 +1,19 @@
-import { Transform } from "class-transformer";
-import { IsIn, IsOptional, IsString, IsUUID } from "class-validator";
+import { Transform } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { CheckInType } from 'src/types/attendee.type';
 
 export class checkInDto {
+	@Transform(({ value }) => value.trim())
+	@IsUUID()
+	@IsOptional()
+	stationID?: string;
 
-    @Transform(({ value }) => value.trim())
-    @IsUUID()
-    @IsOptional()
-    experienceID?: string;
+	@IsString()
+	@IsIn([CheckInType.STATION, CheckInType.CMS, CheckInType.LANDING])
+	@IsOptional()
+	type?: CheckInType;
 
-    @Transform(({ value }) => value.trim())
-    @IsUUID()
-    @IsOptional()
-    stationID?: string;
-
-    @IsString()
-    @IsIn(['station','cms', 'landing'])
-    @IsOptional()
-    type?: string;
+	@IsString()
+	@IsNotEmpty()
+	date: string;
 }
