@@ -63,7 +63,8 @@ export class AttendeeService {
 				station: station,
 				checkInType: type,
 			});
-			return { message: 'check in successfully' };
+			const attendee = this.attendeeRepository.findOne({ where: { id }, relations: ['user'] });
+			return { message: 'check in successfully', attendee };
 		} catch (error) {
 			throw new InternalServerErrorException('error updating assistant');
 		}
