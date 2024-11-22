@@ -253,7 +253,7 @@ export class EventService {
     
     await this.attendeeService.create({
       user,
-      fullName: registerDto.fullName ?? user.fullName,
+      fullName: user.fullName,
       event,
       city : data.ipInfo.city,
       country: data.ipInfo.country,
