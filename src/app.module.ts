@@ -14,6 +14,7 @@ import { LocationModule } from "./location/location.module";
 import * as fs from 'fs';
 import { RequestIpModule } from "nest-request-ip";
 import { ParticipationModule } from './participation/participation.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ParticipationModule } from './participation/participation.module';
     StationsModule,
     LocationModule,
     ParticipationModule,
+    FileUploadModule,
   ],
   controllers: [],
   providers: [
