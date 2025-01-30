@@ -65,6 +65,8 @@ export class EventService {
             id: orgId,
           },
         },
+        select: ["id", "name", "dates", "initialDate", "capacity","organizationAlias"]
+        ,
       });
     } catch (error) {
       this.controlDbErros(error);
@@ -283,10 +285,7 @@ export class EventService {
       throw new BadRequestException("No data to update");
     }
     try {
-      const event = await this.eventRepository.findOne({
-        where: { id },
-        relations: ["experiences"],
-      });
+      const event = await this.eventRepository.findOneBy({ id });
       if (!event) {
         throw new NotFoundException("Event not found");
       }
