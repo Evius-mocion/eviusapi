@@ -63,7 +63,8 @@ export class AttendeeService {
 				station: station,
 				checkInType: type,
 			});
-			return { message: 'check in successfully' };
+			const attendee = await this.attendeeRepository.findOneBy({ id });
+			return { message: 'check in successfully', attendee };
 		} catch (error) {
 			throw new InternalServerErrorException('error updating assistant');
 		}
@@ -83,13 +84,11 @@ export class AttendeeService {
 		});
 
 		return {
-			attendees: attendees.map((attendee) => ({
-				id: attendee.id,
-				fullName: attendee.fullName,
-				checkIn: attendee.checkInActivity,
-				email: attendee.user.email,
-				checkInAt: attendee.checkInActivity,
-			})),
+			attendees:attendees.map(attendee=>{
+				delete attendee.event;
+				delete attendee.user;
+				return attendee
+			}),
 			total,
 		};
 	}

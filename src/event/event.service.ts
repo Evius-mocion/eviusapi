@@ -245,11 +245,10 @@ export class EventService {
     if (totalAttendee >= event.capacity) {
       throw new ForbiddenException("Event Capacity is full");
     }
-    console.log(data);
-    
-    await this.attendeeService.create({
+
+    const attendee = await this.attendeeService.create({
       user,
-      fullName: registerDto.fullName,
+      fullName: user.fullName,
       event,
       city : data.ipInfo.city,
       country: data.ipInfo.country,
@@ -264,6 +263,7 @@ export class EventService {
 
     return {
       access_token,
+      attendee,
       user: {
         id: user.id,
         fullName: user.fullName,

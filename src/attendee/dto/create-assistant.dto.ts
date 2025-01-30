@@ -1,43 +1,35 @@
-import { Transform } from "class-transformer";
-import { IsEmail, IsIn, IsString, MinLength } from "class-validator";
-import { User } from "src/common/entities/user.entity";
-import { Event } from "src/event/entities/event.entity";
-import { genderType } from "src/types/user.types";
-
+import { Transform } from 'class-transformer';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { User } from 'src/common/entities/user.entity';
+import { Event } from 'src/event/entities/event.entity';
 
 export class CreateAssistantDto {
+	@Transform(({ value }) => value.trim())
+	@IsString()
+	@MinLength(5)
+    @IsOptional()
+	fullName?: string;
 
-    @Transform(({ value }) => value.trim())
-    @IsString()
-    @MinLength(5)
-    fullName: string;
+	@Transform(({ value }) => value.toLowerCase())
+	@IsEmail()
+	email: string;
 
-    @Transform(({ value }) => value.toLowerCase())
-    @IsEmail()
-    email: string;
-
-    @Transform(({ value }) => value.trim())
-    @IsString()
-    eventId: string;
-
-    @IsString()
-    @IsIn(["male","female",'other'])
-    gender: genderType;
+	@Transform(({ value }) => value.trim())
+	@IsString()
+	eventId: string;
 }
 export class AssistantDto {
+	fullName: string;
 
-    fullName: string;
+	user: User;
 
-    user: User;
+	event: Event;
 
-    event: Event;
+	country: string;
 
-    country: string;
+	city?: string;
 
-    city?: string;
+	browser: string;
 
-    browser: string;
-
-    plataform: string;
- 
+	plataform: string;
 }
