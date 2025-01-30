@@ -22,13 +22,11 @@ export class ExperiencesService {
   }
 
   findByEventId(eventId: string) {
-    return this.experiencesRepository.find({
+   /*  return this.experiencesRepository.find({
       where: {
-        event: {
-          id: eventId
-        }
+       
       }
-    });
+    }); */
   }
   
   findByIds(ids: string[] = []) {

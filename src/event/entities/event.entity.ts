@@ -1,6 +1,5 @@
 import { Attendee } from "src/attendee/entities/attendee.entity";
 import { User } from "src/common/entities/user.entity";
-import { Experience } from "src/experiences/entities/experience.entity";
 import { Organization } from "src/organization/entities/organization.entity";
 import { Station } from "src/stations/entities/station.entity";
 import {
@@ -44,10 +43,7 @@ export class Event {
   @Column({ nullable: false, default: "without description" })
   description: string;
 
-  @OneToMany(() => Experience, (exp) => exp.event, {
-    eager: true,
-  })
-  experiences: Experience[];
+
 
   @ManyToOne(() => Organization, (org) => org.events, {
     eager: true,

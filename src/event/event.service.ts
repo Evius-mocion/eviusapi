@@ -37,16 +37,12 @@ export class EventService {
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
       const org = await this.organizationService.findOne(user.organizationId);
-      const experiences = await this.experiencisService.findByIds(
-        createEventDto.experiencesId,
-      );
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
         initialDate: new Date(createEventDto.dates[0]?.startDate),
         finishDate:
           new Date(createEventDto.dates[createEventDto.dates.length - 1]?.endDate),
-        experiences: experiences,
         price: 0,
         organizationAlias:org.organization.name,
         ...createEventDto,
@@ -96,7 +92,7 @@ export class EventService {
       throw new BadRequestException("Event not found");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { stations, price, attendees, experiences, ...restOfEvent } = event;
+    const { stations, price, attendees, ...restOfEvent } = event;
     return {
       event: {
         ...restOfEvent,
@@ -287,7 +283,6 @@ export class EventService {
       throw new BadRequestException("No data to update");
     }
     try {
-      const { experiencesId, ...othersFields } = data;
       const event = await this.eventRepository.findOne({
         where: { id },
         relations: ["experiences"],
@@ -300,14 +295,8 @@ export class EventService {
 
       const newEvent = {
         ...event,
-        ...othersFields,
+        ...data,
       };
-
-      if (Array.isArray(experiencesId)) {
-				const experiencias = await this.experiencisService.findByIds(experiencesId);
-
-				newEvent.experiences = experiencias;
-			}
 
       if(data.dates){
         newEvent.initialDate = new Date(data.dates[0]?.startDate);
