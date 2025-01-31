@@ -85,9 +85,11 @@ export class AttendeeService {
 
 		return {
 			attendees:attendees.map(attendee=>{
-				delete attendee.event;
-				delete attendee.user;
-				return attendee
+				const {user,event, ...rest} = attendee;
+				return {
+					...rest,
+					email: user.email
+				}
 			}),
 			total,
 		};
