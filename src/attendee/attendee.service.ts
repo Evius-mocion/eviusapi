@@ -88,11 +88,12 @@ export class AttendeeService {
 			},
 			take: limit,
 			skip: (offset - 1) * limit,
+			relations:['user']
 		});
 
 		return {
 			attendees:attendees.map(attendee=>{
-				const {user,event, ...rest} = attendee;
+				const {user, ...rest} = attendee;
 				return {
 					...rest,
 					email: user.email
