@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { Experience } from "src/experiences/entities/experience.entity";
 import {
   IEventAppearance,
   IEventSections,

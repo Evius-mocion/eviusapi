@@ -127,7 +127,7 @@ export class EventService {
 
     const user = await this.userRepository.findOneBy({ email });
 
-    const event = await this.eventRepository.findOneBy({ id: eventId });
+    const event = await this.eventRepository.findOne({where: { id: eventId }, relations: ["organization"]});
     if (!event) {
       throw new BadRequestException("Event not found");
     }
@@ -183,7 +183,7 @@ export class EventService {
     }
 
     const isRegister = !!attendee?.user;
-    
+
     if (attendee) {
       delete attendee.event;
       delete attendee.user;
