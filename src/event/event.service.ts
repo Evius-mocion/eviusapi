@@ -157,17 +157,21 @@ export class EventService {
   async identifierUser(eventId: string, userId: string) {
     let collaboratorRol = null;
 
-    const event = await this.eventRepository.findOneBy({ id: eventId });
-    const { totalAttendee } =
-      await this.attendeeService.getTotalAttendeesByEvent(eventId);
-
+    const event = await this.eventRepository.findOne({where: { id: eventId }, relations: ["organization"]});
+    
     if (!event) {
       throw new NotFoundException("Event not found");
     }
+    
+    const { totalAttendee } =
+      await this.attendeeService.getTotalAttendeesByEvent(eventId);
+    
+    
     const attendee = await this.attendeeService.findOneByUserIdAndEventId(
       userId,
       event.id,
     );
+
     const collaborator =
       await this.collaboratorService.findOneByIdAndOrganizationId(
         userId,
@@ -177,11 +181,14 @@ export class EventService {
     if (collaborator) {
       collaboratorRol = collaborator.rol;
     }
+
     const isRegister = !!attendee?.user;
+    
     if (attendee) {
       delete attendee.event;
       delete attendee.user;
     }
+
     return {
       event: {
         id: event.id,
