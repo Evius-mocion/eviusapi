@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany, PrimaryColumn, JoinColumn, Generated } from 'typeorm';
 import { Event } from 'src/event/entities/event.entity';
 import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
@@ -9,20 +9,33 @@ import { CheckInType } from 'src/types/attendee.type';
 
 @Entity('attendees')
 export class Attendee {
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
+	
+	@Column({ type: 'uuid', unique: true })
+	@Generated('uuid')
+  	id: string;
+	
+	@PrimaryColumn({type: 'uuid'})
+  	userId: string;
+
+	@PrimaryColumn({type: 'uuid'})
+  	eventId: string;
 
 	@Column({ nullable: false })
 	fullName: string;
 
+	@Column({ nullable: false})
+	email: string;
+
 	@ManyToOne(() => User, (user) => user.attendees, {
-		eager: true,
+		eager: false,
 	})
+	@JoinColumn({ name: 'userId' })
 	user: User;
 
 	@ManyToOne(() => Event, (event) => event.attendees, {
-		eager: true,
+		eager: false,
 	})
+	@JoinColumn({ name: 'eventId' })
 	event: Event;
 
 	@Column({ nullable: true })

@@ -46,7 +46,7 @@ export class Event {
 
 
   @ManyToOne(() => Organization, (org) => org.events, {
-    eager: true,
+    eager: false,
   })
   organization: Organization;
 
@@ -54,7 +54,7 @@ export class Event {
   attendees: Attendee[];
 
   @OneToMany(() => Station, (station) => station.event, {
-    eager: true,
+    eager: false,
   })
   stations: Station[];
 
@@ -97,7 +97,7 @@ export class Event {
   price: number;
 
   @ManyToOne(() => User, (user) => user.events, {
-    eager: true,
+    eager: false,
   })
   createdBy: User;
 

@@ -16,4 +16,5 @@ export class checkInDto {
 	@IsString()
 	@IsNotEmpty()
 	date: string;
+
 }

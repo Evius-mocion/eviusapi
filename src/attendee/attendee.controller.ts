@@ -1,9 +1,10 @@
-import { Controller, Get, Patch, Param, Delete, Query, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Delete, Query, Body, Post } from '@nestjs/common';
 import { AttendeeService } from './attendee.service';
 import { PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
-import { WithoutAccount, Role } from 'src/common/decorators';
+import { WithoutAccount, Role, Public } from 'src/common/decorators';
 import { checkInDto } from './dto/check-in.dto';
+import { CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 
 @Controller('attendee')
 export class AttendeeController {
@@ -43,7 +44,11 @@ export class AttendeeController {
 	update(@Param('id') id: string, @Body() CheckInDto: checkInDto) {
 		return this.attendeeService.checkIn(id, CheckInDto);
 	}
-
+	@Public()
+	@Post('import')
+	importAttendee(@Body() data: CreateMasiveAssistantDto) {
+		return this.attendeeService.registerAttendeesInEvent(data);
+	}
 	@Delete(':id')
 	remove(@Param('id') id: string) {
 		return this.attendeeService.remove(+id);

@@ -65,8 +65,8 @@ export class EventService {
             id: orgId,
           },
         },
-        select: ["id", "name", "dates", "initialDate", "capacity","organizationAlias"]
-        ,
+        select: ["id", "name", "dates", "initialDate", "capacity","organizationAlias"],
+        cache: true,
       });
     } catch (error) {
       this.controlDbErros(error);
@@ -220,8 +220,7 @@ export class EventService {
       throw new NotFoundException("Event not found");
     }
 
-    const { totalAttendee } =
-      await this.attendeeService.getTotalAttendeesByEvent(registerDto.eventId);
+    const { totalAttendee } = await this.attendeeService.getTotalAttendeesByEvent(registerDto.eventId);
 
     let user = await this.userRepository.findOneBy({
       email: registerDto.email,
@@ -251,6 +250,7 @@ export class EventService {
     const attendee = await this.attendeeService.create({
       user,
       fullName: user.fullName,
+      email: user.email,
       event,
       city : data.ipInfo.city,
       country: data.ipInfo.country,
@@ -265,7 +265,13 @@ export class EventService {
 
     return {
       access_token,
-      attendee,
+      attendee: {
+        id: attendee.id,
+        fullName: attendee.fullName,
+        email: attendee.email,
+        checkInAt: attendee.checkInAt,
+        checkInType: attendee.checkInType,
+      },
       user: {
         id: user.id,
         fullName: user.fullName,

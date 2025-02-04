@@ -1,12 +1,14 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AssistantDto } from './dto/create-assistant.dto';
+import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
 import { Station } from 'src/stations/entities/station.entity';
+import { User } from 'src/common/entities';
+import { Event } from 'src/event/entities/event.entity';
 
 @Injectable()
 export class AttendeeService {
@@ -16,7 +18,11 @@ export class AttendeeService {
 		@InjectRepository(CheckInActivity)
 		private CheckInRepository: Repository<CheckInActivity>,
 		@InjectRepository(Station)
-		private readonly stationRepository: Repository<Station>
+		private readonly stationRepository: Repository<Station>,
+		@InjectRepository(Event)
+		private eventRepository: Repository<Event>,
+		@InjectRepository(User)
+		private userRepository: Repository<User>,
 	) {}
 
 	async create(createAssistantDto: AssistantDto) {
@@ -58,12 +64,13 @@ export class AttendeeService {
 				station = await this.stationRepository.findOneBy({ id: stationID });
 				if (!station) throw new NotFoundException();
 			}
-			await this.attendeeRepository.update(id, {
+			const result =await this.attendeeRepository.update(id, {
 				checkInAt: date ?? new Date().toString(),
 				station: station,
 				checkInType: type,
 			});
-			const attendee = await this.attendeeRepository.findOneBy({ id });
+			const { raw } = result;
+			const attendee = raw[0];
 			return { message: 'check in successfully', attendee };
 		} catch (error) {
 			throw new InternalServerErrorException('error updating assistant');
@@ -94,6 +101,49 @@ export class AttendeeService {
 			total,
 		};
 	}
+	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
+		const { attendees, eventId } = data
+		const erros = [];
+		const event = await this.eventRepository.findOneBy({ id: eventId });
+
+		if (!event) throw new NotFoundException('event not found');
+
+		const emails = attendees.map(attendee=>attendee.email);
+		const [userRegistered] = await this.userRepository.findAndCount({where: {email: In(emails)}});
+		
+		const attendeesWithUser = attendees.map((attendee)=>({
+			...attendee,
+			user: userRegistered.find(user=>user.email === attendee.email)
+		}))
+		
+		const preRegistered = [];
+		
+		for (const attendee of attendeesWithUser) {
+			
+
+			if (!attendee.user) {
+				try {
+				const newUser = await this.userRepository.save(attendee);
+				attendee.user = newUser;
+				} catch (error) {
+					erros.push(attendee)
+				}
+			}
+			const attendeeCreated = this.attendeeRepository.create({
+				...attendee,
+				event,
+			})
+			preRegistered.push(attendeeCreated);
+		} 
+		
+		const resultImport = await this.attendeeRepository.save(preRegistered, {reload: true});
+		const result = resultImport.map(attendee=> ({new: attendee.id !== undefined, email: attendee.email}));
+		console.log(resultImport);
+		
+		return { message: 'import successfully', erros , errorsCount: erros.length , successCount: resultImport.length , success: result};
+		
+	}
+
 	async getTotalAttendeesByEvent(eventId: string) {
 		const totalAttendee = await this.attendeeRepository.count({
 			where: {
@@ -107,12 +157,8 @@ export class AttendeeService {
 
 	async findOneByUserIdAndEventId(userID: string, event: string) {
 		return await this.attendeeRepository.findOneBy({
-			user: {
-				id: userID,
-			},
-			event: {
-				id: event,
-			},
+			userId: userID,
+			eventId: event,
 		});
 	}
 

@@ -1,5 +1,5 @@
-import { Transform } from 'class-transformer';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEmail, IsObject, IsOptional, IsString, MinLength } from 'class-validator';
 import { User } from 'src/common/entities/user.entity';
 import { Event } from 'src/event/entities/event.entity';
 
@@ -17,7 +17,26 @@ export class CreateAssistantDto {
 	@Transform(({ value }) => value.trim())
 	@IsString()
 	eventId: string;
+
+	@IsObject()
+	@IsOptional()
+	attendeeData?: IAttendeeData;
+
 }
+
+export class CreateMasiveAssistantDto {
+	@IsArray()
+	@Type(() => CreateAssistantDto)
+	attendees: CreateAssistantDto[];
+
+	@IsString()
+	eventId: string;
+}
+
+interface IAttendeeData {
+	[key: string]: string;
+}
+
 export class AssistantDto {
 	fullName: string;
 
@@ -25,11 +44,13 @@ export class AssistantDto {
 
 	event: Event;
 
+	email: string;
+
 	country: string;
 
 	city?: string;
 
-	browser: string;
+	browser?: string;
 
-	plataform: string;
+	plataform?: string;
 }
