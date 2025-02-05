@@ -71,6 +71,6 @@ export class Attendee {
 	@Column({ type: 'jsonb', nullable: true })
   	properties: Record<string, any>; 
 
-	@CreateDateColumn({type: 'timestamp with local time zone'})
+	@CreateDateColumn({type: 'timestamptz'})
 	createAt: Date;
 }
