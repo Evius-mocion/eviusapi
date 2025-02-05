@@ -20,22 +20,19 @@ export class CreateAssistantDto {
 
 	@IsObject()
 	@IsOptional()
-	attendeeData?: IAttendeeData;
+	attendeeData?: Record<string, any>[];
 
 }
 
 export class CreateMasiveAssistantDto {
 	@IsArray()
-	@Type(() => CreateAssistantDto)
-	attendees: CreateAssistantDto[];
+	attendees: any[];
 
 	@IsString()
 	eventId: string;
 }
 
-interface IAttendeeData {
-	[key: string]: string;
-}
+
 
 export class AssistantDto {
 	fullName: string;
@@ -53,4 +50,6 @@ export class AssistantDto {
 	browser?: string;
 
 	plataform?: string;
+
+	properties?: Record<string, any>; 
 }

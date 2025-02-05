@@ -35,6 +35,9 @@ import { FileUploadModule } from './file-upload/file-upload.module';
         ssl: process.env.PRODUCTION === "true" ? {
           ca: fs.readFileSync(process.env.SSL_CERTIFICATE_PATH).toString(), // read the SSL certificate from the file path, you need donwload the certificate from the database connection settings in digital ocean
         } : true,
+        extra: {
+          timezone: "utc",
+        }
       }),
     }), 
 

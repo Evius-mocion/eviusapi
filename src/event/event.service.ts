@@ -54,9 +54,11 @@ export class EventService {
       throw new BadRequestException(error.message);
     }
   }
+  
   async findOneBy(id: string) {
     return this.eventRepository.findOneBy({ id });
   }
+
   async findAll(orgId: string) {
     try {
       return await this.eventRepository.find({
@@ -262,6 +264,8 @@ export class EventService {
       country: data.ipInfo.country,
       browser: data.browser,
       plataform : data.os,
+      properties: registerDto.attendeeData,
+
     });
 
     const access_token = this.jwtService.sign({

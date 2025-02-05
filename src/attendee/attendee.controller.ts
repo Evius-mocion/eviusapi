@@ -1,14 +1,31 @@
-import { Controller, Get, Patch, Param, Delete, Query, Body, Post } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Delete, Query, Body, Post, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { AttendeeService } from './attendee.service';
 import { PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
 import { WithoutAccount, Role, Public } from 'src/common/decorators';
 import { checkInDto } from './dto/check-in.dto';
-import { CreateMasiveAssistantDto } from './dto/create-assistant.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as XLSX from 'xlsx';
+import { Response } from 'express';
 
 @Controller('attendee')
 export class AttendeeController {
 	constructor(private readonly attendeeService: AttendeeService) {}
+	
+	private parseExcel(file: Express.Multer.File) {
+		const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+		const sheetName = workbook.SheetNames[0];
+		const sheet = workbook.Sheets[sheetName];
+		return XLSX.utils.sheet_to_json(sheet); // 🔹 Devuelve un array de objetos con los datos
+	}
+
+	private convertExcel(data: any[]){
+		const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'Attendees');
+		XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+		return wb;
+	}
 
 	@Get()
 	findAll() {
@@ -44,11 +61,32 @@ export class AttendeeController {
 	update(@Param('id') id: string, @Body() CheckInDto: checkInDto) {
 		return this.attendeeService.checkIn(id, CheckInDto);
 	}
-	@Public()
-	@Post('import')
-	importAttendee(@Body() data: CreateMasiveAssistantDto) {
-		return this.attendeeService.registerAttendeesInEvent(data);
+	
+	@Role(Roles.admin)
+	@Post('import/:eventId')
+	@UseInterceptors(FileInterceptor('file'))
+	importAttendee(
+		@UploadedFile() file: Express.Multer.File,
+		@Param('eventId') eventId: string) {
+		const attendees = this.parseExcel(file);
+		return this.attendeeService.registerAttendeesInEvent({
+			attendees,
+			eventId,
+		});
 	}
+	
+	@Role(Roles.admin)
+	@Get('export/:eventId')
+	async exportAttendee(
+		@Res() res: Response,
+		@Param('eventId') eventId: string) {
+		const attendees = await this.attendeeService.exportAttendees(eventId);
+		const wb = this.convertExcel(attendees);
+		res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		res.setHeader('Content-Disposition', 'attachment; filename=attendees.xlsx');
+		res.send(wb);
+	}
+
 	@Delete(':id')
 	remove(@Param('id') id: string) {
 		return this.attendeeService.remove(+id);
