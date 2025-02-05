@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
@@ -9,6 +9,7 @@ import { checkInDto } from './dto/check-in.dto';
 import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
 import { Event } from 'src/event/entities/event.entity';
+import { validateAttendeesData } from 'src/common/utils/validations.util';
 
 @Injectable()
 export class AttendeeService {
@@ -39,6 +40,7 @@ export class AttendeeService {
 			where: {
 				id: attendeeId,
 			},
+			relations: ['user'],
 		});
 		return { attendee };
 	}
@@ -82,35 +84,51 @@ export class AttendeeService {
 
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
-				event: {
-					id: eventId,
-				},
+				eventId,
 			},
+			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType'],
 			take: limit,
 			skip: (offset - 1) * limit,
-			relations:['user']
+		
 		});
 
 		return {
-			attendees:attendees.map(attendee=>{
-				const {user, ...rest} = attendee;
-				return {
-					...rest,
-					email: user.email
-				}
-			}),
+			attendees,
 			total,
 		};
+	}
+
+	
+	async exportAttendees(eventId: string) {
+		const attendees = await this.attendeeRepository.find({
+			where: {
+				eventId,
+			}
+		});
+		return attendees.map(attendee=>({
+			name: attendee.fullName,
+			email: attendee.email,
+			country: attendee.country ?? '',
+			city: attendee.city ?? '',
+			plataform: attendee.plataform ?? '',
+			browser: attendee.browser ?? '',
+			checkInAt: attendee.checkInAt ?? '',
+			checkInType: attendee.checkInType ?? '',
+		}));
 	}
 	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
 		const { attendees, eventId } = data
 		const erros = [];
+		const isValid = validateAttendeesData(attendees);
+
+		if (!isValid.valid) throw new BadRequestException(isValid.errors);
+
 		const event = await this.eventRepository.findOneBy({ id: eventId });
 
 		if (!event) throw new NotFoundException('event not found');
 
 		const emails = attendees.map(attendee=>attendee.email);
-		const [userRegistered] = await this.userRepository.findAndCount({where: {email: In(emails)}});
+		const userRegistered = await this.userRepository.find({where: {email: In(emails)}});
 		
 		const attendeesWithUser = attendees.map((attendee)=>({
 			...attendee,
