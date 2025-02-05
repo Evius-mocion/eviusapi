@@ -182,7 +182,6 @@ export class EventService {
       collaboratorRol = collaborator.rol;
     }
 
-    const isRegister = !!attendee?.user;
 
     if (attendee) {
       delete attendee.event;
@@ -206,7 +205,7 @@ export class EventService {
         landingDescription: event.landingDescription,
       },
       totalAttendee,
-      isRegister,
+      isRegister: !!attendee,
       rol: collaboratorRol,
       attendee,
       organization: {
