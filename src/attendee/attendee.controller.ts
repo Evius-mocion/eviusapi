@@ -1,6 +1,6 @@
 import { Controller, Get, Patch, Param, Delete, Query, Body, Post, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { AttendeeService } from './attendee.service';
-import { PaginationArgs } from 'src/common/dto';
+import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
 import { WithoutAccount, Role, Public } from 'src/common/decorators';
 import { checkInDto } from './dto/check-in.dto';
@@ -46,8 +46,11 @@ export class AttendeeController {
 
 	@Role(Roles.auditor)
 	@Get(':orgId/all/:eventId')
-	getAssistant(@Query() pagination: PaginationArgs, @Param('eventId') eventId: string) {
-		return this.attendeeService.getAttendeeByEvent(eventId, pagination);
+	getAssistant(
+	@Query() Filters: FilterAttendeeArgs,
+	@Query() pagination: PaginationArgs, 
+	@Param('eventId') eventId: string) {
+		return this.attendeeService.getAttendeeByEvent(eventId, pagination,Filters);
 	}
 
 	@WithoutAccount()
@@ -85,6 +88,12 @@ export class AttendeeController {
 		res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		res.setHeader('Content-Disposition', 'attachment; filename=attendees.xlsx');
 		res.send(wb);
+	}
+
+	@Public()
+	@Patch(':id')
+	upddateAttendee(@Param('id') id: string, @Body() updateAssistantDto: any) {
+		return this.attendeeService.update(id, updateAssistantDto);
 	}
 
 	@Delete(':id')

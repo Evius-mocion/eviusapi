@@ -99,16 +99,11 @@ export class OrganizationService {
 
       const { offset, limit } = pagination;
 
-      
-     
-      
       const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
         where: {organizationId: orgId, status},
         take: limit,
         skip: (offset - 1) * limit,
       });  
-
-      
 
       return {
           invitations,

@@ -15,6 +15,23 @@ export class PaginationArgs {
         
 }
 
+export class FilterAttendeeArgs {
+    @IsOptional()
+    email: string;
+
+    @IsOptional()
+    fullName: string;
+
+    @IsOptional()
+    checkInType: string;
+
+    @IsOptional()
+    checkInAt: string;
+
+    @IsOptional()
+    orderBy: string;
+}
+
 export class UuidDto {
     @IsUUID()
     orgId: string;

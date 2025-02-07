@@ -3,7 +3,7 @@ import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.d
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
 import { In, Repository } from 'typeorm';
-import { PaginationArgs } from 'src/common/dto';
+import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
 import { Station } from 'src/stations/entities/station.entity';
@@ -79,14 +79,15 @@ export class AttendeeService {
 		}
 	}
 
-	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs) {
+	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
 		const { offset, limit } = pagination;
 
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
 				eventId,
+				
 			},
-			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType'],
+			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser'],
 			take: limit,
 			skip: (offset - 1) * limit,
 		
@@ -180,7 +181,16 @@ export class AttendeeService {
 			eventId: event,
 		});
 	}
-
+	async update(id: string, updateAssistantDto: Partial<AssistantDto>) {
+		const result = await this.attendeeRepository.update({
+			id
+		}, updateAssistantDto);
+		const { raw } = result;
+		console.log(result);
+		
+		const attendee = raw[0];
+		return { message: 'assistant updated successfully', attendee };
+	}
 	remove(id: number) {
 		return `This action removes a #${id} assistant`;
 	}
