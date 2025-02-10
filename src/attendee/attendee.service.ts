@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
@@ -81,16 +81,21 @@ export class AttendeeService {
 
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
 		const { offset, limit } = pagination;
+		const { orderBy, order, ...others } = Filter;
+		const filterOptions = this.filterAttendee(others);
 
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
 				eventId,
-				
+				...filterOptions
 			},
 			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser'],
 			take: limit,
 			skip: (offset - 1) * limit,
-		
+			cache: true,
+			order: {
+				[orderBy]: [order],
+			}
 		});
 
 		return {
@@ -191,5 +196,14 @@ export class AttendeeService {
 	}
 	remove(id: number) {
 		return `This action removes a #${id} assistant`;
+	}
+	
+	filterAttendee(Filter: Partial<FilterAttendeeArgs>) : FindOptionsWhere<Attendee>{
+		const where: FindOptionsWhere<Attendee> = {};
+		if(Filter.email) where.email = Filter.email;
+		if(Filter.fullName) where.fullName = Filter.fullName;
+		if(Filter.checkInType) where.checkInType = Filter.checkInType;
+		if(Filter.checkInAt) where.checkInAt = Filter.checkInAt;
+		return where;
 	}
 }

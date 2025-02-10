@@ -1,5 +1,6 @@
 import { Transform } from "class-transformer";
-import { IsOptional, IsUUID, Min } from "class-validator";
+import { IsEnum, IsIn, IsOptional, IsUUID, Min } from "class-validator";
+import { CheckInType } from "src/types/attendee.type";
 
 export class PaginationArgs {
     
@@ -17,19 +18,25 @@ export class PaginationArgs {
 
 export class FilterAttendeeArgs {
     @IsOptional()
-    email: string;
+    email?: string;
 
     @IsOptional()
-    fullName: string;
+    fullName?: string;
 
     @IsOptional()
-    checkInType: string;
+    @IsEnum(CheckInType)
+    checkInType?: CheckInType;
 
     @IsOptional()
-    checkInAt: string;
+    checkInAt?: string;
 
     @IsOptional()
-    orderBy: string;
+    @IsIn(['email', 'fullName', 'checkInAt', 'checkInType'])
+    orderBy?: string;
+
+    @IsOptional()
+    @IsIn(['ASC', 'DESC'])
+    order?: string;
 }
 
 export class UuidDto {
