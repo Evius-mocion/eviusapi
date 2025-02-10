@@ -182,13 +182,11 @@ export class AttendeeService {
 		});
 	}
 	async update(id: string, updateAssistantDto: Partial<AssistantDto>) {
-		const result = await this.attendeeRepository.update({
-			id
-		}, updateAssistantDto);
-		const { raw } = result;
-		console.log(result);
-		
-		const attendee = raw[0];
+		await this.attendeeRepository.update({ id }, updateAssistantDto);
+		const attendee = await this.attendeeRepository.findOneBy({ id });
+		if (!attendee) {
+			throw new NotFoundException(`Attendee with ID ${id} not found`);
+		}
 		return { message: 'assistant updated successfully', attendee };
 	}
 	remove(id: number) {
