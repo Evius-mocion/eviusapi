@@ -141,7 +141,7 @@ export class AttendeeService {
 			const validation  = validateAttendeesData(attendee);
 
 			if (!validation.isValid) {
-				errors.push({email: attendee.email + '', errors: validation.errors});
+				errors.push({fullName:attendee.fullName, email: attendee.email + '', errors: validation.errors});
 				continue;
 			}
 
@@ -162,7 +162,6 @@ export class AttendeeService {
 		
 		const resultImport = await this.attendeeRepository.save(preRegistered, {reload: true});
 		const result = resultImport.map(attendee=> ({new: attendee.id !== undefined, email: attendee.email}));
-		console.log(resultImport);
 		
 		return { message: 'import successfully', errors , errorsCount: errors.length , successCount: resultImport.length , success: result};
 		
