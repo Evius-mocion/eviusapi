@@ -141,7 +141,7 @@ export class AttendeeService {
 			const validation  = validateAttendeesData(attendee);
 
 			if (!validation.isValid) {
-				errors.push({email: attendee.email, errors: validation.errors});
+				errors.push({email: attendee.email + '', errors: validation.errors});
 				continue;
 			}
 
