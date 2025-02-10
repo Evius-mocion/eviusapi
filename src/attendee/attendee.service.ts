@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
@@ -81,21 +81,19 @@ export class AttendeeService {
 
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
 		const { offset, limit } = pagination;
-		const { orderBy, order, ...others } = Filter;
-		const filterOptions = this.filterAttendee(others);
-
+		const {where,order} = this.filterAttendee(Filter);
+		console.log(where,order);
+		
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
 				eventId,
-				...filterOptions
+				...where
 			},
 			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser'],
 			take: limit,
 			skip: (offset - 1) * limit,
 			cache: true,
-			order: {
-				[orderBy]: [order],
-			}
+			order,
 		});
 
 		return {
@@ -198,12 +196,18 @@ export class AttendeeService {
 		return `This action removes a #${id} assistant`;
 	}
 	
-	filterAttendee(Filter: Partial<FilterAttendeeArgs>) : FindOptionsWhere<Attendee>{
+	filterAttendee(Filter: Partial<FilterAttendeeArgs>) {
 		const where: FindOptionsWhere<Attendee> = {};
-		if(Filter.email) where.email = Filter.email;
-		if(Filter.fullName) where.fullName = Filter.fullName;
+		const order: FindOptionsOrder<Attendee> = {};
+		if(Filter.orderBy && Filter.order) order[Filter.orderBy] = Filter.order ?? 'ASC';
+
+		if(Filter.email) where.email =  Like(`%${Filter.email}%`);
+		if(Filter.fullName) where.fullName =  Like(`%${Filter.fullName}%`);
 		if(Filter.checkInType) where.checkInType = Filter.checkInType;
-		if(Filter.checkInAt) where.checkInAt = Filter.checkInAt;
-		return where;
+		if(Filter.checkInAt) where.checkInAt =  Like(`%${Filter.checkInAt}%`);
+		return {
+			where,
+			order,
+		};
 	}
 }
