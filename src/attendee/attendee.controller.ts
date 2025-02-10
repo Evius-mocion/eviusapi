@@ -78,7 +78,7 @@ export class AttendeeController {
 		});
 	}
 	
-	@Role(Roles.admin)
+	@Public()
 	@Get('export/:eventId')
 	async exportAttendee(
 		@Res() res: Response,
@@ -87,6 +87,7 @@ export class AttendeeController {
 		const wb = this.convertExcel(attendees);
 		res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		res.setHeader('Content-Disposition', 'attachment; filename=attendees.xlsx');
+		
 		res.send(wb);
 	}
 

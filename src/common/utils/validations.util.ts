@@ -2,8 +2,8 @@
 
 export const REGEX_EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export function validateEmail(password: string): boolean {
-    return REGEX_EMAIL.test(password);
+export function validateEmail(email: string): boolean {
+    return REGEX_EMAIL.test(email);
   }
 
   type Attendee = {
@@ -12,21 +12,19 @@ export function validateEmail(password: string): boolean {
     [key: string]: any; // Permite otras propiedades opcionales
   };
   
- export function validateAttendeesData(attendees: Attendee[]): { valid: boolean; errors: string[] } {
-    const errors: string[] = [];
-  
-    attendees.forEach((attendee, index) => {
-      if (!attendee.email || typeof attendee.email !== 'string') {
-        errors.push(`Error en el asistente ${index + 1}: 'email' es obligatorio y debe ser un string.`);
-      }
-      if (!attendee.fullName || typeof attendee.fullName !== 'string') {
-        errors.push(`Error en el asistente ${index + 1}: 'fullName' es obligatorio y debe ser un string.`);
-      }
-    });
-  
+ export function validateAttendeesData(attendee: Attendee): { isValid: boolean; errors: string[] } {
+    const errors = []
+    const { email, fullName , ...others} = attendee;
+
+    if (!validateEmail(email)) {
+      errors.push('Invalid email');
+    }
+    if (!fullName || fullName.trim() === '') {
+      errors.push('Full name is required');
+    }
+      
     return {
-      valid: errors.length === 0,
+      isValid : errors.length === 0,
       errors,
     };
   }
-  

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
@@ -82,8 +82,7 @@ export class AttendeeService {
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
 		const { offset, limit } = pagination;
 		const {where,order} = this.filterAttendee(Filter);
-		console.log(where,order);
-		
+
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
 				eventId,
@@ -122,10 +121,7 @@ export class AttendeeService {
 	}
 	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
 		const { attendees, eventId } = data
-		const erros = [];
-		const isValid = validateAttendeesData(attendees);
-
-		if (!isValid.valid) throw new BadRequestException(isValid.errors);
+		const errors = [];
 
 		const event = await this.eventRepository.findOneBy({ id: eventId });
 
@@ -142,14 +138,19 @@ export class AttendeeService {
 		const preRegistered = [];
 		
 		for (const attendee of attendeesWithUser) {
-			
+			const validation  = validateAttendeesData(attendee);
+
+			if (!validation.isValid) {
+				errors.push({email: attendee.email, errors: validation.errors});
+				continue;
+			}
 
 			if (!attendee.user) {
 				try {
 				const newUser = await this.userRepository.save(attendee);
 				attendee.user = newUser;
 				} catch (error) {
-					erros.push(attendee)
+					errors.push({email: attendee.email, errors: [ 'error creating user']});
 				}
 			}
 			const attendeeCreated = this.attendeeRepository.create({
@@ -163,7 +164,7 @@ export class AttendeeService {
 		const result = resultImport.map(attendee=> ({new: attendee.id !== undefined, email: attendee.email}));
 		console.log(resultImport);
 		
-		return { message: 'import successfully', erros , errorsCount: erros.length , successCount: resultImport.length , success: result};
+		return { message: 'import successfully', errors , errorsCount: errors.length , successCount: resultImport.length , success: result};
 		
 	}
 
