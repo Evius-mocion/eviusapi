@@ -140,9 +140,9 @@ export class AttendeeService {
 		
 		for (const attendee of attendeesWithUser) {
 			const validation  = validateAttendeesData(attendee,event.registrationFields);
-
+			const { email, fullName, user, ...properties} = attendee;
 			if (!validation.isValid) {
-				errors.push({fullName:attendee.fullName, email: attendee.email + '', errors: validation.errors});
+				errors.push({fullName, email: email + '', errors: validation.errors});
 				continue;
 			}
 
@@ -151,12 +151,13 @@ export class AttendeeService {
 				const newUser = await this.userRepository.save(attendee);
 				attendee.user = newUser;
 				} catch (error) {
-					errors.push({email: attendee.email, errors: [ 'error creating user']});
+					errors.push({email, errors: [ 'error creating user']});
 				}
 			}
 			const attendeeCreated = this.attendeeRepository.create({
-				...attendee,
+				properties,
 				event,
+				...attendee,
 			})
 			preRegistered.push(attendeeCreated);
 		} 
