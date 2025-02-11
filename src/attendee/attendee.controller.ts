@@ -16,7 +16,7 @@ export class AttendeeController {
 		const workbook = XLSX.read(file.buffer, { type: 'buffer' });
 		const sheetName = workbook.SheetNames[0];
 		const sheet = workbook.Sheets[sheetName];
-		return XLSX.utils.sheet_to_json(sheet); // 🔹 Devuelve un array de objetos con los datos
+		return XLSX.utils.sheet_to_json(sheet,{raw: false}); // 🔹 Devuelve un array de objetos con los datos
 	}
 
 	private convertExcel(data: any[]){
@@ -72,6 +72,8 @@ export class AttendeeController {
 		@UploadedFile() file: Express.Multer.File,
 		@Param('eventId') eventId: string) {
 		const attendees = this.parseExcel(file);
+		console.log(attendees);
+		
 		return this.attendeeService.registerAttendeesInEvent({
 			attendees,
 			eventId,
@@ -97,8 +99,9 @@ export class AttendeeController {
 		return this.attendeeService.update(id, updateAssistantDto);
 	}
 
+	@Role(Roles.admin)
 	@Delete(':id')
 	remove(@Param('id') id: string) {
-		return this.attendeeService.remove(+id);
+		return this.attendeeService.remove(id);
 	}
 }

@@ -24,7 +24,7 @@ export class AttendeeService {
 		private eventRepository: Repository<Event>,
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
-	) {}
+	) { }
 
 	async create(createAssistantDto: AssistantDto) {
 		const attendee = this.attendeeRepository.create(createAssistantDto);
@@ -66,7 +66,7 @@ export class AttendeeService {
 				station = await this.stationRepository.findOneBy({ id: stationID });
 				if (!station) throw new NotFoundException();
 			}
-			const result =await this.attendeeRepository.update(id, {
+			const result = await this.attendeeRepository.update(id, {
 				checkInAt: date ?? new Date().toString(),
 				station: station,
 				checkInType: type,
@@ -81,7 +81,7 @@ export class AttendeeService {
 
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
 		const { offset, limit } = pagination;
-		const {where,order} = this.filterAttendee(Filter);
+		const { where, order } = this.filterAttendee(Filter);
 
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
@@ -101,14 +101,14 @@ export class AttendeeService {
 		};
 	}
 
-	
+
 	async exportAttendees(eventId: string) {
 		const attendees = await this.attendeeRepository.find({
 			where: {
 				eventId,
 			}
 		});
-		return attendees.map(attendee=>({
+		return attendees.map(attendee => ({
 			name: attendee.fullName,
 			email: attendee.email,
 			country: attendee.country ?? '',
@@ -119,54 +119,61 @@ export class AttendeeService {
 			checkInType: attendee.checkInType ?? '',
 		}));
 	}
-	
+
+	//Method to import attendees in an event from an excel file
 	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
 		const { attendees, eventId } = data
 		const errors = [];
 
-		const event = await this.eventRepository.findOneBy({ id: eventId });
-		
-		if (!event) throw new NotFoundException('event not found');
+		const event = await this.eventRepository.findOneBy({ id: eventId }); //find event
 
-		const emails = attendees.map(attendee=>attendee.email);
-		const userRegistered = await this.userRepository.find({where: {email: In(emails)}});
-		
-		const attendeesWithUser = attendees.map((attendee)=>({
+		if (!event) throw new NotFoundException('event not found');	//if event not found throw error
+
+		const emails = attendees.map(attendee => attendee.email);
+		const userRegistered = await this.userRepository.find({ where: { email: In(emails) } }); //find users with the emails in the excel file
+
+		const attendeesWithUser = attendees.map((attendee) => ({
 			...attendee,
-			user: userRegistered.find(user=>user.email === attendee.email)
+			user: userRegistered.find(user => user.email === attendee.email)	// add user to the attendee object
 		}))
-		
+
 		const preRegistered = [];
-		
-		for (const attendee of attendeesWithUser) {
-			const validation  = validateAttendeesData(attendee,event.registrationFields);
-			const { email, fullName, user, ...properties} = attendee;
+
+		for (const attendee of attendeesWithUser) {	//loop through the attendees
+			const validation = validateAttendeesData(attendee, event.registrationFields); //validate the attendee data, check if the data is valid
+			const { email, fullName, user, ...properties } = attendee;
+
 			if (!validation.isValid) {
-				errors.push({fullName, email: email + '', errors: validation.errors});
+				errors.push({ fullName, email: email + '', errors: validation.errors });
 				continue;
 			}
 
-			if (!attendee.user) {
+
+			if (!attendee.user) {  // if the user is not registered, create a new user
 				try {
-				const newUser = await this.userRepository.save(attendee);
-				attendee.user = newUser;
+					const newUser = await this.userRepository.save(attendee);
+					attendee.user = newUser;
 				} catch (error) {
-					errors.push({email, errors: [ 'error creating user']});
+					errors.push({ email, errors: ['error creating user'] });
+					continue;
 				}
 			}
+
+
 			const attendeeCreated = this.attendeeRepository.create({
-				properties,
+				properties, //add the properties to the attendee object
 				event,
 				...attendee,
 			})
-			preRegistered.push(attendeeCreated);
-		} 
-		
-		const resultImport = await this.attendeeRepository.save(preRegistered, {reload: true});
-		const result = resultImport.map(attendee=> ({new: attendee.id !== undefined, email: attendee.email}));
 
-		return { message: 'import successfully', errors , errorsCount: errors.length , successCount: resultImport.length , success: result};
-		
+			preRegistered.push(attendeeCreated);
+		}
+
+		const resultImport = await this.attendeeRepository.save(preRegistered, { reload: true });
+		const result = resultImport.map(attendee => ({ new: attendee.id !== undefined, email: attendee.email }));
+
+		return { message: 'import successfully', errors, errorsCount: errors.length, successCount: resultImport.length, success: result };
+
 	}
 
 	async getTotalAttendeesByEvent(eventId: string) {
@@ -196,19 +203,25 @@ export class AttendeeService {
 		return { message: 'assistant updated successfully', attendee };
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} assistant`;
+
+	//Method to delete an attendee
+	async remove(id: string) {
+		const result = await this.attendeeRepository.delete({ id }); //delete the attendee with criteria id
+		if (result.affected === 0) {
+			throw new NotFoundException(`Attendee with ID ${id} not found`);
+		}
+		return { message: 'assistant deleted successfully' };
 	}
-	
+
 	filterAttendee(Filter: Partial<FilterAttendeeArgs>) {
 		const where: FindOptionsWhere<Attendee> = {};
 		const order: FindOptionsOrder<Attendee> = {};
-		if(Filter.orderBy && Filter.order) order[Filter.orderBy] = Filter.order ?? 'ASC';
+		if (Filter.orderBy && Filter.order) order[Filter.orderBy] = Filter.order ?? 'ASC';
 
-		if(Filter.email) where.email =  Like(`%${Filter.email}%`);
-		if(Filter.fullName) where.fullName =  Like(`%${Filter.fullName}%`);
-		if(Filter.checkInType) where.checkInType = Filter.checkInType;
-		if(Filter.checkInAt) where.checkInAt =  Like(`%${Filter.checkInAt}%`);
+		if (Filter.email) where.email = Like(`%${Filter.email}%`);
+		if (Filter.fullName) where.fullName = Like(`%${Filter.fullName}%`);
+		if (Filter.checkInType) where.checkInType = Filter.checkInType;
+		if (Filter.checkInAt) where.checkInAt = Like(`%${Filter.checkInAt}%`);
 		return {
 			where,
 			order,
