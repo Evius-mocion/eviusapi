@@ -142,7 +142,7 @@ export class AttendeeService {
 			const validation  = validateAttendeesData(attendee,event.registrationFields);
 
 			if (!validation.isValid) {
-				errors.push({email: attendee.email + '', errors: validation.errors});
+				errors.push({fullName:attendee.fullName, email: attendee.email + '', errors: validation.errors});
 				continue;
 			}
 
