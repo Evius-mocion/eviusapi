@@ -119,12 +119,13 @@ export class AttendeeService {
 			checkInType: attendee.checkInType ?? '',
 		}));
 	}
+	
 	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
 		const { attendees, eventId } = data
 		const errors = [];
 
 		const event = await this.eventRepository.findOneBy({ id: eventId });
-
+		
 		if (!event) throw new NotFoundException('event not found');
 
 		const emails = attendees.map(attendee=>attendee.email);
@@ -138,7 +139,7 @@ export class AttendeeService {
 		const preRegistered = [];
 		
 		for (const attendee of attendeesWithUser) {
-			const validation  = validateAttendeesData(attendee);
+			const validation  = validateAttendeesData(attendee,event.registrationFields);
 
 			if (!validation.isValid) {
 				errors.push({email: attendee.email + '', errors: validation.errors});
@@ -162,8 +163,7 @@ export class AttendeeService {
 		
 		const resultImport = await this.attendeeRepository.save(preRegistered, {reload: true});
 		const result = resultImport.map(attendee=> ({new: attendee.id !== undefined, email: attendee.email}));
-		console.log(resultImport);
-		
+
 		return { message: 'import successfully', errors , errorsCount: errors.length , successCount: resultImport.length , success: result};
 		
 	}
@@ -185,6 +185,7 @@ export class AttendeeService {
 			eventId: event,
 		});
 	}
+
 	async update(id: string, updateAssistantDto: Partial<AssistantDto>) {
 		await this.attendeeRepository.update({ id }, updateAssistantDto);
 		const attendee = await this.attendeeRepository.findOneBy({ id });
@@ -193,6 +194,7 @@ export class AttendeeService {
 		}
 		return { message: 'assistant updated successfully', attendee };
 	}
+
 	remove(id: number) {
 		return `This action removes a #${id} assistant`;
 	}

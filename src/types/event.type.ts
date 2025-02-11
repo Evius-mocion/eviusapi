@@ -26,6 +26,8 @@ export type DynamicField = {
   dependsOn?: string;
   isRequerid: boolean;
   rules?: DynamicRuleObject;
+  visibleToAdminsOnly?: boolean;
+  type: "text"  | "number" | "select" | "phone" | "optionsButton";
   specialField: ("country" | "stateAndDepartment" | "city") | null;
   origin: FieldOrigin;
   dynamicVisibility?: {

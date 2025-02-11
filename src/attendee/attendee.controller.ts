@@ -78,7 +78,7 @@ export class AttendeeController {
 		});
 	}
 	
-	@Public()
+	@Role(Roles.admin)
 	@Get('export/:eventId')
 	async exportAttendee(
 		@Res() res: Response,
@@ -91,7 +91,7 @@ export class AttendeeController {
 		res.send(wb);
 	}
 
-	@Public()
+	@Role(Roles.admin)
 	@Patch(':id')
 	upddateAttendee(@Param('id') id: string, @Body() updateAssistantDto: any) {
 		return this.attendeeService.update(id, updateAssistantDto);

@@ -27,7 +27,10 @@ export class Event {
 
   @Column({ nullable: false })
   name: string;
-
+  
+  @Column({ nullable: false, default: "online", enum: ["online", "onsite","payment",'hibrid'] })
+  type: string;
+  
   @Column({ nullable: false, type: "jsonb" })
   dates: IDates[];
 
