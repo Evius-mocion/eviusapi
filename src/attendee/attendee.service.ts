@@ -101,6 +101,23 @@ export class AttendeeService {
 		};
 	}
 
+	async statisticsEvent(eventId: string) {
+
+	const event = await this.eventRepository.findOneBy({ id: eventId });
+
+	if (!event) throw new NotFoundException('event not found');
+
+	const totalAttendees = await this.attendeeRepository.count({
+		where: {
+			eventId,
+		}})
+	
+	return {
+		totalAttendees,
+		capacity: event.capacity,
+		percentage: (totalAttendees / event.capacity) * 100,
+	};
+	}
 
 	async exportAttendees(eventId: string) {
 		const attendees = await this.attendeeRepository.find({
