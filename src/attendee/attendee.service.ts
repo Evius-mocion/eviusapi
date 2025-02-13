@@ -115,7 +115,6 @@ export class AttendeeService {
 	return {
 		totalAttendees,
 		capacity: event.capacity,
-		percentage: (totalAttendees / event.capacity) * 100,
 	};
 	}
 

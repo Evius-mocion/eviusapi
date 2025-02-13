@@ -89,15 +89,9 @@ export class AttendeeController {
 	@Role(Roles.auditor)
 	@Get('statistics/:eventId')
 	async statistics(@Res() res: Response, @Param('eventId') eventId: string) {
-		const attendees = await this.attendeeService.exportAttendees(eventId);
-		const buffer = this.convertExcel(attendees);
-
-		res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		res.setHeader('Content-Disposition', 'attachment; filename=attendees.xlsx');
-
-		// 🔹 Ahora enviamos el buffer en la respuesta correctamente
-		res.send(buffer);
+		return this.attendeeService.statisticsEvent(eventId);
 	}
+	
 	@Role(Roles.admin)
 	@Patch(':id')
 	upddateAttendee(@Param('id') id: string, @Body() updateAssistantDto: any) {
