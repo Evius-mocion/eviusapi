@@ -88,7 +88,7 @@ export class AttendeeController {
 	}
 	@Role(Roles.auditor)
 	@Get('statistics/:eventId')
-	async statistics(@Res() res: Response, @Param('eventId') eventId: string) {
+	async statistics(@Param('eventId') eventId: string) {
 		return this.attendeeService.statisticsEvent(eventId);
 	}
 	
