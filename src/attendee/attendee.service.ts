@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
-import { FindOptionsOrder, FindOptionsWhere, In, Like, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, In, IsNull, Like, Not, Repository } from 'typeorm';
 import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
@@ -112,9 +112,18 @@ export class AttendeeService {
 			eventId,
 		}})
 	
+		const totalAttendeesCheckIn = await this.attendeeRepository.count({
+			where: {
+			  eventId,
+			  checkInAt: Not(IsNull()),
+			},
+		  });
+		
 	return {
 		totalAttendees,
-		capacity: event.capacity,
+		totalAttendeesCheckIn,
+		attendeesCheckInPercent: (totalAttendeesCheckIn / totalAttendees) * 100,
+		capacity: Number(event.capacity)
 	};
 	}
 
