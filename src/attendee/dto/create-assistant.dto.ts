@@ -1,7 +1,8 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEmail, IsObject, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsObject, IsOptional, isString, IsString, MinLength } from 'class-validator';
 import { User } from 'src/common/entities/user.entity';
 import { Event } from 'src/event/entities/event.entity';
+import { CheckInType } from 'src/types/attendee.type';
 
 export class CreateAssistantDto {
 	@Transform(({ value }) => value.trim())
@@ -22,6 +23,9 @@ export class CreateAssistantDto {
 	@IsOptional()
 	attendeeData?: Record<string, any>[];
 
+	@IsString()
+	@IsEnum(CheckInType)
+	origin: CheckInType;
 }
 
 export class CreateMasiveAssistantDto {
@@ -48,6 +52,8 @@ export class AssistantDto {
 	city?: string;
 
 	browser?: string;
+
+	origin: CheckInType
 
 	plataform?: string;
 

@@ -35,6 +35,7 @@ export class ActivitiesService {
   async findAll(eventId: string, pagination: PaginationArgs) {
     const { offset, limit } = pagination;
     return this.activityRepository.find({
+      select : ['id', 'name', 'longDescription','shortDescription','Speaker','image','imageMobile', 'dates'],
       where: {
         event: {
           id: eventId

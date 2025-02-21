@@ -10,6 +10,7 @@ import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
 import { Event } from 'src/event/entities/event.entity';
 import { validateAttendeesData } from 'src/common/utils/validations.util';
+import { CheckInType } from 'src/types/attendee.type';
 
 @Injectable()
 export class AttendeeService {
@@ -188,6 +189,7 @@ export class AttendeeService {
 			const attendeeCreated = this.attendeeRepository.create({
 				properties, //add the properties to the attendee object
 				event,
+				origin: CheckInType.CMS,
 				...attendee,
 			})
 

@@ -23,6 +23,13 @@ export class Attendee {
 	@Column({ nullable: false })
 	fullName: string;
 
+	@Column({
+		type: 'enum',
+		enum: CheckInType,
+		nullable: true,
+	})
+	origin: CheckInType;
+
 	@Column({ nullable: false})
 	email: string;
 

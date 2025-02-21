@@ -19,7 +19,7 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ExperiencesService } from "src/experiences/experiences.service";
-import { ClientInfo } from "nest-request-ip";
+import { ClientInfo } from "nest-request-ip"
 @Injectable()
 export class EventService {
   constructor(
@@ -257,6 +257,7 @@ export class EventService {
 
     const attendee = await this.attendeeService.create({
       user,
+      origin: registerDto.origin,
       fullName: user.fullName,
       email: user.email,
       event,
