@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Param, Delete, Query, Body, Post, UseIntercepto
 import { AttendeeService } from './attendee.service';
 import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { Roles } from 'src/constants/constants';
-import { WithoutAccount, Role, Public } from 'src/common/decorators';
+import { WithoutAccount, Role } from 'src/common/decorators';
 import { checkInDto } from './dto/check-in.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as XLSX from 'xlsx';
@@ -62,12 +62,10 @@ export class AttendeeController {
 	}
 
 	@Role(Roles.admin)
-	@Post('import/:eventId')
+	@Post(':orgId/import/:eventId')
 	@UseInterceptors(FileInterceptor('file'))
 	importAttendee(@UploadedFile() file: Express.Multer.File, @Param('eventId') eventId: string) {
 		const attendees = this.parseExcel(file);
-		console.log(attendees);
-
 		return this.attendeeService.registerAttendeesInEvent({
 			attendees,
 			eventId,
@@ -75,7 +73,7 @@ export class AttendeeController {
 	}
 
 	@Role(Roles.admin)
-	@Get('export/:eventId')
+	@Get(':orgId/export/:eventId')
 	async exportAttendee(@Res() res: Response, @Param('eventId') eventId: string) {
 		const attendees = await this.attendeeService.exportAttendees(eventId);
 		const buffer = this.convertExcel(attendees);
@@ -87,19 +85,19 @@ export class AttendeeController {
 		res.send(buffer);
 	}
 	@Role(Roles.auditor)
-	@Get('statistics/:eventId')
+	@Get(':orgId/statistics/:eventId')
 	async statistics(@Param('eventId') eventId: string) {
 		return this.attendeeService.statisticsEvent(eventId);
 	}
 	
 	@Role(Roles.admin)
-	@Patch(':id')
+	@Patch(':orgId/:id')
 	upddateAttendee(@Param('id') id: string, @Body() updateAssistantDto: any) {
 		return this.attendeeService.update(id, updateAssistantDto);
 	}
 
 	@Role(Roles.admin)
-	@Delete(':id')
+	@Delete(':orgId/:id')
 	remove(@Param('id') id: string) {
 		return this.attendeeService.remove(id);
 	}

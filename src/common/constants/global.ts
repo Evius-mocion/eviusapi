@@ -1,0 +1,1 @@
+export const ORGANIZATION_PARAM = 'orgId';

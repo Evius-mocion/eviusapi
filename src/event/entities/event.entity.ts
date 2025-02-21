@@ -19,6 +19,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { defaultLandingSections } from "../constants/event.constants";
+import { Categories } from "./category.entity";
+import { Activity } from "src/activities/entities/activity.entity";
 
 @Entity("events")
 export class Event {
@@ -46,15 +48,23 @@ export class Event {
   @Column({ nullable: false, default: "without description" })
   description: string;
 
-
+  @OneToMany(() => Attendee, (attendee) => attendee.event)
+  attendees: Attendee[]
 
   @ManyToOne(() => Organization, (org) => org.events, {
     eager: false,
   })
   organization: Organization;
 
-  @OneToMany(() => Attendee, (attendee) => attendee.event)
-  attendees: Attendee[];
+  @OneToMany(() => Categories, (category) => category.event, {
+    eager: false,
+  })
+  categories: Categories[];
+
+  @OneToMany(() => Activity, (activity) => activity.event, {
+    eager: false,
+  })
+  activities: Activity[];
 
   @OneToMany(() => Station, (station) => station.event, {
     eager: false,

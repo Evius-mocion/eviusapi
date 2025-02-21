@@ -15,6 +15,7 @@ import * as fs from 'fs';
 import { RequestIpModule } from "nest-request-ip";
 import { ParticipationModule } from './participation/participation.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { ActivitiesModule } from './activities/activities.module';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
         database: process.env.DATABASE,
         host: process.env.DATABASE_HOST,
         port: parseInt(process.env.DATABASE_PORT),
-        synchronize: false, // set to false in production
+        synchronize: true, // set to false in production
         autoLoadEntities: true, // load all entities from the entities folder
         logging: false,
         ssl: process.env.PRODUCTION === "true" ? {
@@ -60,6 +61,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     LocationModule,
     ParticipationModule,
     FileUploadModule,
+    ActivitiesModule,
   ],
   controllers: [],
   providers: [

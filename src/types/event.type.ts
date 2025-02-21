@@ -2,6 +2,26 @@ export interface IDates {
   startDate: string;
   endDate: string;
 }
+
+export interface IContent {
+  type : TypeContentConfig;
+  link: string
+  iframe: string;
+  provider: TypeContentProvider;
+}
+
+export enum TypeContentConfig {
+  stream = 'stream',
+  video = 'video',
+}
+
+export enum TypeContentProvider {
+  dacast = 'dacast',
+  vimeo = 'vimeo',
+  iframe = 'iframe',
+  url = 'url',
+}
+
 export interface IEvent {
   id?: string;
   name: string;
