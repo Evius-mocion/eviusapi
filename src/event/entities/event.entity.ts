@@ -34,7 +34,7 @@ export class Event {
   @Column({ nullable: false, type: "jsonb" })
   dates: IDates[];
 
-  @Column({ nullable: false, type: "numeric", default: 20 })
+  @Column({ nullable: false, type: "integer", default: 20 })
   capacity: number;
 
   @Column({ nullable: false })
