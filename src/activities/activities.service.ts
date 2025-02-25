@@ -28,12 +28,14 @@ export class ActivitiesService {
       event
     });
 
-    return await this.activityRepository.save(newActivity);
+    const activity = await this.activityRepository.save(newActivity); 
+    
+    return { activity }
   }
 
   async findAll(eventId: string, pagination: PaginationArgs) {
     const { offset, limit } = pagination;
-    return this.activityRepository.find({
+    const activities = await this.activityRepository.find({
       select: ['id', 'name', 'longDescription', 'shortDescription', 'Speaker', 'image', 'imageMobile', 'dates'],
       where: {
         event: {
@@ -44,6 +46,9 @@ export class ActivitiesService {
       skip: (offset - 1) * limit,
       cache: true,
     });
+    return {
+      activities
+    }
   }
 
   async findOne(id: string) {

@@ -123,7 +123,7 @@ export class AttendeeService {
 	return {
 		totalAttendees,
 		totalAttendeesCheckIn,
-		attendeesCheckInPercent: (totalAttendeesCheckIn / totalAttendees) * 100,
+		attendeesCheckInPercent: ((totalAttendeesCheckIn / totalAttendees) * 100) || 0,
 		capacity: Number(event.capacity)
 	};
 	}
