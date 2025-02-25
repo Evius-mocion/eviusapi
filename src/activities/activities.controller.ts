@@ -24,18 +24,21 @@ export class ActivitiesController {
     return this.activitiesService.findAll(eventId,pagination);
   }
 
+  @WithoutAccount()
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.activitiesService.findOne(+id);
+    return this.activitiesService.findOne(id);
   }
 
+  @Role(Roles.admin)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateActivityDto: UpdateActivityDto) {
-    return this.activitiesService.update(+id, updateActivityDto);
+    return this.activitiesService.update(id, updateActivityDto);
   }
 
+  @Role(Roles.admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.activitiesService.remove(+id);
+    return this.activitiesService.remove(id);
   }
 }

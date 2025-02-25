@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
-import { UpdateActivityDto } from './dto/update-activity.dto';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Activity } from './entities/activity.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from 'src/event/entities/event.entity';
@@ -35,7 +34,7 @@ export class ActivitiesService {
   async findAll(eventId: string, pagination: PaginationArgs) {
     const { offset, limit } = pagination;
     return this.activityRepository.find({
-      select : ['id', 'name', 'longDescription','shortDescription','Speaker','image','imageMobile', 'dates'],
+      select: ['id', 'name', 'longDescription', 'shortDescription', 'Speaker', 'image', 'imageMobile', 'dates'],
       where: {
         event: {
           id: eventId
@@ -47,15 +46,37 @@ export class ActivitiesService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} activity`;
+  async findOne(id: string) {
+
+    const activity = await this.activityRepository.findOneBy({ id });
+
+    if (!activity) throw new NotFoundException('Activity not found');
+
+    return activity;
+
   }
 
-  update(id: number, updateActivityDto: UpdateActivityDto) {
-    return `This action updates a #${id} activity`;
+  async update(id: string, updateActivityDto: Partial<CreateActivityDto>) {
+
+    const activity = await this.activityRepository.findOneBy({ id });
+
+    if (!activity) throw new NotFoundException('Activity not found');
+
+    await this.activityRepository.update(id, updateActivityDto)
+
+    return {
+      message: 'Activity updated successfully',
+    }
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} activity`;
+  async remove(id: string) {
+    const activity = await this.activityRepository.findOneBy({ id });
+
+    if (!activity) throw new NotFoundException('Activity not found');
+    
+    await this.activityRepository.delete(id);
+    
+    return { message: 'Activity deleted successfully' }
   }
 }

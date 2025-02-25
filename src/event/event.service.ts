@@ -76,11 +76,9 @@ export class EventService {
   }
   async findAllEvents() {
     try {
-      const events = await this.eventRepository.find();
-      events.forEach(async (event) => {
-        delete event.createdBy.password;
-        delete event.createdBy.type_account;
-        delete event.createdBy.rol;
+      const events = await this.eventRepository.find({
+       select: ["id", "name", "dates", "initialDate", "capacity","organizationAlias","capacity","appearance","createdBy","createAt","landingSections","landingDescription"],
+        cache: true,
       });
       return events;
     } catch (error) {
