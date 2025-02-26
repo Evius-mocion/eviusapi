@@ -89,7 +89,7 @@ export class AttendeeService {
 				eventId,
 				...where
 			},
-			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser'],
+			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser', 'createAt'],
 			take: limit,
 			skip: (offset - 1) * limit,
 			cache: true,
