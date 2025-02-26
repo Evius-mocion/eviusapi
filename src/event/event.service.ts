@@ -299,14 +299,13 @@ export class EventService {
     if (Object.keys(data).length === 0) {
       throw new BadRequestException("No data to update");
     }
-    try {
-      const event = await this.eventRepository.findOneBy({ id });
+    const event = await this.eventRepository.findOneBy({ id });
       if (!event) {
         throw new NotFoundException("Event not found");
       }
 
+    try {
     
-
       const newEvent = {
         ...event,
         ...data,
@@ -324,8 +323,14 @@ export class EventService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+ async remove(id: string) {
+    const event = await this.eventRepository.findOneBy({ id });
+    if (!event) {
+      throw new NotFoundException("Event not found");
+    }
+    await this.eventRepository.delete(id);
+    
+    return { message: "Event deleted" };
   }
 
   controlDbErros(error: any) {
