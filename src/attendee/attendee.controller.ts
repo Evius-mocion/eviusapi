@@ -88,7 +88,7 @@ export class AttendeeController {
 
 	
 	@Role(Roles.editor)
-	@Get(':orgId/checkInUsers/:eventId')
+	@Patch(':orgId/checkInUsers/:eventId')
 	async checkInMasive(
 		@Param('eventId') eventId: string,
 		@Body() data: MasivecheckInDto
