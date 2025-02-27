@@ -86,6 +86,6 @@ export class EventController {
   
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.eventService.remove(+id);
+    return this.eventService.remove(id);
   }
 }

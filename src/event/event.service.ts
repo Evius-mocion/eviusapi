@@ -77,7 +77,20 @@ export class EventService {
   async findAllEvents() {
     try {
       const events = await this.eventRepository.find({
-       select: ["id", "name", "dates", "initialDate", "capacity","organizationAlias","capacity","appearance","createdBy","createAt","landingSections","landingDescription"],
+        select: [
+          "id",
+          "name",
+          "dates",
+          "initialDate",
+          "capacity",
+          "organizationAlias",
+          "appearance",
+          "createdBy",
+          "createAt",
+          "landingSections",
+          "landingDescription"
+        ],
+        relations: ["createdBy"], // Incluir la relación con User
         cache: true,
       });
       return events;
