@@ -120,7 +120,10 @@ export class EventService {
     };
   }
   async getOne(id: string) {
-    const event = await this.eventRepository.findOneBy({ id });
+    const event = await this.eventRepository.findOne({  where:{
+      id
+    },
+    relations:['stations']});
     const { totalAttendee } =
       await this.attendeeService.getTotalAttendeesByEvent(id);
     if (!event) {
