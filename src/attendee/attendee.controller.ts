@@ -7,6 +7,7 @@ import { checkInDto } from './dto/check-in.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as XLSX from 'xlsx';
 import { Response } from 'express';
+import { MasivecheckInDto } from './dto/masive-check-in.dto';
 
 @Controller('attendee')
 export class AttendeeController {
@@ -84,6 +85,17 @@ export class AttendeeController {
 		// 🔹 Ahora enviamos el buffer en la respuesta correctamente
 		res.send(buffer);
 	}
+
+	
+	@Role(Roles.editor)
+	@Get(':orgId/checkInUsers/:eventId')
+	async checkInMasive(
+		@Param('eventId') eventId: string,
+		@Body() data: MasivecheckInDto
+	) {
+		return this.attendeeService.checkInMasive(data,eventId);
+	}
+
 	@Role(Roles.auditor)
 	@Get(':orgId/statistics/:eventId')
 	async statistics(@Param('eventId') eventId: string) {

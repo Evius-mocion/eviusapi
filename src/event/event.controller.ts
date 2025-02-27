@@ -84,8 +84,11 @@ export class EventController {
     return this.eventService.confirmedEmailRegisterInEvent(email,eventId);
   }
   
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventService.remove(id);
+  @Role(Roles.owner)
+  @Delete(':orgId/delete/:eventId')
+  remove(
+    @Param('eventId') eventId: string
+) {
+    return this.eventService.remove(eventId);
   }
 }

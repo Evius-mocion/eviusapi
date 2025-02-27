@@ -11,6 +11,7 @@ import { User } from 'src/common/entities';
 import { Event } from 'src/event/entities/event.entity';
 import { validateAttendeesData } from 'src/common/utils/validations.util';
 import { CheckInType } from 'src/types/attendee.type';
+import { MasivecheckInDto } from './dto/masive-check-in.dto';
 
 @Injectable()
 export class AttendeeService {
@@ -101,7 +102,40 @@ export class AttendeeService {
 			total,
 		};
 	}
+	async checkInMasive(data: MasivecheckInDto, eventId: string) {
+		const event = this.eventRepository.findOneBy({ id: eventId });
 
+		if (!event) throw new NotFoundException('event not found');
+
+		const { date, attendees: attendeeIds } = data;
+
+		let attendeesChecked = [];
+
+		const attendees = await this.attendeeRepository.find({
+			where: {
+				id: In(attendeeIds),
+				eventId,
+			},
+		})
+
+		attendeesChecked = attendees.map(attendee => {
+			attendee.checkInAt = date;
+			attendee.checkInType = CheckInType.CMS;
+			return attendee;
+		});
+
+		await this.attendeeRepository.save(attendeesChecked);
+
+		return {
+			message: 'check in successfully', 
+			attendeesChecked: attendeesChecked.map(attendee => ({
+				id: attendee.id,
+				email: attendee.email,
+				checkInAt: attendee.checkInAt,
+			}))
+		};
+
+	}
 	async statisticsEvent(eventId: string) {
 
 	const event = await this.eventRepository.findOneBy({ id: eventId });

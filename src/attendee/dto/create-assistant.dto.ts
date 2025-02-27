@@ -1,5 +1,5 @@
-import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEmail, IsEnum, IsObject, IsOptional, isString, IsString, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsArray, IsEmail, IsEnum, IsObject, IsOptional, IsString, MinLength } from 'class-validator';
 import { User } from 'src/common/entities/user.entity';
 import { Event } from 'src/event/entities/event.entity';
 import { CheckInType } from 'src/types/attendee.type';
