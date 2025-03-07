@@ -72,12 +72,11 @@ export class EventController {
   @WithoutAccount()
   @Get("access/:eventId")
   accessEvent(
-    @Ip() ip: string,
     @ActiveUser() user: UserContext,
     @Param('eventId') eventID: string) {
     return this.eventService.identifierUser(eventID,user.id);
   }
-
+ 
   @Public()
   @Get("isAttendee")
   validateAttendees(@Query('email') email: string, @Query('eventId') eventId: string) {

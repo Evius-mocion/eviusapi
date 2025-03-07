@@ -62,14 +62,9 @@ export class CollaboratorService {
   }
   async findOneByIdAndOrganizationId(id: string, org_id: string = "") {
     try {
-      const collaborator = await this.collaboratorRepository.findOne({
-        where: {
-          user: {id},
-          organization: {
-            id: org_id,
-            deleted_at: null,
-          },
-        },
+      const collaborator = await this.collaboratorRepository.findOneBy({
+        user: {id},
+        organization: {id: org_id},
       });
       return collaborator;
     } catch (error) {
