@@ -1,137 +1,130 @@
-import { Attendee } from "src/attendee/entities/attendee.entity";
-import { User } from "src/common/entities/user.entity";
-import { Organization } from "src/organization/entities/organization.entity";
-import { Station } from "src/stations/entities/station.entity";
-import {
-  DynamicField,
-  IDates,
-  IEventAppearance,
-  IEventSections,
-  ILandingSection,
-} from "src/types/event.type";
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { defaultLandingSections } from "../constants/event.constants";
-import { Categories } from "./category.entity";
-import { Activity } from "src/activities/entities/activity.entity";
+import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { User } from 'src/common/entities/user.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
+import { Station } from 'src/stations/entities/station.entity';
+import { DynamicField, IDates, IEventAppearance, IEventSections, ILandingSection } from 'src/types/event.type';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { defaultLandingSections } from '../constants/event.constants';
+import { Categories } from './category.entity';
+import { Activity } from 'src/activities/entities/activity.entity';
+import { Survey } from 'src/survey/entities/survey.entity';
 
-@Entity("events")
+@Entity('events')
 export class Event {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
-  @Column({ nullable: false })
-  name: string;
-  
-  @Column({ nullable: false, default: "online", enum: ["online", "onsite","payment",'hibrid'] })
-  type: string;
-  
-  @Column({ nullable: false, type: "jsonb" })
-  dates: IDates[];
+	// 🟢 Columnas normales
+	@Column({ nullable: false })
+	name: string;
 
-  @Column({ nullable: false, type: "integer", default: 20 })
-  capacity: number;
+	@Column({ nullable: false, default: 'online', enum: ['online', 'onsite', 'payment', 'hibrid'] })
+	type: string;
 
-  @Column({ nullable: false })
-  initialDate: Date;
+	@Column({ nullable: false, type: 'jsonb' })
+	dates: IDates[];
 
-  @Column({ nullable: false})
-  finishDate: Date;
+	@Column({ nullable: false, type: 'integer', default: 20 })
+	capacity: number;
 
-  @Column({ nullable: false, default: "without description" })
-  description: string;
+	@Column({ nullable: false })
+	initialDate: Date;
 
-  @OneToMany(() => Attendee, (attendee) => attendee.event)
-  attendees: Attendee[]
+	@Column({ nullable: false })
+	finishDate: Date;
 
-  @ManyToOne(() => Organization, (org) => org.events, {
-    eager: false,
-  })
-  organization: Organization;
+	@Column({ nullable: false, default: 'without description' })
+	description: string;
 
-  @OneToMany(() => Categories, (category) => category.event, {
-    eager: false,
-  })
-  categories: Categories[];
+	@Column({
+		type: 'jsonb',
+		nullable: false,
+		default: defaultLandingSections,
+	})
+	landingSections: ILandingSection[];
 
-  @OneToMany(() => Activity, (activity) => activity.event, {
-    eager: false,
-  })
-  activities: Activity[];
+	@Column({
+		nullable: true,
+		default: '',
+	})
+	landingDescription?: string;
 
-  @OneToMany(() => Station, (station) => station.event, {
-    eager: false,
-  })
-  stations: Station[];
+	@Column({
+		nullable: false,
+		type: 'simple-json',
+		default: {
+			primaryColor: '#FFFFFF',
+			textColor: '#352848',
+			bgColor: '#F8F9FA',
+			bannerImage: '',
+		},
+	})
+	appearance: IEventAppearance;
 
-  @Column({
-    type: "jsonb",
-    nullable: false,
-    default: defaultLandingSections,
-  })
-  landingSections: ILandingSection[];
+	@Column({
+		nullable: false,
+		type: 'simple-json',
+		default: { news: false, sponsors: false },
+	})
+	eventSection?: Partial<IEventSections>;
 
-  @Column({
-    nullable: true,
-    default: "",
-  })
-  landingDescription?: string;
+	@Column({ nullable: false, type: 'jsonb', default: [] })
+	registrationFields?: DynamicField[];
 
-  @Column({
-    nullable: false,
-    type: "simple-json",
-    default: {
-      primaryColor: "#FFFFFF",
-      textColor: "#352848",
-      bgColor: "#F8F9FA",
-      bannerImage: "",
-    },
-  })
-  appearance: IEventAppearance;
+	@Column({ nullable: false })
+	price: number;
 
-  @Column({
-    nullable: false,
-    type: "simple-json",
-    default: { news: false, sponsors: false },
-  })
-  eventSection?: Partial<IEventSections>;
+	@Column({ nullable: false })
+	organizationAlias: string;
 
-  @Column({ nullable: false, type: "jsonb", default: [] })
-  registrationFields?: DynamicField[];
+	@Column({ nullable: true })
+	googleAnalyticsId?: string;
 
-  @Column({ nullable: false })
-  price: number;
+	@Column({ nullable: true })
+	googleTagManager?: string;
 
-  @ManyToOne(() => User, (user) => user.events, {
-    eager: false,
-  })
-  createdBy: User;
+	@Column({ nullable: true })
+	faceBookPixelId?: string;
 
-  @Column({ nullable: false })
-  organizationAlias: string;
+	@Column({ nullable: false, default: false })
+	hiddenEventDates?: boolean;
 
-  @Column({ nullable: true })
-  googleAnalyticsId?: string;
+	@CreateDateColumn()
+	createAt: Date;
 
-  @Column({ nullable: true })
-  googleTagManager?: string;
+	@DeleteDateColumn()
+	deletedAt: Date;
 
-  @Column({ nullable: true })
-  faceBookPixelId?: string;
+	// 🔵 Relaciones
 
-  @Column({ nullable: false, default: false })
-  hiddenEventDates?: boolean;
+	@OneToMany(() => Survey, (survey) => survey.event)
+	surveys: Survey[];
 
-  @CreateDateColumn()
-  createAt: Date;
+	@OneToMany(() => Attendee, (attendee) => attendee.event)
+	attendees: Attendee[];
 
-  @DeleteDateColumn()
-  deletedAt: Date;
+	@ManyToOne(() => Organization, (org) => org.events, {
+		eager: false,
+	})
+	organization: Organization;
+
+	@OneToMany(() => Categories, (category) => category.event, {
+		eager: false,
+	})
+	categories: Categories[];
+
+	@OneToMany(() => Activity, (activity) => activity.event, {
+		eager: false,
+	})
+	activities: Activity[];
+
+	@OneToMany(() => Station, (station) => station.event, {
+		eager: false,
+	})
+	stations: Station[];
+
+	@ManyToOne(() => User, (user) => user.events, {
+		eager: false,
+	})
+	createdBy: User;
 }
