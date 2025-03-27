@@ -201,7 +201,7 @@ export class AttendeeService {
 
 		for (const attendee of attendeesWithUser) {	//loop through the attendees
 			const validation = validateAttendeesData(attendee, event.registrationFields); //validate the attendee data, check if the data is valid
-			const { email, fullName, user, ...properties } = attendee;
+			const { email, fullName, _user, ...properties } = attendee;
 
 			if (!validation.isValid) {
 				errors.push({ fullName, email: email + '', errors: validation.errors });
@@ -249,9 +249,12 @@ export class AttendeeService {
 	}
 
 	async findOneByUserIdAndEventId(userID: string, event: string) {
-		return await this.attendeeRepository.findOneBy({
-			userId: userID,
+		return await this.attendeeRepository.findOne({
+			select: ['id', 'fullName', 'email', 'checkInAt',"properties"],
+			where: {
+				userId: userID,
 			eventId: event,
+			}
 		});
 	}
 

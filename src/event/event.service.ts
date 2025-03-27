@@ -167,7 +167,11 @@ export class EventService {
   async identifierUser(eventId: string, userId: string) {
     let collaboratorRol = null;
 
-    const event = await this.eventRepository.findOne({where: { id: eventId }, relations: ["organization","organization.collaborators"], loadRelationIds: {relations: ["attendees"]}});
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId }, 
+      relations: ["organization","organization.collaborators"], 
+      cache: true,
+    });
   
     
     if (!event) {
@@ -184,11 +188,6 @@ export class EventService {
       collaboratorRol = collaborator.rol;
     }
 
-    
-    if (attendee) {
-      delete attendee.event;
-      delete attendee.user;
-    }
 
     return {
       event: {
@@ -206,7 +205,6 @@ export class EventService {
         landingSections: event.landingSections,
         landingDescription: event.landingDescription,
       },
-      totalAttendee : event.attendees.length,
       isRegister: !!attendee,
       rol: collaboratorRol,
       attendee,

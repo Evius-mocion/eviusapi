@@ -1,18 +1,33 @@
-import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { User } from 'src/common/entities/user.entity';
-import { Organization } from 'src/organization/entities/organization.entity';
-import { Station } from 'src/stations/entities/station.entity';
-import { DynamicField, IDates, IEventAppearance, IEventSections, ILandingSection } from 'src/types/event.type';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { defaultLandingSections } from '../constants/event.constants';
-import { Categories } from './category.entity';
-import { Activity } from 'src/activities/entities/activity.entity';
-import { Survey } from 'src/survey/entities/survey.entity';
+import { Attendee } from "src/attendee/entities/attendee.entity";
+import { User } from "src/common/entities/user.entity";
+import { Organization } from "src/organization/entities/organization.entity";
+import { Station } from "src/stations/entities/station.entity";
+import {
+  DynamicField,
+  IDates,
+  IEventAppearance,
+  IEventSections,
+  ILandingSection,
+} from "src/types/event.type";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { defaultLandingSections } from "../constants/event.constants";
+import { Categories } from "./category.entity";
+import { Activity } from "src/activities/entities/activity.entity";
 
 @Entity('events')
 export class Event {
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
+  @Index()
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
 	// 🟢 Columnas normales
 	@Column({ nullable: false })
@@ -33,8 +48,32 @@ export class Event {
 	@Column({ nullable: false })
 	finishDate: Date;
 
-	@Column({ nullable: false, default: 'without description' })
-	description: string;
+  @Column({ nullable: false, default: "without description" })
+  description: string;
+
+  @OneToMany(() => Attendee, (attendee) => attendee.event)
+  attendees: Attendee[]
+  
+  @Index()
+  @ManyToOne(() => Organization, (org) => org.events, {
+    eager: false,
+  })
+  organization: Organization;
+
+  @OneToMany(() => Categories, (category) => category.event, {
+    eager: false,
+  })
+  categories: Categories[];
+
+  @OneToMany(() => Activity, (activity) => activity.event, {
+    eager: false,
+  })
+  activities: Activity[];
+
+  @OneToMany(() => Station, (station) => station.event, {
+    eager: false,
+  })
+  stations: Station[];
 
 	@Column({
 		type: 'jsonb',
