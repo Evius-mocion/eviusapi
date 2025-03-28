@@ -21,7 +21,7 @@ export class SurveyService {
 		private readonly activityRepository: Repository<Activity>
 	) {}
 
-	async create(createSurveyDto: CreateSurveyDto): Promise<Survey> {
+	async create(createSurveyDto: CreateSurveyDto): Promise<{ survey: Survey }> {
 		const { name, eventId, activityId } = createSurveyDto;
 		const event = await this.eventRepository.findOneBy({ id: eventId });
 
@@ -44,10 +44,14 @@ export class SurveyService {
 			activity,
 		});
 
-		return await this.surveyRepository.save(newSurvey);
+		const surveyResult = await this.surveyRepository.save(newSurvey);
+		delete surveyResult.event;
+		return {
+			survey: surveyResult,
+		};
 	}
 
-	async update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<Survey> {
+	async update(id: string, updateSurveyDto: UpdateSurveyDto): Promise<{ survey: Survey }> {
 		const survey = await this.surveyRepository.findOne({ where: { id }, relations: ['event', 'activity'] });
 		if (!survey) {
 			throw new NotFoundException(`Survey with ID ${id} not found`);
@@ -73,8 +77,11 @@ export class SurveyService {
 
 		// Actualizamos solo los campos proporcionados
 		Object.assign(survey, updateSurveyDto);
-
-		return this.surveyRepository.save(survey);
+		const surveyResult = await this.surveyRepository.save(survey);
+		delete surveyResult.event;
+		return {
+			survey: surveyResult,
+		};
 	}
 
 	async findAllByEventId(
@@ -104,7 +111,7 @@ export class SurveyService {
 		return { surveys, total };
 	}
 
-	async getById(surveyId: string): Promise<Survey> {
+	async getById(surveyId: string): Promise<{ survey: Survey }> {
 		const survey = await this.surveyRepository.findOne({
 			where: { id: surveyId },
 			relations: ['event', 'activity'],
@@ -114,6 +121,6 @@ export class SurveyService {
 			throw new NotFoundException(`Survey with ID ${surveyId} not found`);
 		}
 
-		return survey;
+		return { survey };
 	}
 }

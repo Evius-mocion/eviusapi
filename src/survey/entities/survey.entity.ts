@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Event } from 'src/event/entities/event.entity';
 import { Question } from 'src/survey/entities/question.entity';
@@ -11,6 +11,10 @@ export class Survey {
 
 	@Column({ length: 500, nullable: false })
 	name: string;
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at: Date;
+	@UpdateDateColumn({ type: 'timestamp' })
+	updatedAt: Date;
 
 	//* Relaciones
 	@ManyToOne(() => Event, (event) => event.surveys, { eager: false })
