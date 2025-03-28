@@ -100,14 +100,22 @@ export class EventService {
   }
 
   async findOne(id: string) {
-    const event = await this.eventRepository.findOneBy({ id });
-    const { totalAttendee } =
-      await this.attendeeService.getTotalAttendeesByEvent(id);
+    const event = await this.eventRepository.findOne({
+      where: { id },
+      relations: [
+        "organization",
+      ],
+      loadRelationIds: {
+        relations: ["attendees"],
+      },
+      cache: true,
+    });
     if (!event) {
       throw new BadRequestException("Event not found");
     }
+    const totalAttendee  = event.attendees.length;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { stations, price, attendees, ...restOfEvent } = event;
+    const { attendees, ...restOfEvent } = event;
     return {
       event: {
         ...restOfEvent,
@@ -218,15 +226,18 @@ export class EventService {
   async register(registerDto: CreateAssistantDto, data: ClientInfo) {
     let newAccount = false;
 
-    const event = await this.eventRepository.findOneBy({
-      id: registerDto.eventId,
+    const event = await this.eventRepository.findOne({
+     where: { id: registerDto.eventId },
+      loadRelationIds: {
+        relations: ["attendees"],
+      },
     });
 
     if (!event) {
       throw new NotFoundException("Event not found");
     }
 
-    const { totalAttendee } = await this.attendeeService.getTotalAttendeesByEvent(registerDto.eventId);
+    const  totalAttendee  = event.attendees.length;
 
     let user = await this.userRepository.findOneBy({
       email: registerDto.email,

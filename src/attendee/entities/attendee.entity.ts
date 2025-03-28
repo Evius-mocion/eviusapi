@@ -15,6 +15,7 @@ export class Attendee {
 	@Generated('uuid')
   	id: string;
 	
+	@Index()
 	@PrimaryColumn({type: 'uuid'})
   	userId: string;
 	

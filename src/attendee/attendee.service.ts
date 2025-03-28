@@ -60,7 +60,6 @@ export class AttendeeService {
 		return { attendee };
 	}
 	async checkIn(id: string, checkInData: checkInDto) {
-		try {
 			const { date, stationID, type } = checkInData;
 			let station = null;
 
@@ -76,9 +75,7 @@ export class AttendeeService {
 			const { raw } = result;
 			const attendee = raw[0];
 			return { message: 'check in successfully', attendee };
-		} catch (error) {
-			throw new InternalServerErrorException('error updating assistant');
-		}
+		
 	}
 
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
@@ -244,6 +241,7 @@ export class AttendeeService {
 					id: eventId,
 				},
 			},
+			cache: true,
 		});
 		return { totalAttendee };
 	}

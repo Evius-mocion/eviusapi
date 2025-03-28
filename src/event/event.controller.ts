@@ -49,7 +49,6 @@ export class EventController {
   @Get('landing/:id')
   findOne(
     @Param('id') id: string) {
-      
     return this.eventService.findOne(id);
   }
 
