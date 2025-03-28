@@ -123,4 +123,16 @@ export class SurveyService {
 
 		return { survey };
 	}
+
+	async remove(surveyId: string): Promise<{ message: string }> {
+		const survey = await this.surveyRepository.findOne({ where: { id: surveyId } });
+
+		if (!survey) {
+			throw new NotFoundException(`Survey with ID ${surveyId} not found`);
+		}
+
+		await this.surveyRepository.remove(survey);
+
+		return { message: 'Survey deleted successfully' };
+	}
 }
