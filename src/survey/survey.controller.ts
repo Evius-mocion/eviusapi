@@ -48,8 +48,12 @@ export class SurveyController {
 
 	//* ---------------------------- Questions ------------------------------
 	@Get('questions/:surveyId')
-	getQuestionsBySurveyId(@Param('surveyId', new ParseUUIDPipe()) surveyId: string) {
-		return this.questionService.getQuestionsBySurveyId(surveyId);
+	getQuestionsBySurveyId(
+	    @Param('surveyId', new ParseUUIDPipe()) surveyId: string,
+	    @Query() pagination?: PaginationArgs,
+	    @Query('all') all?: boolean
+	) {
+	    return this.questionService.getQuestionsBySurveyId(surveyId, all ? null : pagination);
 	}
 
 	@Get('questions/get/:id')

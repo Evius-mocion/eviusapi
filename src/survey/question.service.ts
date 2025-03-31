@@ -5,6 +5,7 @@ import { Question } from './entities/question.entity';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { SurveyService } from './survey.service';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { PaginationArgs } from 'src/common/dto';
 
 @Injectable()
 export class QuestionService {
@@ -13,12 +14,27 @@ export class QuestionService {
 		private readonly questionRepository: Repository<Question>,
 		private readonly surveyService: SurveyService
 	) {}
-	//Todo: Agregar paginado
-	async getQuestionsBySurveyId(surveyId: string): Promise<{ questions: Question[]; total: number }> {
-		const [questions, total] = await this.questionRepository.findAndCount({
-			where: { survey: { id: surveyId } },
-		});
-		return { questions, total };
+	async getQuestionsBySurveyId(
+	    surveyId: string,
+	    pagination?: PaginationArgs | null
+	): Promise<{ questions: Question[]; total: number }> {
+	    let findOptions = {};
+	    
+	    if (pagination) {
+	        const offset = pagination.offset ?? 1;
+	        const limit = pagination.limit ?? 10;
+	        const skip = (offset - 1) * limit;
+	        
+	        findOptions = { skip, take: limit };
+	    }
+
+	    const [questions, total] = await this.questionRepository.findAndCount({
+	        ...findOptions,
+	        where: { survey: { id: surveyId } },
+	        order: { created_at: 'ASC' }
+	    });
+	    
+	    return { questions, total };
 	}
 
 	async getQuestionById(questionId: string): Promise<{ question: Question }> {
