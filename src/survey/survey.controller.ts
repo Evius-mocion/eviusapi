@@ -6,6 +6,7 @@ import { Survey } from './entities/survey.entity';
 import { PaginationArgs } from 'src/common/dto';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
+import { UpdateQuestionDto } from './dto/update-question.dto';
 
 //ToDO: Agregar validaciones por rol.
 
@@ -15,7 +16,7 @@ export class SurveyController {
 		private readonly surveyService: SurveyService,
 		private readonly questionService: QuestionService
 	) {}
-	//*Surveys
+	//* ---------------------------- Surveys ----------------------------
 	@Get(':surveyId')
 	getById(@Param('surveyId', new ParseUUIDPipe()) surveyId: string): Promise<{ survey: Survey }> {
 		return this.surveyService.getById(surveyId);
@@ -45,13 +46,29 @@ export class SurveyController {
 		return this.surveyService.remove(surveyId);
 	}
 
-	//* Questions
+	//* ---------------------------- Questions ------------------------------
 	@Get('questions/:surveyId')
 	getQuestionsBySurveyId(@Param('surveyId', new ParseUUIDPipe()) surveyId: string) {
 		return this.questionService.getQuestionsBySurveyId(surveyId);
 	}
-	@Post('createQuestion')
+
+	@Get('questions/get/:id')
+	getQuestionById(@Param('id', new ParseUUIDPipe()) id: string) {
+		return this.questionService.getQuestionById(id);
+	}
+
+	@Post('questions/create')
 	createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
 		return this.questionService.createQuestion(createQuestionDto);
+	}
+
+	@Patch('questions/update/:id')
+	updateQuestion(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateDto: UpdateQuestionDto) {
+		return this.questionService.updateQuestion(id, updateDto);
+	}
+
+	@Delete('questions/delete/:id')
+	deleteQuestion(@Param('id', new ParseUUIDPipe()) id: string) {
+		return this.questionService.deleteQuestion(id);
 	}
 }
