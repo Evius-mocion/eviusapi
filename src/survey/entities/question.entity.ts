@@ -1,5 +1,5 @@
 import { Survey } from 'src/survey/entities/survey.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Option } from './option.entity';
 import { SurveyAnswer } from './surveyAnswer.entity';
 
@@ -9,10 +9,15 @@ export class Question {
 	id: string;
 
 	@Column({ length: 500, nullable: false })
-	question: string;
+	value: string;
 
 	@Column({ type: 'enum', enum: ['number', 'string'], nullable: false })
 	type: 'number' | 'string';
+
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at: Date;
+	@UpdateDateColumn({ type: 'timestamptz' })
+	updated_at: Date;
 
 	//* Relaciones
 	@ManyToOne(() => Survey, (survey) => survey.questions, { eager: false })

@@ -103,7 +103,6 @@ export class SurveyService {
 			whereCondition.name = ILike(`%${nameSearch}%`); // Usa ILike en PostgreSQL
 		}
 
-		console.log('whereCondition', whereCondition);
 		const [surveys, total] = await this.surveyRepository.findAndCount({
 			where: whereCondition,
 			skip: (offset - 1) * limit,
