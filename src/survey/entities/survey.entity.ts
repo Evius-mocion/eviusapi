@@ -11,10 +11,11 @@ export class Survey {
 
 	@Column({ length: 500, nullable: false })
 	name: string;
+
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;
-	@UpdateDateColumn({ type: 'timestamp' })
-	updatedAt: Date;
+	@UpdateDateColumn({ type: 'timestamptz' })
+	updated_at: Date;
 
 	//* Relaciones
 	@ManyToOne(() => Event, (event) => event.surveys, { eager: false })
