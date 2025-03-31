@@ -23,6 +23,7 @@ import { defaultLandingSections } from "../constants/event.constants";
 import { Categories } from "./category.entity";
 import { Activity } from "src/activities/entities/activity.entity";
 import { Survey } from "src/survey/entities/survey.entity";
+import { Auction } from "src/auction/entities/auction.entity";
 
 @Entity('events')
 export class Event {
@@ -134,6 +135,11 @@ export class Event {
 		eager: false,
 	})
 	activities: Activity[];
+	
+	@OneToMany(() => Auction, (auction) => auction.event, {
+		eager: false,
+	})
+	auction: Auction[];
 
 	@OneToMany(() => Station, (station) => station.event, {
 		eager: false,

@@ -1,9 +1,11 @@
 import { IContent, IDates } from 'src/types/event.type';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Document } from './document';
 import { Speaker } from './speaker.entity';
 import { Event } from 'src/event/entities/event.entity';
 import { Survey } from 'src/survey/entities/survey.entity';
+import { CheckInActivity } from 'src/attendee/entities/checkIn.entity';
+import { Auction } from 'src/auction/entities/auction.entity';
 
 @Entity('activities')
 export class Activity {
@@ -64,7 +66,15 @@ export class Activity {
 	event: Event;
 
 	@OneToMany(() => Survey, (survey) => survey.activity, {
-		eager: false,
+		eager: true,
 	})
 	surveys: Survey[];
+
+	@OneToMany(() => CheckInActivity, (CheckIn) => CheckIn.Activity, {
+		eager: false,
+	})
+	CheckIns: CheckInActivity[];
+
+	@OneToOne(() => Auction, (auction) => auction.activity)
+	auction: Auction
 }

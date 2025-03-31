@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
@@ -198,8 +198,8 @@ export class AttendeeService {
 
 		for (const attendee of attendeesWithUser) {	//loop through the attendees
 			const validation = validateAttendeesData(attendee, event.registrationFields); //validate the attendee data, check if the data is valid
-			const { email, fullName, _user, ...properties } = attendee;
-
+			const { email, fullName, ...properties } = attendee;
+				delete attendee.user;
 			if (!validation.isValid) {
 				errors.push({ fullName, email: email + '', errors: validation.errors });
 				continue;
