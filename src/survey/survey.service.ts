@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Event } from 'src/event/entities/event.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Survey } from './entities/survey.entity';
@@ -100,8 +100,10 @@ export class SurveyService {
 		// Construcción dinámica de condiciones de búsqueda
 		const whereCondition: any = { event: { id: event.id } };
 		if (nameSearch) {
-			whereCondition.name = Like(`%${nameSearch}%`);
+			whereCondition.name = ILike(`%${nameSearch}%`); // Usa ILike en PostgreSQL
 		}
+
+		console.log('whereCondition', whereCondition);
 		const [surveys, total] = await this.surveyRepository.findAndCount({
 			where: whereCondition,
 			skip: (offset - 1) * limit,

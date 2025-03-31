@@ -5,6 +5,8 @@ import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { Survey } from './entities/survey.entity';
 import { PaginationArgs } from 'src/common/dto';
 
+//ToDO: Agregar validaciones por rol.
+
 @Controller('survey')
 export class SurveyController {
 	constructor(private readonly surveyService: SurveyService) {}
@@ -14,7 +16,7 @@ export class SurveyController {
 		return this.surveyService.getById(surveyId);
 	}
 
-	@Get('event/:eventId')
+	@Get('get-all-by-event/:eventId')
 	async findAllByEventId(
 		@Param('eventId', new ParseUUIDPipe()) eventId: string,
 		@Query('nameSearch') nameSearch?: string,
