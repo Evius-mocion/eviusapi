@@ -16,6 +16,7 @@ import { RequestIpModule } from "nest-request-ip";
 import { ParticipationModule } from './participation/participation.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SurveyModule } from './survey/survey.module';
+import { AuctionModule } from './auction/auction.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { SurveyModule } from './survey/survey.module';
     ParticipationModule,
     ActivitiesModule,
     SurveyModule,
+    AuctionModule,
   ],
   controllers: [],
   providers: [

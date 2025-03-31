@@ -4,6 +4,7 @@ import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
 import { CheckInActivity } from './checkIn.entity';
 import { CheckInType } from 'src/types/attendee.type';
+import { Bid } from 'src/auction/entities/bid.entity';
 
 
 
@@ -70,6 +71,9 @@ export class Attendee {
 
 	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
 	checkInActivity: CheckInActivity[];
+	
+	@OneToMany(() => Bid, (bids) => bids.attende)
+	bids: Bid[];
 
 	@Column({
 		type: 'enum',
