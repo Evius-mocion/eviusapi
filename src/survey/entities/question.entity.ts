@@ -2,6 +2,7 @@ import { Survey } from 'src/survey/entities/survey.entity';
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Option } from './option.entity';
 import { SurveyAnswer } from './surveyAnswer.entity';
+import { QuestionType } from '../enums/question-type.enum';
 
 @Entity()
 export class Question {
@@ -11,8 +12,12 @@ export class Question {
 	@Column({ length: 500, nullable: false })
 	value: string;
 
-	@Column({ type: 'enum', enum: ['number', 'string'], nullable: false })
-	type: 'number' | 'string';
+	@Column({ 
+		type: 'enum', 
+		enum: QuestionType, 
+		nullable: false 
+	})
+	type: QuestionType;
 
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;

@@ -4,13 +4,18 @@ import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { Survey } from './entities/survey.entity';
 import { PaginationArgs } from 'src/common/dto';
+import { QuestionService } from './question.service';
+import { CreateQuestionDto } from './dto/create-question.dto';
 
 //ToDO: Agregar validaciones por rol.
 
 @Controller('survey')
 export class SurveyController {
-	constructor(private readonly surveyService: SurveyService) {}
-
+	constructor(
+		private readonly surveyService: SurveyService,
+		private readonly questionService: QuestionService
+	) {}
+	//*Surveys
 	@Get(':surveyId')
 	getById(@Param('surveyId', new ParseUUIDPipe()) surveyId: string): Promise<{ survey: Survey }> {
 		return this.surveyService.getById(surveyId);
@@ -38,5 +43,15 @@ export class SurveyController {
 	@Delete(':surveyId')
 	remove(@Param('surveyId', new ParseUUIDPipe()) surveyId: string) {
 		return this.surveyService.remove(surveyId);
+	}
+
+	//* Questions
+	@Get('questions/:surveyId')
+	getQuestionsBySurveyId(@Param('surveyId', new ParseUUIDPipe()) surveyId: string) {
+		return this.questionService.getQuestionsBySurveyId(surveyId);
+	}
+	@Post('createQuestion')
+	createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
+		return this.questionService.createQuestion(createQuestionDto);
 	}
 }
