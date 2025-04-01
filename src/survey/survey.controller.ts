@@ -10,6 +10,8 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 import { OptionService } from './option.service';
 import { CreateOptionDto } from './dto/create-option.dto';
 import { UpdateOptionDto } from './dto/update-option.dto';
+import { QuestionReorderDto } from './dto/reorder-question.dto';
+// Add to imports:
 
 //ToDO: Agregar validaciones por rol.
 
@@ -18,7 +20,7 @@ export class SurveyController {
 	constructor(
 		private readonly surveyService: SurveyService,
 		private readonly questionService: QuestionService,
-		private readonly optionService: OptionService,
+		private readonly optionService: OptionService
 	) {}
 	//* ---------------------------- Surveys ----------------------------
 	@Get(':surveyId')
@@ -53,11 +55,11 @@ export class SurveyController {
 	//* ---------------------------- Questions ------------------------------
 	@Get('questions/:surveyId')
 	getQuestionsBySurveyId(
-	    @Param('surveyId', new ParseUUIDPipe()) surveyId: string,
-	    @Query() pagination?: PaginationArgs,
-	    @Query('all') all?: boolean
+		@Param('surveyId', new ParseUUIDPipe()) surveyId: string,
+		@Query() pagination?: PaginationArgs,
+		@Query('all') all?: boolean
 	) {
-	    return this.questionService.getQuestionsBySurveyId(surveyId, all ? null : pagination);
+		return this.questionService.getQuestionsBySurveyId(surveyId, all ? null : pagination);
 	}
 
 	@Get('questions/get/:id')
@@ -104,5 +106,10 @@ export class SurveyController {
 	@Delete('options/delete/:id')
 	deleteOption(@Param('id', new ParseUUIDPipe()) id: string) {
 		return this.optionService.deleteOption(id);
+	}
+
+	@Patch('questions/reorder')
+	async reorderQuestions(@Body() reorderDto: QuestionReorderDto) {
+		return this.questionService.reorderQuestions(reorderDto);
 	}
 }

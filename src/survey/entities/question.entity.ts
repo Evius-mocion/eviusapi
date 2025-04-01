@@ -12,13 +12,15 @@ export class Question {
 	@Column({ length: 500, nullable: false })
 	value: string;
 
-	@Column({ 
-		type: 'enum', 
-		enum: QuestionType, 
-		nullable: false 
+	@Column({
+		type: 'enum',
+		enum: QuestionType,
+		nullable: false,
 	})
 	type: QuestionType;
-
+	
+	@Column({ type: 'int', default: 0 })
+	order: number;
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;
 	@UpdateDateColumn({ type: 'timestamptz' })
