@@ -24,6 +24,7 @@ import { Categories } from "./category.entity";
 import { Activity } from "src/activities/entities/activity.entity";
 import { Survey } from "src/survey/entities/survey.entity";
 import { Auction } from "src/auction/entities/auction.entity";
+import { Collaborator } from "src/collaborator/entities";
 
 @Entity('events')
 export class Event {
@@ -135,6 +136,11 @@ export class Event {
 		eager: false,
 	})
 	activities: Activity[];
+
+	@OneToMany(() => Collaborator, (collaborator) => collaborator.event, {
+		eager: false,
+	})
+	collaborators: Collaborator[];
 	
 	@OneToMany(() => Auction, (auction) => auction.event, {
 		eager: false,

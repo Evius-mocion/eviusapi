@@ -15,6 +15,7 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    
     const requiredRole = this.reflector.getAllAndOverride<RoleType>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -35,7 +36,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const collaborator = await this.CollaboratoService.findOneByIdAndOrganizationId(user.id,user.organizationId);
+    const collaborator = await this.CollaboratoService.findOneByUserIdAndEventId(user.id,user.eventId);
     
     const rol = collaborator?.rol;
     

@@ -1,6 +1,7 @@
 import { Attendee } from "src/attendee/entities/attendee.entity";
 import { Collaborator } from "src/collaborator/entities/collaborator.entity";
 import { Event } from "src/event/entities/event.entity";
+import { Organization } from "src/organization/entities/organization.entity";
 import { genderType, typeAccount } from "src/types/user.types";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -36,6 +37,9 @@ export class User {
     
     @OneToMany(() => Collaborator, collaborator => collaborator.user)
     collaborators: Collaborator[];
+
+    @OneToMany(() => Organization, orga => orga.user)
+    organizations: Organization[];
 
     @OneToMany(() => Event, event => event.createdBy)
     events: Event[];
