@@ -18,9 +18,10 @@ export class Question {
 		nullable: false,
 	})
 	type: QuestionType;
-	
-	@Column({ type: 'int', default: 0 })
+
+	@Column({ type: 'numeric', default: 0 })
 	order: number;
+
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;
 	@UpdateDateColumn({ type: 'timestamptz' })

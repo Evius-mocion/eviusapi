@@ -105,9 +105,7 @@ export class QuestionService {
 		reorderDto.questionIds.forEach((id, index) => idPositionMap.set(id, index));
 
 		// Sort questions according to DTO's ID order
-		questions.sort((a, b) => 
-			idPositionMap.get(a.id) - idPositionMap.get(b.id)
-		);
+		questions.sort((a, b) => idPositionMap.get(a.id) - idPositionMap.get(b.id));
 
 		// Update order based on array position (starting at 1)
 		questions.forEach((question, index) => {
