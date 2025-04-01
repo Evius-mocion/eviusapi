@@ -7,6 +7,9 @@ import { PaginationArgs } from 'src/common/dto';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { OptionService } from './option.service';
+import { CreateOptionDto } from './dto/create-option.dto';
+import { UpdateOptionDto } from './dto/update-option.dto';
 
 //ToDO: Agregar validaciones por rol.
 
@@ -14,7 +17,8 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 export class SurveyController {
 	constructor(
 		private readonly surveyService: SurveyService,
-		private readonly questionService: QuestionService
+		private readonly questionService: QuestionService,
+		private readonly optionService: OptionService,
 	) {}
 	//* ---------------------------- Surveys ----------------------------
 	@Get(':surveyId')
@@ -74,5 +78,31 @@ export class SurveyController {
 	@Delete('questions/delete/:id')
 	deleteQuestion(@Param('id', new ParseUUIDPipe()) id: string) {
 		return this.questionService.deleteQuestion(id);
+	}
+
+	//* ---------------------------- Options ------------------------------
+	@Post('options/create')
+	createOption(@Body() createOptionDto: CreateOptionDto) {
+		return this.optionService.createOption(createOptionDto);
+	}
+
+	@Get('options/by-question/:questionId')
+	getOptionsByQuestionId(@Param('questionId', new ParseUUIDPipe()) questionId: string) {
+		return this.optionService.getOptionsByQuestionId(questionId);
+	}
+
+	@Get('options/:id')
+	getOptionById(@Param('id', new ParseUUIDPipe()) id: string) {
+		return this.optionService.getOptionById(id);
+	}
+
+	@Patch('options/update/:id')
+	updateOption(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateDto: UpdateOptionDto) {
+		return this.optionService.updateOption(id, updateDto);
+	}
+
+	@Delete('options/delete/:id')
+	deleteOption(@Param('id', new ParseUUIDPipe()) id: string) {
+		return this.optionService.deleteOption(id);
 	}
 }
