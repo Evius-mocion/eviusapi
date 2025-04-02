@@ -1,26 +1,24 @@
 import { Question } from './question.entity';
 import { Survey } from './survey.entity';
 import { Option } from './option.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Entity()
 export class SurveyAnswer {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
-  @Column({ nullable: false })
-  attendee_id: string;
+	//* Relaciones
+	@ManyToOne(() => Survey, (survey) => survey.answers, { eager: false })
+	survey: Survey;
 
-  @Column({ nullable: true })
-  value: string;
+	@ManyToOne(() => Question, (question) => question.answers, { eager: false })
+	question: Question;
 
-  //* Relaciones
-  @ManyToOne(() => Survey, (survey) => survey.answers, { eager: false })
-  survey: Survey;
+	@ManyToOne(() => Option, (option) => option, { nullable: true, eager: false })
+	option: Option;
 
-  @ManyToOne(() => Question, (question) => question.answers, { eager: false })
-  question: Question;
-
-  @ManyToOne(() => Option, (option) => option, { nullable: true, eager: false })
-  option: Option;
+	@ManyToOne(() => Attendee, (attendee) => attendee.answers, { eager: false })
+	attendee: Attendee;
 }

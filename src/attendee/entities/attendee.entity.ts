@@ -5,24 +5,22 @@ import { User } from 'src/common/entities';
 import { CheckInActivity } from './checkIn.entity';
 import { CheckInType } from 'src/types/attendee.type';
 import { Bid } from 'src/auction/entities/bid.entity';
-
-
+import { SurveyAnswer } from 'src/survey/entities/surveyAnswer.entity';
 
 @Entity('attendees')
 export class Attendee {
-
 	@Index()
 	@Column({ type: 'uuid', unique: true })
 	@Generated('uuid')
-  	id: string;
-	
+	id: string;
+
 	@Index()
-	@PrimaryColumn({type: 'uuid'})
-  	userId: string;
-	
+	@PrimaryColumn({ type: 'uuid' })
+	userId: string;
+
 	@Index()
-	@PrimaryColumn({type: 'uuid'})
-  	eventId: string;
+	@PrimaryColumn({ type: 'uuid' })
+	eventId: string;
 
 	@Column({ nullable: false })
 	fullName: string;
@@ -34,7 +32,7 @@ export class Attendee {
 	})
 	origin: CheckInType;
 
-	@Column({ nullable: false})
+	@Column({ nullable: false })
 	email: string;
 
 	@ManyToOne(() => User, (user) => user.attendees, {
@@ -71,7 +69,7 @@ export class Attendee {
 
 	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
 	checkInActivity: CheckInActivity[];
-	
+
 	@OneToMany(() => Bid, (bids) => bids.attende)
 	bids: Bid[];
 
@@ -83,8 +81,11 @@ export class Attendee {
 	checkInType: CheckInType;
 
 	@Column({ type: 'jsonb', nullable: true })
-  	properties: Record<string, any>; 
+	properties: Record<string, any>;
 
-	@CreateDateColumn({type: 'timestamptz'})
+	@CreateDateColumn({ type: 'timestamptz' })
 	createAt: Date;
+
+	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
+	answers: SurveyAnswer[];
 }
