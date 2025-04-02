@@ -19,7 +19,7 @@ export class Question {
 	})
 	type: QuestionType;
 
-	@Column({ type: 'numeric', default: 0 })
+	@Column({ type: 'int', default: 0 })
 	order: number;
 
 	@CreateDateColumn({ type: 'timestamptz' })
