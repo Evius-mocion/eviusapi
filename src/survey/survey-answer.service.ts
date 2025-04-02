@@ -26,29 +26,27 @@ export class SurveyAnswerService {
 	) {}
 
 	async createAnswer(createDto: CreateSurveyAnswerDto) {
-		return this.answerRepository.manager.transaction(async (manager) => {
-			// Validate all relations exist
-			const [attendee, question, option, survey] = await Promise.all([
-				manager.findOneBy(Attendee, { id: createDto.attendeeId }),
-				manager.findOneBy(Question, { id: createDto.questionId }),
-				manager.findOneBy(Option, { id: createDto.optionId }),
-				manager.findOneBy(Survey, { id: createDto.surveyId }),
-			]);
+		console.log('createDto', createDto);
+		// Validate all relations exist
+		const [attendee, question, option, survey] = await Promise.all([
+			this.attendeeRepository.findOneBy({ id: createDto.attendeeId }),
+			this.questionRepository.findOneBy({ id: createDto.questionId }),
+			this.optionRepository.findOneBy({ id: createDto.optionId }),
+			this.surveyRepository.findOneBy({ id: createDto.surveyId }),
+		]);
+		if (!attendee) throw new NotFoundException('Attendee not found');
+		if (!question) throw new NotFoundException('Question not found');
+		if (!option) throw new NotFoundException('Option not found');
+		if (!survey) throw new NotFoundException('Survey not found');
 
-			if (!attendee) throw new NotFoundException('Attendee not found');
-			if (!question) throw new NotFoundException('Question not found');
-			if (!option) throw new NotFoundException('Option not found');
-			if (!survey) throw new NotFoundException('Survey not found');
-
-			const answer = manager.create(SurveyAnswer, {
-				attendee: { id: createDto.attendeeId },
-				question: { id: createDto.questionId },
-				option: { id: createDto.optionId },
-				survey: { id: createDto.surveyId },
-			});
-
-			return { answer: await manager.save(answer) };
+		const answer = this.answerRepository.create({
+			attendee,
+			question,
+			option,
+			survey,
 		});
+
+		return { answer: await this.answerRepository.save(answer) };
 	}
 
 	async getAnswerById(answerId: string) {
@@ -107,26 +105,26 @@ export class SurveyAnswerService {
 
 	async updateAnswer(answerId: string, updateDto: UpdateSurveyAnswerDto) {
 		const { answer } = await this.getAnswerById(answerId);
-		
+
 		// Validate and update relations
 		if (updateDto.attendeeId) {
 			const attendee = await this.attendeeRepository.findOneBy({ id: updateDto.attendeeId });
 			if (!attendee) throw new NotFoundException('Attendee not found');
 			answer.attendee = attendee;
 		}
-		
+
 		if (updateDto.questionId) {
 			const question = await this.questionRepository.findOneBy({ id: updateDto.questionId });
 			if (!question) throw new NotFoundException('Question not found');
 			answer.question = question;
 		}
-	
+
 		if (updateDto.optionId) {
 			const option = await this.optionRepository.findOneBy({ id: updateDto.optionId });
 			if (!option) throw new NotFoundException('Option not found');
 			answer.option = option;
 		}
-	
+
 		if (updateDto.surveyId) {
 			const survey = await this.surveyRepository.findOneBy({ id: updateDto.surveyId });
 			if (!survey) throw new NotFoundException('Survey not found');
