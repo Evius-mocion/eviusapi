@@ -36,7 +36,7 @@ export class EventService {
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
-      const org = await this.organizationService.findOne(user.organizationId);
+      const org = await this.organizationService.findOne(user.eventId);
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
@@ -151,7 +151,7 @@ export class EventService {
 
     const user = await this.userRepository.findOneBy({ email });
 
-    const event = await this.eventRepository.findOne({where: { id: eventId }, relations: ["organization","organization.collaborators"], loadRelationIds: {relations: ["attendees"]}});
+    const event = await this.eventRepository.findOne({where: { id: eventId }, relations: ["organization","collaborators"], loadRelationIds: {relations: ["attendees"]}});
     if (!event) {
       throw new BadRequestException("Event not found");
     }
@@ -161,7 +161,7 @@ export class EventService {
     let collaborator = null;
     if (user) {
       attendee = event.attendees.find((attendee) => attendee.id === user.id);
-      collaborator = event.organization.collaborators.find((collaborator) => collaborator.user.id === user.id);
+      collaborator = event.collaborators.find((collaborator) => collaborator.user.id === user.id);
     }
 
     return {
@@ -177,7 +177,7 @@ export class EventService {
 
     const event = await this.eventRepository.findOne({
       where: { id: eventId }, 
-      relations: ["organization","organization.collaborators"], 
+      relations: ["organization","collaborators"], 
       cache: true,
     });
   
@@ -191,7 +191,7 @@ export class EventService {
       event.id,
     );
 
-    const  collaborator = event.organization.collaborators.find((collaborator) => collaborator.user.id === userId);
+    const  collaborator = event.collaborators.find((collaborator) => collaborator.user.id === userId);
     if (collaborator) {
       collaboratorRol = collaborator.rol;
     }

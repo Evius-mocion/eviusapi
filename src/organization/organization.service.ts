@@ -8,7 +8,6 @@ import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
 import { inviteCollaborator } from "src/collaborator/entities";
 import { RoleType } from "src/types/collaborator.types";
-import { Roles } from "src/constants/constants";
 import { PaginationArgs } from "src/common/dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
@@ -28,21 +27,17 @@ export class OrganizationService {
   ) {}
 
   async create(
-    ActiveUser: UserContext,
+    user: UserContext,
     createOrganizationDto: CreateOrganizationDto,
   ) {
     try {
-      const pre_org = this.organizationRepository.create(createOrganizationDto);
+      const currentUser = await this.userRepository.findOneBy({id: user.id});
+
+      const pre_org = this.organizationRepository.create({...createOrganizationDto, user: currentUser});
       const organization = await this.organizationRepository.save(pre_org);
-      const user = await this.userRepository.findOneBy({id: ActiveUser.id});
-      const collaborator = await this.collaboratorService.create({
-        rol: Roles.owner,
-        organization,
-        user
-      });
+
       return {
         organization,
-        rol: collaborator.rol,
       };
     } catch (error) {
       this.controlDbErros(error);
@@ -61,7 +56,7 @@ export class OrganizationService {
         throw new BadRequestException("Error rejecting invitation");
     }
   }
-  async register(user: UserContext, invitationId: string) {
+ /*  async register(user: UserContext, invitationId: string) {
       const activeUser = await this.userRepository.findOneBy({id: user.id});
      
       const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId, status: "pending"});
@@ -75,11 +70,7 @@ export class OrganizationService {
         relations: ["collaborators"],
       });
 
-     const isCollaborator = organization.collaborators.map((collaborator) => (collaborator.user.id)).includes(activeUser.id);
-
-      if (isCollaborator) {
-        throw new ConflictException("You are already a member of this organization");
-      }
+     
 
       const Collaborator = await this.collaboratorService.create(
         {
@@ -94,7 +85,7 @@ export class OrganizationService {
         organization,
         rol: Collaborator.rol,
       }
-  }
+  } */
   async getInvitations( orgId: string, pagination: PaginationArgs,status?: string) {
 
       const { offset, limit } = pagination;
@@ -149,7 +140,7 @@ export class OrganizationService {
     try {
       const collaborator = await this.collaboratorService.findAllByUserID(userID);
        return {
-        organizations: collaborator.map((c) => ({...c.organization, rol: c.rol})),
+        organizations: collaborator.map((c) => ({ rol: c.rol})),
        }
     } catch (error) {
       throw new InternalServerErrorException("Error getting organization's user");
@@ -163,7 +154,7 @@ export class OrganizationService {
       organization
       }
   }
-
+/* 
   async getAccessOrganization(organizationID: string, userID:string) {
     const organization = await this.organizationRepository.findOneBy({ id: organizationID})
     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userID,organizationID);
@@ -172,7 +163,7 @@ export class OrganizationService {
      rol:collaborator.rol
      }
  }
-
+ */
 
  
 

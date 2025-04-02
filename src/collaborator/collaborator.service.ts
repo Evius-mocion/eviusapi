@@ -27,9 +27,9 @@ export class CollaboratorService {
   }
  
 
-  async findAll(id: string) {
+  async findAll(eventId: string) {
     const collaborators = await this.collaboratorRepository.find({
-      where: { organization: { id } },
+      where: { event: {id: eventId}, deleteAt: null },
     });
 
     return {
@@ -60,11 +60,11 @@ export class CollaboratorService {
       return null;
     }
   }
-  async findOneByIdAndOrganizationId(id: string, org_id: string = "") {
+  async findOneByUserIdAndEventId(id: string, eventId: string = "") {
     try {
       const collaborator = await this.collaboratorRepository.findOneBy({
         user: {id},
-        organization: {id: org_id},
+        event: {id: eventId},
       });
       return collaborator;
     } catch (error) {

@@ -11,13 +11,13 @@ import { ActiveUser, Role } from 'src/common/decorators';
 @Controller('collaborator')
 export class CollaboratorController {
   constructor(private readonly colaboratorService: CollaboratorService) {}
-  CollaboratorService
+  
   @Post()
   create(@Body() createColaboratorDto: CreateCollaboratorDto) {
     return this.colaboratorService.create(createColaboratorDto);
   }
   
-  @Get("organization/:id")
+  @Get("event/:id")
   findAll(@Param('id') id: string) {
     return this.colaboratorService.findAll(id);
   }
@@ -28,7 +28,7 @@ export class CollaboratorController {
   }
   
   @Role(Roles.admin)
-  @Patch(':orgId/:id')
+  @Patch(':id')
   update(
     @ActiveUser() user: UserContext,
     @Param('id') id: string, 

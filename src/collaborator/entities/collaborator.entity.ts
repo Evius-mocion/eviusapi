@@ -1,8 +1,8 @@
-import { Organization } from "src/organization/entities/organization.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { RoleType } from '../../types/collaborator.types';
 import { User } from "src/common/entities/user.entity";
 import { Roles } from "src/constants/constants";
+import { Event } from "src/event/entities/event.entity";
 
 
 @Entity('collaborator')
@@ -10,16 +10,6 @@ import { Roles } from "src/constants/constants";
 export class Collaborator {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    
-    @ManyToOne(() => User, user => user.collaborators,{
-        eager: true
-    })
-    user: User;
-
-    @ManyToOne(() => Organization, organization => organization.collaborators,{
-        eager: true
-    })
-    organization: Organization;
 
     @Column({default: Roles.auditor})
     rol: RoleType;
@@ -32,4 +22,15 @@ export class Collaborator {
 
     @Column({nullable: true})
     deleteAt: Date;
+
+    //Relations
+    @ManyToOne(() => User, user => user.collaborators,{
+        eager: true
+    })
+    user: User;
+
+    @ManyToOne(() => Event, (event) => event.collaborators,{
+        eager: false
+    })
+    event: Event;
 }

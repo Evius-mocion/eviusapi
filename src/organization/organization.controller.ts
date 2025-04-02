@@ -23,13 +23,13 @@ export class OrganizationController {
 
   
   
-  @HttpCode(HttpStatus.CREATED)
+/*   @HttpCode(HttpStatus.CREATED)
   @Get("register/:invitationId")
   getInvitation(
     @ActiveUser() user: UserContext,
     @Param("invitationId") invitationId: string) {
     return this.organizationService.register(user, invitationId);
-  }
+  } */
   
   @HttpCode(HttpStatus.OK)
   @Get("reject/:invitationId")
@@ -80,18 +80,18 @@ export class OrganizationController {
     return this.organizationService.findOne(id);
   }
 
-  @Role(Roles.auditor)
+ /*  @Role(Roles.auditor)
   @Get(':orgId/accessToOrganization')
   accessToOrganization(
     @Param('orgId') id: string,
     @ActiveUser() user: UserContext
   ) {
     return this.organizationService.getAccessOrganization(id, user.id);
-  }
+  } */
 
 
 
-  @Role('owner')
+  @Role(Roles.owner)
   @Patch(':orgId')
   update(
     @Param('orgId') id: string,
@@ -99,7 +99,7 @@ export class OrganizationController {
   ) {
     return this.organizationService.update(id,updateOrganizationDto);
   }
-  @Role('owner')
+  @Role(Roles.owner)
   @Delete(':orgId')
   remove(@Param('orgId') id: string) {
     return this.organizationService.remove(id);

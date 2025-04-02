@@ -1,6 +1,7 @@
-import { Collaborator } from "src/collaborator/entities/collaborator.entity";
+
+import { User } from "src/common/entities";
 import { Event } from "src/event/entities/event.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
  type IOrganizationSocialMedia = {
   facebookUrl?: string;
@@ -22,9 +23,6 @@ export class Organization {
   @Column({ nullable: true, default: "" })
   avatar: string;
 
-  @OneToMany(() => Collaborator, (collaborator) => collaborator.organization)
-  collaborators: Collaborator[];
-
   @OneToMany(() => Event, (event) => event.organization)
   events: Event[];
 
@@ -36,6 +34,9 @@ export class Organization {
 
   @Column({ nullable: true, default: "" })
   myWebsiteUrl?: string;
+
+  @ManyToOne(() => User, (user) => user.organizations)
+  user: User;
 
   @Column({
     nullable: true,
