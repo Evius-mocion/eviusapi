@@ -1,16 +1,29 @@
-import { ForbiddenException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateCollaboratorDto, UpdateCollaboratorDto } from "./dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Collaborator } from "./entities";
+import { Collaborator, inviteCollaborator } from "./entities";
 import { RoleEnum, Roles } from "src/constants/constants";
 import { UserContext } from "src/types/user.types";
+import { PaginationArgs } from "src/common/dto";
+import { User } from "src/common/entities";
+import { RoleType } from "src/types/collaborator.types";
+import { Event } from "src/event/entities/event.entity";
 
 @Injectable()
 export class CollaboratorService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+   
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
+
     @InjectRepository(Collaborator)
     private readonly collaboratorRepository: Repository<Collaborator>,
+    
+    @InjectRepository(inviteCollaborator)
+    private readonly inviteCollaboratorRepository: Repository<inviteCollaborator>,
    
   ) {}
   async create(createCollaboratorDto: CreateCollaboratorDto) {
@@ -89,5 +102,102 @@ export class CollaboratorService {
 
   remove(id: number) {
     return `This action removes a #${id} collaborator`;
+  }
+
+  //invitaciones 
+
+  async getInvitationsByEvent( eventId: string, pagination: PaginationArgs,status?: string) {
+
+    const { offset, limit } = pagination;
+
+    const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
+      where: {eventId, status},
+      take: limit,
+      skip: (offset - 1) * limit,
+    });  
+
+    return {
+        invitations,
+        total
+    }
+  
+}
+
+async rejectInvitation( invitationId: string) {
+  try {
+
+    await this.inviteCollaboratorRepository.update(invitationId, {status: "rejected"});
+    return {
+      message: "Invitation rejected"
+    }
+  } catch (error) {
+      console.log(error);
+      throw new BadRequestException("Error rejecting invitation");
+  }
+}
+
+async getInvitationsByUser( userContext: UserContext, status?: string) {
+
+  const user = await this.userRepository.findOneBy({id: userContext.id});
+    
+    const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
+      where: {email: user.email, status},
+    });  
+
+    return {
+        invitations,
+        total
+    }
+  
+}
+
+
+
+async invitationStatus( invitationId: string) {
+  try {
+    const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
+    if(!invitation){
+      throw new NotFoundException("Invitation not found");
+    }
+    return {
+        id: invitation?.id,
+        email: invitation?.email,
+        organization: invitation?.eventName,
+        status: invitation?.status,
+        role: invitation?.role,
+    }
+  } catch (error) {
+      console.log(error);
+      throw new BadRequestException("Error getting invitation");
+  }
+}
+  async register(user: UserContext, invitationId: string) {
+      const activeUser = await this.userRepository.findOneBy({id: user.id});
+     
+      const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId, status: "pending"});
+
+      if (!invitation || activeUser.email !== invitation.email) {
+        throw new ForbiddenException("you don't have invitation to this event");
+      }
+
+      const event = await this.eventRepository.findOne({
+        where: {id: invitation.eventId, deletedAt: null},
+      });
+
+     
+
+      const Collaborator =  this.collaboratorRepository.create(
+        {
+          event,
+          rol: invitation.role as RoleType,
+          user: activeUser,
+        }
+      );
+
+      await this.inviteCollaboratorRepository.update(invitationId, {status: "accepted"});
+      return {
+        event,
+        rol: Collaborator.rol,
+      }
   }
 }

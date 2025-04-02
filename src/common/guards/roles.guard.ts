@@ -21,16 +21,22 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
     
-    const isAdmin = this.reflector.getAllAndOverride<RoleType>(SUPER_ADMIN, [
+    const requiredAdmin = this.reflector.getAllAndOverride<boolean>(SUPER_ADMIN, [
       context.getHandler(),
       context.getClass(),
     ]);
     
-    if (!requiredRole && !isAdmin) {
+    if (!requiredRole && !requiredAdmin) {
       return true;
     }
 
+
     const { user } = context.switchToHttp().getRequest() as { user: UserContext };
+    
+    if (requiredAdmin && !user.isAdmin) {
+      throw new ForbiddenException("You don't have permission to access this resource, contact an administrator");
+    }
+    
 
     if(user.isAdmin){
       return true;

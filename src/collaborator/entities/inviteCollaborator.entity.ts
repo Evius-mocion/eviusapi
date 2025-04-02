@@ -13,13 +13,13 @@ export class inviteCollaborator {
     userHost: string;
 
     @Column({nullable: false})
-    organizationName: string;
+    eventName: string;
     
     @Column({nullable: false})
     email: string;
     
     @Column({nullable: false})
-    organizationId: string;
+    eventId: string;
 
     @Column({nullable: false, enum: ["owner","admin","member"], default:"member"})
     role: string;

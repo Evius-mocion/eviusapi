@@ -41,5 +41,5 @@ export class FilterAttendeeArgs {
 
 export class UuidDto {
     @IsUUID()
-    orgId: string;
+    eventId: string;
 }

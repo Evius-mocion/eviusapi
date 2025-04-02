@@ -23,7 +23,7 @@ export class Organization {
   @Column({ nullable: true, default: "" })
   avatar: string;
 
-  @OneToMany(() => Event, (event) => event.organization)
+  @OneToMany(() => Event, (event) => event.organization, {eager: false})
   events: Event[];
 
   @Column({ nullable: true, default: "" })
@@ -35,7 +35,7 @@ export class Organization {
   @Column({ nullable: true, default: "" })
   myWebsiteUrl?: string;
 
-  @ManyToOne(() => User, (user) => user.organizations)
+  @ManyToOne(() => User, (user) => user.organizations, {eager: false})
   user: User;
 
   @Column({

@@ -1,11 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, HttpCode, HttpStatus, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Public, Role , ActiveUser} from 'src/common/decorators';
+import { Role , ActiveUser, SuperAdmin} from 'src/common/decorators';
 import { Roles } from 'src/constants/constants';
-import { PaginationArgs, UuidDto } from 'src/common/dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 @ApiTags('organization')
 @ApiBearerAuth()
@@ -31,13 +30,13 @@ export class OrganizationController {
     return this.organizationService.register(user, invitationId);
   } */
   
-  @HttpCode(HttpStatus.OK)
+  /* @HttpCode(HttpStatus.OK)
   @Get("reject/:invitationId")
   rejectInvitation(
     @Param("invitationId") invitationId: string) {
     return this.organizationService.rejectInvitation( invitationId);
-  }
-
+  } */
+/* 
   @Role(Roles.auditor)
   @HttpCode(HttpStatus.CREATED)
   @Get(":orgId/invitations")
@@ -48,8 +47,8 @@ export class OrganizationController {
   ) {
     return this.organizationService.getInvitations(params.orgId,pagination, status);
   }
-  
-
+   */
+/* 
   @HttpCode(HttpStatus.CREATED)
   @Get('invitations/user')
   invitationsUser(
@@ -57,25 +56,26 @@ export class OrganizationController {
     @Query('status') status?: string,
   ) {
     return this.organizationService.getInvitationsByUser(user, status);
-  }
+  } */
   
-  @Public()
+  /* @Public()
   @HttpCode(HttpStatus.CREATED)
   @Get("invitation/:id")
   invitation(
     @Param("id") id: string) {
     return this.organizationService.invitationStatus(id);
-  }
+  } */
 
+  @SuperAdmin()
   @Get('all')
-  findAll(@Query('userId') userId: string,) {
-    return this.organizationService.findAllByContributorId(userId);
+  findAll() {
+    return this.organizationService.findAll();
   }
 
   @Role(Roles.auditor)
-  @Get(':orgId')
+  @Get(':id')
   findOne(
-    @Param('orgId') id: string,
+    @Param('id') id: string,
   ) {
     return this.organizationService.findOne(id);
   }
@@ -92,16 +92,16 @@ export class OrganizationController {
 
 
   @Role(Roles.owner)
-  @Patch(':orgId')
+  @Patch(':id')
   update(
-    @Param('orgId') id: string,
+    @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto 
   ) {
     return this.organizationService.update(id,updateOrganizationDto);
   }
-  @Role(Roles.owner)
-  @Delete(':orgId')
-  remove(@Param('orgId') id: string) {
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     return this.organizationService.remove(id);
   }
 }

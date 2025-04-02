@@ -1,14 +1,10 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Organization } from "./entities/organization.entity";
-import { CollaboratorService } from "src/collaborator";
 import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
-import { inviteCollaborator } from "src/collaborator/entities";
-import { RoleType } from "src/types/collaborator.types";
-import { PaginationArgs } from "src/common/dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
 @Injectable()
@@ -20,10 +16,6 @@ export class OrganizationService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    private readonly collaboratorService: CollaboratorService,
-
-    @InjectRepository(inviteCollaborator)
-    private readonly inviteCollaboratorRepository: Repository<inviteCollaborator>,
   ) {}
 
   async create(
@@ -44,18 +36,7 @@ export class OrganizationService {
     }
   }
 
-  async rejectInvitation( invitationId: string) {
-    try {
   
-      await this.inviteCollaboratorRepository.update(invitationId, {status: "rejected"});
-      return {
-        message: "Invitation rejected"
-      }
-    } catch (error) {
-        console.log(error);
-        throw new BadRequestException("Error rejecting invitation");
-    }
-  }
  /*  async register(user: UserContext, invitationId: string) {
       const activeUser = await this.userRepository.findOneBy({id: user.id});
      
@@ -86,61 +67,15 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   } */
-  async getInvitations( orgId: string, pagination: PaginationArgs,status?: string) {
+  
 
-      const { offset, limit } = pagination;
-
-      const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
-        where: {organizationId: orgId, status},
-        take: limit,
-        skip: (offset - 1) * limit,
-      });  
-
-      return {
-          invitations,
-          total
-      }
-    
-  }
-  async getInvitationsByUser( userContext: UserContext, status?: string) {
-
-    const user = await this.userRepository.findOneBy({id: userContext.id});
-      
-      const [invitations, total ]= await this.inviteCollaboratorRepository.findAndCount({
-        where: {email: user.email, status},
-      });  
-
-      return {
-          invitations,
-          total
-      }
-    
-  }
-  async invitationStatus( invitationId: string) {
-    try {
-      const invitation = await this.inviteCollaboratorRepository.findOneBy({id: invitationId});  
-      if(!invitation){
-        throw new NotFoundException("Invitation not found");
-      }
-      return {
-          id: invitation?.id,
-          email: invitation?.email,
-          organization: invitation?.organizationName,
-          status: invitation?.status,
-          role: invitation?.role,
-      }
-    } catch (error) {
-        console.log(error);
-        throw new BadRequestException("Error getting invitation");
-    }
-  }
 
   
-  async findAllByContributorId(userID: string) {
+  async findAll() {
     try {
-      const collaborator = await this.collaboratorService.findAllByUserID(userID);
+      const organizations = await this.organizationRepository.find();
        return {
-        organizations: collaborator.map((c) => ({ rol: c.rol})),
+        organizations: organizations,
        }
     } catch (error) {
       throw new InternalServerErrorException("Error getting organization's user");
