@@ -9,6 +9,7 @@ import { Question } from './entities/question.entity';
 import { Option } from './entities/option.entity';
 import { Survey } from './entities/survey.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { QuestionType } from './enums/question-type.enum';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -26,16 +27,6 @@ export class SurveyAnswerService {
 	) {}
 
 	private async validateEntities(createDto: CreateSurveyAnswerDto) {
-		if ((!createDto.optionId && !createDto.response) || (createDto.optionId && createDto.response)) {
-			throw new Error('Either option or response must be provided, but not both');
-		}
-
-		let option = null;
-		if (createDto.optionId) {
-			option = await this.optionRepository.findOneBy({ id: createDto.optionId });
-			if (!option) throw new NotFoundException('Option not found');
-		}
-
 		const [attendee, question, survey] = await Promise.all([
 			this.attendeeRepository.findOneBy({ id: createDto.attendeeId }),
 			this.questionRepository.findOneBy({ id: createDto.questionId }),
@@ -56,7 +47,20 @@ export class SurveyAnswerService {
 			throw new NotFoundException('Question does not belong to the specified survey');
 		}
 
-		if (createDto.optionId) {
+		let option = null;
+		if (question.type === QuestionType.TEXT) {
+			if (!createDto.response) {
+				throw new Error('Response is required for text type questions');
+			}
+		}
+		if (question.type === QuestionType.SINGLE_CHOICE || question.type === QuestionType.MULTIPLE_CHOICE) {
+			if (!createDto.optionId) {
+				throw new Error('Option ID is required for single/multiple choice questions');
+			}
+
+			option = await this.optionRepository.findOneBy({ id: createDto.optionId });
+			if (!option) throw new NotFoundException('Option not found');
+
 			const optionBelongsToQuestion = await this.optionRepository.findOne({
 				where: {
 					id: createDto.optionId,
@@ -174,5 +178,5 @@ export class SurveyAnswerService {
 		const { answer } = await this.getAnswerById(answerId);
 		await this.answerRepository.remove(answer);
 		return { answer };
-	}	
+	}
 }
