@@ -7,7 +7,6 @@ import { UpdateSurveyAnswerDto } from './dto/update-survey-answer.dto';
 import { PaginationArgs } from 'src/common/dto';
 import { Question } from './entities/question.entity';
 import { Option } from './entities/option.entity';
-import { Survey } from './entities/survey.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Injectable()
@@ -20,9 +19,7 @@ export class SurveyAnswerService {
 		@InjectRepository(Question)
 		private readonly questionRepository: Repository<Question>,
 		@InjectRepository(Option)
-		private readonly optionRepository: Repository<Option>,
-		@InjectRepository(Survey)
-		private readonly surveyRepository: Repository<Survey>
+		private readonly optionRepository: Repository<Option>
 	) {}
 
 	private async validateEntities(createDto: CreateSurveyAnswerDto) {
@@ -37,7 +34,7 @@ export class SurveyAnswerService {
 			}),
 			this.questionRepository.findOne({
 				where: { id: createDto.questionId },
-				relations: ['survey'],
+				relations: ['survey.event'],
 			}),
 			createDto.optionId
 				? this.optionRepository.findOne({
@@ -46,17 +43,14 @@ export class SurveyAnswerService {
 					})
 				: Promise.resolve(null),
 		]);
-
 		if (!attendee) throw new NotFoundException('Asistente no encontrado');
 		if (!question) throw new NotFoundException('Pregunta no encontrada');
 
-		// Validar que la opción pertenece a la pregunta
 		if (option && option.question.id !== createDto.questionId) {
 			throw new BadRequestException('La opción no pertenece a la pregunta especificada');
 		}
 
-		// Validar que el evento del asistente coincide con el de la encuesta
-		if (question.survey.eventId !== attendee.event.id) {
+		if (question.survey.event.id !== attendee.event.id) {
 			throw new BadRequestException('La pregunta no pertenece al evento del asistente');
 		}
 
@@ -64,11 +58,12 @@ export class SurveyAnswerService {
 	}
 
 	async createAnswer(createDto: CreateSurveyAnswerDto) {
-		const { attendee, option } = await this.validateEntities(createDto);
+		const { attendee, option, question } = await this.validateEntities(createDto);
 
 		const answer = this.answerRepository.create({
 			attendee,
 			option,
+			question,
 			response: createDto.response,
 		});
 
@@ -78,7 +73,7 @@ export class SurveyAnswerService {
 	async getAnswerById(answerId: string) {
 		const answer = await this.answerRepository.findOne({
 			where: { id: answerId },
-			relations: ['attendee', 'question', 'option', 'survey'],
+			relations: ['attendee', 'question', 'option'],
 		});
 
 		if (!answer) {
@@ -92,7 +87,7 @@ export class SurveyAnswerService {
 
 		const [answers, total] = await this.answerRepository.findAndCount({
 			where: { question: { id: questionId } },
-			relations: ['attendee', 'option'],
+			relations: ['attendee', 'option', 'question'],
 			skip,
 			take: limit,
 		});
@@ -119,7 +114,7 @@ export class SurveyAnswerService {
 
 		const [answers, total] = await this.answerRepository.findAndCount({
 			where: { option: { id: optionId } },
-			relations: ['attendee', 'question'],
+			relations: ['attendee', 'question', 'question'],
 			skip,
 			take: limit,
 		});
