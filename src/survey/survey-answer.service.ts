@@ -8,6 +8,7 @@ import { PaginationArgs } from 'src/common/dto';
 import { Question } from './entities/question.entity';
 import { Option } from './entities/option.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { QuestionType } from './enums/question-type.enum';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -23,38 +24,63 @@ export class SurveyAnswerService {
 	) {}
 
 	private async validateEntities(createDto: CreateSurveyAnswerDto) {
-		if ((!createDto.optionId && !createDto.response) || (createDto.optionId && createDto.response)) {
-			throw new BadRequestException('Debe proporcionar solo una opción o una respuesta');
-		}
+		const { attendeeId, questionId, optionId, response } = createDto;
 
+		const { attendee, option, question } = await this.findEntities(attendeeId, questionId, optionId);
+
+		this.validateQuestionType(question, optionId, response);
+		this.validateQuestionAndOption(question, option);
+		this.validateEventRelationship(question, attendee);
+
+		return { attendee, question, option };
+	}
+
+	private async findEntities(attendeeId: string, questionId: string, optionId?: string) {
 		const [attendee, question, option] = await Promise.all([
-			this.attendeeRepository.findOne({
-				where: { id: createDto.attendeeId },
-				relations: ['event'],
-			}),
-			this.questionRepository.findOne({
-				where: { id: createDto.questionId },
-				relations: ['survey.event'],
-			}),
-			createDto.optionId
-				? this.optionRepository.findOne({
-						where: { id: createDto.optionId },
-						relations: ['question'],
-					})
-				: Promise.resolve(null),
+			this.attendeeRepository.findOne({ where: { id: attendeeId }, relations: ['event'] }),
+			this.questionRepository.findOne({ where: { id: questionId }, relations: ['survey.event'] }),
+			optionId ? this.optionRepository.findOne({ where: { id: optionId }, relations: ['question'] }) : null,
 		]);
-		if (!attendee) throw new NotFoundException('Asistente no encontrado');
-		if (!question) throw new NotFoundException('Pregunta no encontrada');
 
-		if (option && option.question.id !== createDto.questionId) {
+		return { attendee, question, option };
+	}
+
+	private validateQuestionType(question: Question, optionId?: string, response?: string) {
+		const validations = {
+			[QuestionType.TEXT]: () => {
+				if (!response || optionId) {
+					throw new BadRequestException('Las preguntas de tipo texto solo deben recibir una respuesta y no una opción.');
+				}
+			},
+			[QuestionType.MULTIPLE_CHOICE]: () => {
+				if (!optionId || response) {
+					throw new BadRequestException('Las preguntas de opción múltiple deben recibir solo una opción y no una respuesta.');
+				}
+			},
+			[QuestionType.SINGLE_CHOICE]: () => {
+				if (!optionId || response) {
+					throw new BadRequestException('Las preguntas de opción única deben recibir solo una opción y no una respuesta.');
+				}
+			},
+		};
+
+		if (validations[question.type]) {
+			validations[question.type]();
+		} else {
+			throw new BadRequestException('Tipo de pregunta no válido.');
+		}
+	}
+
+	private validateQuestionAndOption(question: Question, option?: Option) {
+		if (option && option.question.id !== question.id) {
 			throw new BadRequestException('La opción no pertenece a la pregunta especificada');
 		}
+	}
 
+	private validateEventRelationship(question: Question, attendee: Attendee) {
 		if (question.survey.event.id !== attendee.event.id) {
 			throw new BadRequestException('La pregunta no pertenece al evento del asistente');
 		}
-
-		return { attendee, question, option };
 	}
 
 	async createAnswer(createDto: CreateSurveyAnswerDto) {
