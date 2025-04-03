@@ -26,23 +26,31 @@ export class SurveyAnswerService {
 	) {}
 
 	private async validateEntities(createDto: CreateSurveyAnswerDto) {
-		const [attendee, question, option, survey] = await Promise.all([
+		if ((!createDto.optionId && !createDto.response) || (createDto.optionId && createDto.response)) {
+			throw new Error('Either option or response must be provided, but not both');
+		}
+
+		let option = null;
+		if (createDto.optionId) {
+			option = await this.optionRepository.findOneBy({ id: createDto.optionId });
+			if (!option) throw new NotFoundException('Option not found');
+		}
+
+		const [attendee, question, survey] = await Promise.all([
 			this.attendeeRepository.findOneBy({ id: createDto.attendeeId }),
 			this.questionRepository.findOneBy({ id: createDto.questionId }),
-			this.optionRepository.findOneBy({ id: createDto.optionId }),
 			this.surveyRepository.findOneBy({ id: createDto.surveyId }),
 		]);
 
 		if (!attendee) throw new NotFoundException('Attendee not found');
 		if (!question) throw new NotFoundException('Question not found');
-		if (!option) throw new NotFoundException('Option not found');
 		if (!survey) throw new NotFoundException('Survey not found');
 
 		const questionBelongsToSurvey = await this.questionRepository.findOne({
 			where: {
 				id: createDto.questionId,
-				survey: { id: createDto.surveyId }
-			}
+				survey: { id: createDto.surveyId },
+			},
 		});
 		if (!questionBelongsToSurvey) {
 			throw new NotFoundException('Question does not belong to the specified survey');
@@ -52,8 +60,8 @@ export class SurveyAnswerService {
 			const optionBelongsToQuestion = await this.optionRepository.findOne({
 				where: {
 					id: createDto.optionId,
-					question: { id: createDto.questionId }
-				}
+					question: { id: createDto.questionId },
+				},
 			});
 			if (!optionBelongsToQuestion) {
 				throw new NotFoundException('Option does not belong to the specified question');
@@ -71,6 +79,7 @@ export class SurveyAnswerService {
 			question,
 			option,
 			survey,
+			response: createDto.response,
 		});
 
 		return { answer: await this.answerRepository.save(answer) };
@@ -165,5 +174,5 @@ export class SurveyAnswerService {
 		const { answer } = await this.getAnswerById(answerId);
 		await this.answerRepository.remove(answer);
 		return { answer };
-	}
+	}	
 }

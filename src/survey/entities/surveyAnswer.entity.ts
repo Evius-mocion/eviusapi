@@ -1,7 +1,7 @@
 import { Question } from './question.entity';
 import { Survey } from './survey.entity';
 import { Option } from './option.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Entity()
@@ -19,7 +19,10 @@ export class SurveyAnswer {
 
 	@ManyToOne(() => Option, (option) => option, { nullable: true, eager: false })
 	option: Option;
-	
+
+	@Column({ nullable: true }) 
+	response: string;
+
 	@ManyToOne(() => Attendee, (attendee) => attendee.answers, { eager: false })
 	@JoinColumn({ name: 'attendeeId', referencedColumnName: 'id' })
 	attendee: Attendee;
