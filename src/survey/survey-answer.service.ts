@@ -25,19 +25,24 @@ export class SurveyAnswerService {
 		private readonly surveyRepository: Repository<Survey>
 	) {}
 
-	async createAnswer(createDto: CreateSurveyAnswerDto) {
-		console.log('createDto', createDto);
-		// Validate all relations exist
+	private async validateEntities(createDto: CreateSurveyAnswerDto) {
 		const [attendee, question, option, survey] = await Promise.all([
 			this.attendeeRepository.findOneBy({ id: createDto.attendeeId }),
 			this.questionRepository.findOneBy({ id: createDto.questionId }),
 			this.optionRepository.findOneBy({ id: createDto.optionId }),
 			this.surveyRepository.findOneBy({ id: createDto.surveyId }),
 		]);
+
 		if (!attendee) throw new NotFoundException('Attendee not found');
 		if (!question) throw new NotFoundException('Question not found');
 		if (!option) throw new NotFoundException('Option not found');
 		if (!survey) throw new NotFoundException('Survey not found');
+
+		return { attendee, question, option, survey };
+	}
+
+	async createAnswer(createDto: CreateSurveyAnswerDto) {
+		const { attendee, question, option, survey } = await this.validateEntities(createDto);
 
 		const answer = this.answerRepository.create({
 			attendee,
