@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
-import { Event } from 'src/event/entities/event.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Survey } from './entities/survey.entity';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { PaginationArgs } from 'src/common/dto';
+import { Event } from 'src/event/entities/event.entity';
 
 @Injectable()
 export class SurveyService {

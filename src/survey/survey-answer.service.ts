@@ -38,6 +38,28 @@ export class SurveyAnswerService {
 		if (!option) throw new NotFoundException('Option not found');
 		if (!survey) throw new NotFoundException('Survey not found');
 
+		const questionBelongsToSurvey = await this.questionRepository.findOne({
+			where: {
+				id: createDto.questionId,
+				survey: { id: createDto.surveyId }
+			}
+		});
+		if (!questionBelongsToSurvey) {
+			throw new NotFoundException('Question does not belong to the specified survey');
+		}
+
+		if (createDto.optionId) {
+			const optionBelongsToQuestion = await this.optionRepository.findOne({
+				where: {
+					id: createDto.optionId,
+					question: { id: createDto.questionId }
+				}
+			});
+			if (!optionBelongsToQuestion) {
+				throw new NotFoundException('Option does not belong to the specified question');
+			}
+		}
+
 		return { attendee, question, option, survey };
 	}
 

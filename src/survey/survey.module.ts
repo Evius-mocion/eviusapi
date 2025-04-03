@@ -12,6 +12,7 @@ import { OptionService } from './option.service';
 import { SurveyAnswerController } from './survey-answer.controller';
 import { Option } from './entities/option.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { Event } from 'src/event/entities/event.entity';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Survey, Question, Option, SurveyAnswer, Event, Activity, Attendee])],
