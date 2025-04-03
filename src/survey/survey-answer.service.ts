@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SurveyAnswer } from './entities/surveyAnswer.entity';
@@ -49,13 +49,15 @@ export class SurveyAnswerService {
 
 		let option = null;
 		if (question.type === QuestionType.TEXT) {
+			if (createDto.attendeeId) delete createDto.optionId;
 			if (!createDto.response) {
-				throw new Error('Response is required for text type questions');
+				throw new BadRequestException('Response is required for text type questions');
 			}
 		}
 		if (question.type === QuestionType.SINGLE_CHOICE || question.type === QuestionType.MULTIPLE_CHOICE) {
+			if (createDto.response) delete createDto.response;
 			if (!createDto.optionId) {
-				throw new Error('Option ID is required for single/multiple choice questions');
+				throw new BadRequestException('Option ID is required for single/multiple choice questions');
 			}
 
 			option = await this.optionRepository.findOneBy({ id: createDto.optionId });
@@ -75,6 +77,7 @@ export class SurveyAnswerService {
 		return { attendee, question, option, survey };
 	}
 
+	//toDo: Validar que el asistene pertenezca al evento de la encuesta
 	async createAnswer(createDto: CreateSurveyAnswerDto) {
 		const { attendee, question, option, survey } = await this.validateEntities(createDto);
 
@@ -177,6 +180,6 @@ export class SurveyAnswerService {
 	async deleteAnswer(answerId: string) {
 		const { answer } = await this.getAnswerById(answerId);
 		await this.answerRepository.remove(answer);
-		return { answer };
+		return { answer, message: 'Answer deleted successfully' };
 	}
 }

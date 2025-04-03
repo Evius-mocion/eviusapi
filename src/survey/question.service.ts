@@ -29,7 +29,7 @@ export class QuestionService {
 
 			findOptions = { skip, take: limit };
 		}
-
+		//toDo: Validar que surveyId exista
 		const [questions, total] = await this.questionRepository.findAndCount({
 			...findOptions,
 			where: { survey: { id: surveyId } },
@@ -52,11 +52,15 @@ export class QuestionService {
 
 	async createQuestion(createQuestionDto: CreateQuestionDto) {
 		return this.questionRepository.manager.transaction(async (manager) => {
-			// Lock survey row during order calculation
-			await manager.findOne(Survey, {
+			// Lock and verify survey exists
+			const survey = await manager.findOne(Survey, {
 				where: { id: createQuestionDto.surveyId },
 				lock: { mode: 'pessimistic_write' },
 			});
+
+			if (!survey) {
+				throw new NotFoundException(`Survey with ID ${createQuestionDto.surveyId} not found`);
+			}
 
 			const lastQuestion = await manager.findOne(Question, {
 				where: { survey: { id: createQuestionDto.surveyId } },

@@ -52,7 +52,6 @@ export class SurveyAnswerController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAnswer(@Param('id') answerId: string) {
     return this.answerService.deleteAnswer(answerId);
   }
