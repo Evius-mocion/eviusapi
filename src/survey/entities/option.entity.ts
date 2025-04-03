@@ -14,7 +14,7 @@ export class Option {
 	isCorrect: boolean;
 
 	//* Relaciones
-	@OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.option)
+	@OneToMany(() => SurveyAnswer, (answer) => answer.option)
 	surveyAnswers: SurveyAnswer[];
 
 	@ManyToOne(() => Question, (question) => question.options, { eager: false })

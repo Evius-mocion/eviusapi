@@ -2,27 +2,18 @@ import { IsNotEmpty, IsOptional, IsString, IsUUID, ValidateIf } from 'class-vali
 
 export class CreateSurveyAnswerDto {
 	@IsUUID()
-	@IsNotEmpty()
 	attendeeId: string;
-
+	
 	@IsUUID()
 	@IsNotEmpty()
 	questionId: string;
 
-	@IsUUID()
-	@IsNotEmpty()
-	optionId?: string;
-
-	@IsUUID()
-	@IsNotEmpty()
-	surveyId: string;
-
 	@ValidateIf((o) => !o.response)
 	@IsOptional()
-	@IsString()
-	option?: string;
+	@IsUUID()
+	optionId?: string;
 
-	@ValidateIf((o) => !o.option)
+	@ValidateIf((o) => !o.optionId)
 	@IsOptional()
 	@IsString()
 	response?: string;

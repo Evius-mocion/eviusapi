@@ -6,53 +6,36 @@ import { PaginationArgs } from 'src/common/dto';
 
 @Controller('survey/answers')
 export class SurveyAnswerController {
-  constructor(private readonly answerService: SurveyAnswerService) {}
+	constructor(private readonly answerService: SurveyAnswerService) {}
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async createAnswer(@Body() createDto: CreateSurveyAnswerDto) {
-    return this.answerService.createAnswer(createDto);
-  }
+	@Post()
+	@HttpCode(HttpStatus.CREATED)
+	async createAnswer(@Body() createDto: CreateSurveyAnswerDto) {
+		return this.answerService.createAnswer(createDto);
+	}
 
-  @Get(':id')
-  async getAnswerById(@Param('id') answerId: string) {
-    return this.answerService.getAnswerById(answerId);
-  }
+	@Get(':id')
+	async getAnswerById(@Param('id') answerId: string) {
+		return this.answerService.getAnswerById(answerId);
+	}
 
-  @Get('attendee/:attendeeId')
-  async getAnswersByAttendee(
-    @Param('attendeeId') attendeeId: string,
-    @Query() pagination?: PaginationArgs
-  ) {
-    return this.answerService.getAnswersByAttendee(attendeeId, pagination);
-  }
+	@Get('attendee/:attendeeId')
+	async getAnswersByAttendee(@Param('attendeeId') attendeeId: string, @Query() pagination?: PaginationArgs) {
+		return this.answerService.getAnswersByAttendee(attendeeId, pagination);
+	}
 
-  @Get('question/:questionId')
-  async getAnswersByQuestion(
-    @Param('questionId') questionId: string,
-    @Query() pagination?: PaginationArgs
-  ) {
-    return this.answerService.getAnswersByQuestion(questionId, pagination);
-  }
+	@Get('option/:optionId')
+	async getAnswersByOption(@Param('optionId') optionId: string, @Query() pagination?: PaginationArgs) {
+		return this.answerService.getAnswersByOption(optionId, pagination);
+	}
 
-  @Get('option/:optionId')
-  async getAnswersByOption(
-    @Param('optionId') optionId: string,
-    @Query() pagination?: PaginationArgs
-  ) {
-    return this.answerService.getAnswersByOption(optionId, pagination);
-  }
+	@Patch(':id')
+	async updateAnswer(@Param('id') answerId: string, @Body() updateDto: UpdateSurveyAnswerDto) {
+		return this.answerService.updateAnswer(answerId, updateDto);
+	}
 
-  @Patch(':id')
-  async updateAnswer(
-    @Param('id') answerId: string,
-    @Body() updateDto: UpdateSurveyAnswerDto
-  ) {
-    return this.answerService.updateAnswer(answerId, updateDto);
-  }
-
-  @Delete(':id')
-  async deleteAnswer(@Param('id') answerId: string) {
-    return this.answerService.deleteAnswer(answerId);
-  }
+	@Delete(':id')
+	async deleteAnswer(@Param('id') answerId: string) {
+		return this.answerService.deleteAnswer(answerId);
+	}
 }

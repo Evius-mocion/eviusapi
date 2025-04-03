@@ -34,7 +34,6 @@ export class Question {
 	@OneToMany(() => Option, (option) => option.question)
 	options: Option[];
 
-	// Add to Question entity
-	@OneToMany(() => SurveyAnswer, surveyAnswer => surveyAnswer.question)
+	@OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.question)
 	surveyAnswers: SurveyAnswer[];
 }

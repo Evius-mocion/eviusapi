@@ -9,7 +9,6 @@ import { Question } from './entities/question.entity';
 import { Option } from './entities/option.entity';
 import { Survey } from './entities/survey.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { QuestionType } from './enums/question-type.enum';
 
 @Injectable()
 export class SurveyAnswerService {
@@ -27,65 +26,49 @@ export class SurveyAnswerService {
 	) {}
 
 	private async validateEntities(createDto: CreateSurveyAnswerDto) {
-		const [attendee, question, survey] = await Promise.all([
-			this.attendeeRepository.findOneBy({ id: createDto.attendeeId }),
-			this.questionRepository.findOneBy({ id: createDto.questionId }),
-			this.surveyRepository.findOneBy({ id: createDto.surveyId }),
+		if ((!createDto.optionId && !createDto.response) || (createDto.optionId && createDto.response)) {
+			throw new BadRequestException('Debe proporcionar solo una opción o una respuesta');
+		}
+
+		const [attendee, question, option] = await Promise.all([
+			this.attendeeRepository.findOne({
+				where: { id: createDto.attendeeId },
+				relations: ['event'],
+			}),
+			this.questionRepository.findOne({
+				where: { id: createDto.questionId },
+				relations: ['survey'],
+			}),
+			createDto.optionId
+				? this.optionRepository.findOne({
+						where: { id: createDto.optionId },
+						relations: ['question'],
+					})
+				: Promise.resolve(null),
 		]);
 
-		if (!attendee) throw new NotFoundException('Attendee not found');
-		if (!question) throw new NotFoundException('Question not found');
-		if (!survey) throw new NotFoundException('Survey not found');
+		if (!attendee) throw new NotFoundException('Asistente no encontrado');
+		if (!question) throw new NotFoundException('Pregunta no encontrada');
 
-		const questionBelongsToSurvey = await this.questionRepository.findOne({
-			where: {
-				id: createDto.questionId,
-				survey: { id: createDto.surveyId },
-			},
-		});
-		if (!questionBelongsToSurvey) {
-			throw new NotFoundException('Question does not belong to the specified survey');
+		// Validar que la opción pertenece a la pregunta
+		if (option && option.question.id !== createDto.questionId) {
+			throw new BadRequestException('La opción no pertenece a la pregunta especificada');
 		}
 
-		let option = null;
-		if (question.type === QuestionType.TEXT) {
-			if (createDto.attendeeId) delete createDto.optionId;
-			if (!createDto.response) {
-				throw new BadRequestException('Response is required for text type questions');
-			}
-		}
-		if (question.type === QuestionType.SINGLE_CHOICE || question.type === QuestionType.MULTIPLE_CHOICE) {
-			if (createDto.response) delete createDto.response;
-			if (!createDto.optionId) {
-				throw new BadRequestException('Option ID is required for single/multiple choice questions');
-			}
-
-			option = await this.optionRepository.findOneBy({ id: createDto.optionId });
-			if (!option) throw new NotFoundException('Option not found');
-
-			const optionBelongsToQuestion = await this.optionRepository.findOne({
-				where: {
-					id: createDto.optionId,
-					question: { id: createDto.questionId },
-				},
-			});
-			if (!optionBelongsToQuestion) {
-				throw new NotFoundException('Option does not belong to the specified question');
-			}
+		// Validar que el evento del asistente coincide con el de la encuesta
+		if (question.survey.eventId !== attendee.event.id) {
+			throw new BadRequestException('La pregunta no pertenece al evento del asistente');
 		}
 
-		return { attendee, question, option, survey };
+		return { attendee, question, option };
 	}
 
-	//toDo: Validar que el asistene pertenezca al evento de la encuesta
 	async createAnswer(createDto: CreateSurveyAnswerDto) {
-		const { attendee, question, option, survey } = await this.validateEntities(createDto);
+		const { attendee, option } = await this.validateEntities(createDto);
 
 		const answer = this.answerRepository.create({
 			attendee,
-			question,
 			option,
-			survey,
 			response: createDto.response,
 		});
 
@@ -103,21 +86,6 @@ export class SurveyAnswerService {
 		}
 		return { answer };
 	}
-
-	async getAnswersByAttendee(attendeeId: string, pagination?: PaginationArgs) {
-		const { limit = 10, offset = 1 } = pagination || {};
-		const skip = (offset - 1) * limit;
-
-		const [answers, total] = await this.answerRepository.findAndCount({
-			where: { attendee: { id: attendeeId } },
-			relations: ['question', 'option'],
-			skip,
-			take: limit,
-		});
-
-		return { answers, total };
-	}
-
 	async getAnswersByQuestion(questionId: string, pagination?: PaginationArgs) {
 		const { limit = 10, offset = 1 } = pagination || {};
 		const skip = (offset - 1) * limit;
@@ -125,6 +93,19 @@ export class SurveyAnswerService {
 		const [answers, total] = await this.answerRepository.findAndCount({
 			where: { question: { id: questionId } },
 			relations: ['attendee', 'option'],
+			skip,
+			take: limit,
+		});
+
+		return { answers, total };
+	}
+	async getAnswersByAttendee(attendeeId: string, pagination?: PaginationArgs) {
+		const { limit = 10, offset = 1 } = pagination || {};
+		const skip = (offset - 1) * limit;
+
+		const [answers, total] = await this.answerRepository.findAndCount({
+			where: { attendee: { id: attendeeId } },
+			relations: ['question', 'option'],
 			skip,
 			take: limit,
 		});
@@ -156,22 +137,28 @@ export class SurveyAnswerService {
 			answer.attendee = attendee;
 		}
 
-		if (updateDto.questionId) {
-			const question = await this.questionRepository.findOneBy({ id: updateDto.questionId });
-			if (!question) throw new NotFoundException('Question not found');
-			answer.question = question;
-		}
-
 		if (updateDto.optionId) {
-			const option = await this.optionRepository.findOneBy({ id: updateDto.optionId });
+			const option = await this.optionRepository.findOne({
+				where: { id: updateDto.optionId },
+				relations: ['question.survey.event'],
+			});
+			console.log('option', option);
 			if (!option) throw new NotFoundException('Option not found');
+
+			// Validate event consistency
+			/* if (option.question.survey.eventId !== answer.attendee.event.id) {
+				throw new BadRequestException('La opción no pertenece al evento del asistente');
+			} */
+
 			answer.option = option;
+			answer.response = null; // Clear response when setting option
 		}
 
-		if (updateDto.surveyId) {
-			const survey = await this.surveyRepository.findOneBy({ id: updateDto.surveyId });
-			if (!survey) throw new NotFoundException('Survey not found');
-			answer.survey = survey;
+		if (updateDto.response) {
+			if (answer.option) {
+				throw new BadRequestException('Cannot set response when answer has an option');
+			}
+			answer.response = updateDto.response;
 		}
 
 		return { answer: await this.answerRepository.save(answer) };

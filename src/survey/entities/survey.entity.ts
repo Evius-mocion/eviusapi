@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Event } from 'src/event/entities/event.entity';
 import { Question } from 'src/survey/entities/question.entity';
-import { SurveyAnswer } from './surveyAnswer.entity';
 
 @Entity()
 export class Survey {
@@ -26,7 +25,4 @@ export class Survey {
 
 	@OneToMany(() => Question, (question) => question.survey)
 	questions: Question[];
-
-	@OneToMany(() => SurveyAnswer, (answer) => answer.survey)
-	answers: SurveyAnswer[];
 }
