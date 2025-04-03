@@ -1,5 +1,6 @@
 import { Question } from './question.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { SurveyAnswer } from './surveyAnswer.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('question_options') // Changed table name
 export class Option {
@@ -13,6 +14,9 @@ export class Option {
 	isCorrect: boolean;
 
 	//* Relaciones
+	@OneToMany(() => SurveyAnswer, (surveyAnswer) => surveyAnswer.option)
+	surveyAnswers: SurveyAnswer[];
+
 	@ManyToOne(() => Question, (question) => question.options, { eager: false })
 	question: Question;
 }
