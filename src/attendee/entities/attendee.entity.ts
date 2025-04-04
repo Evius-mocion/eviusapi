@@ -6,6 +6,7 @@ import { CheckInActivity } from './checkIn.entity';
 import { CheckInType } from 'src/types/attendee.type';
 import { Bid } from 'src/auction/entities/bid.entity';
 import { SurveyAnswer } from 'src/survey/entities/surveyAnswer.entity';
+import { ElementHuntParticipant } from 'src/element-hunt-game/entities/element-hunt-participants.entity';
 
 @Entity('attendees')
 export class Attendee {
@@ -88,4 +89,7 @@ export class Attendee {
 
 	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
 	answers: SurveyAnswer[];
+
+	@OneToMany(() => ElementHuntParticipant, (elementHuntParticipant) => elementHuntParticipant.attendee)
+	elementHuntParticipations: ElementHuntParticipant[];
 }
