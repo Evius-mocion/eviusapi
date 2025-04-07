@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Bingo } from "./bingo.entity";
+import { Attendee } from "src/attendee/entities/attendee.entity";
 
 @Entity("bingo_card")
 export class BingoCard {
@@ -21,10 +22,13 @@ export class BingoCard {
 
     @UpdateDateColumn({ nullable: false })
     updated_at: Date;
-    
+
     // relations
 
     @ManyToOne(() => Bingo, (bingo) => bingo.cards)
     bingo: Bingo;
 
+  @OneToOne(() => Attendee, (attendee) => attendee.bingoCard, { nullable: true, cascade: true })
+  @JoinColumn() 
+  attendee?: Attendee;
 }

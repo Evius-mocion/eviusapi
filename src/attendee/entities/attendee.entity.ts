@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, OneToMany, PrimaryColumn, JoinColumn, Generated, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, CreateDateColumn, OneToMany, PrimaryColumn, JoinColumn, Generated, Index, OneToOne } from 'typeorm';
 import { Event } from 'src/event/entities/event.entity';
 import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
@@ -7,6 +7,7 @@ import { CheckInType } from 'src/types/attendee.type';
 import { Bid } from 'src/auction/entities/bid.entity';
 import { SurveyAnswer } from 'src/survey/entities/surveyAnswer.entity';
 import { ElementHuntParticipant } from 'src/element-hunt-game/entities/element-hunt-participants.entity';
+import { BingoCard } from 'src/bingo/entities/bingo_card.entity';
 
 @Entity('attendees')
 export class Attendee {
@@ -36,17 +37,6 @@ export class Attendee {
 	@Column({ nullable: false })
 	email: string;
 
-	@ManyToOne(() => User, (user) => user.attendees, {
-		eager: false,
-	})
-	@JoinColumn({ name: 'userId' })
-	user: User;
-
-	@ManyToOne(() => Event, (event) => event.attendees, {
-		eager: false,
-	})
-	@JoinColumn({ name: 'eventId' })
-	event: Event;
 
 	@Column({ nullable: true })
 	country: string;
@@ -63,17 +53,6 @@ export class Attendee {
 	@Column({ nullable: true })
 	checkInAt: string;
 
-	@ManyToOne(() => Station, (station) => station.attendees, {
-		nullable: true,
-	})
-	station?: Station;
-
-	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
-	checkInActivity: CheckInActivity[];
-
-	@OneToMany(() => Bid, (bids) => bids.attende)
-	bids: Bid[];
-
 	@Column({
 		type: 'enum',
 		enum: CheckInType,
@@ -87,9 +66,39 @@ export class Attendee {
 	@CreateDateColumn({ type: 'timestamptz' })
 	createAt: Date;
 
+	// relations
+
+	
+	@ManyToOne(() => User, (user) => user.attendees, {
+		eager: false,
+	})
+	@JoinColumn({ name: 'userId' })
+	user: User;
+
+	@ManyToOne(() => Event, (event) => event.attendees, {
+		eager: false,
+	})
+	@JoinColumn({ name: 'eventId' })
+	event: Event;
+
+
 	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
 	answers: SurveyAnswer[];
 
 	@OneToMany(() => ElementHuntParticipant, (elementHuntParticipant) => elementHuntParticipant.attendee)
 	elementHuntParticipations: ElementHuntParticipant[];
+
+	@ManyToOne(() => Station, (station) => station.attendees, {
+		nullable: true,
+	})
+	station?: Station;
+
+	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
+	checkInActivity: CheckInActivity[];
+
+	@OneToMany(() => Bid, (bids) => bids.attende)
+	bids: Bid[];
+	
+	@OneToOne(() => BingoCard, (bingoCard) => bingoCard.attendee)
+	bingoCard: BingoCard;
 }
