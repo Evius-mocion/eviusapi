@@ -1,5 +1,15 @@
 import { Event } from 'src/event/entities/event.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	OneToMany,
+	OneToOne,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from 'typeorm';
 import { HiddenPoints } from '../types/hidden-point';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
 import { DEFAULT_MAX_LIVES } from 'src/common/constants/elementHunt.constants';
@@ -11,6 +21,10 @@ export class ElementHuntGame {
 
 	@Column({ type: 'varchar', length: 255, nullable: false })
 	name: string;
+
+	@Column({ type: 'uuid', nullable: false })
+	@Index()
+	eventId: string;
 
 	@Column({ type: 'varchar', nullable: false, default: '' })
 	image_url: string;

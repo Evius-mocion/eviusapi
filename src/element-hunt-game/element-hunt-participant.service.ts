@@ -28,7 +28,14 @@ export class ElementHuntParticipantService {
 		return participant;
 	}
 	async create(createDto: CreateParticipantDto) {
-		await Promise.all([this.attendeeService.findOneById(createDto.attendeeId), this.gameService.findOne(createDto.gameId)]);
+		const [attendeeResponse, gameResponse] = await Promise.all([
+			this.attendeeService.findOneById(createDto.attendeeId),
+			this.gameService.findOne(createDto.gameId),
+		]);
+
+		if (attendeeResponse.attendee.eventId !== gameResponse.elementHunt.eventId) {
+			throw new ConflictException("Attendee does not belong to the game's event");
+		}
 
 		const existing = await this.participantRepo.findOne({
 			where: {
@@ -41,6 +48,7 @@ export class ElementHuntParticipantService {
 			throw new ConflictException('Participant already registered for this game');
 		}
 
+		// Create and save new participant
 		const participant = this.participantRepo.create({
 			attendee: { id: createDto.attendeeId },
 			elementHuntGame: { id: createDto.gameId },

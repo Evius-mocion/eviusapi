@@ -9,7 +9,7 @@ export class ElementHuntSession {
 	id: string;
 
 	@ApiProperty({ description: 'Participant associated with the session' })
-	@ManyToOne(() => ElementHuntParticipant, (participant) => participant.elementHuntSession, { eager: false })
+	@ManyToOne(() => ElementHuntParticipant, (participant) => participant.elementHuntSessions, { eager: false })
 	@JoinColumn({ name: 'participantId', referencedColumnName: 'id' })
 	participant: ElementHuntParticipant;
 
