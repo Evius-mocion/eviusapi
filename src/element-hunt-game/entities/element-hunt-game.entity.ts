@@ -1,5 +1,5 @@
 import { Event } from 'src/event/entities/event.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { HiddenPoints } from '../types/hidden-point';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
 
@@ -30,7 +30,9 @@ export class ElementHuntGame {
 	hidden_points: HiddenPoints[];
 
 	//* ----------------------------- Relaciones -----------------------------
-	@OneToMany(() => Event, (event) => event.elementHuntGames)
+
+	@OneToOne(() => Event, (event) => event.elementHuntGame)
+	@JoinColumn()
 	event: Event;
 	@OneToMany(() => ElementHuntParticipant, (participation) => participation.elementHuntGame)
 	participants: ElementHuntParticipant[];

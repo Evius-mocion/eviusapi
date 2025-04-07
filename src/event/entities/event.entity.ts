@@ -1,37 +1,32 @@
-import { Attendee } from "src/attendee/entities/attendee.entity";
-import { User } from "src/common/entities/user.entity";
-import { Organization } from "src/organization/entities/organization.entity";
-import { Station } from "src/stations/entities/station.entity";
+import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { User } from 'src/common/entities/user.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
+import { Station } from 'src/stations/entities/station.entity';
+import { DynamicField, IDates, IEventAppearance, IEventSections, ILandingSection } from 'src/types/event.type';
 import {
-  DynamicField,
-  IDates,
-  IEventAppearance,
-  IEventSections,
-  ILandingSection,
-} from "src/types/event.type";
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { defaultLandingSections } from "../constants/event.constants";
-import { Categories } from "./category.entity";
-import { Activity } from "src/activities/entities/activity.entity";
-import { Survey } from "src/survey/entities/survey.entity";
-import { Auction } from "src/auction/entities/auction.entity";
-import { Collaborator } from "src/collaborator/entities";
-import { Bingo } from "src/bingo/entities/bingo.entity";
-import { ElementHuntGame } from "src/element-hunt-game/entities/element-hunt-game.entity";
+	Column,
+	CreateDateColumn,
+	DeleteDateColumn,
+	Entity,
+	Index,
+	ManyToOne,
+	OneToMany,
+	OneToOne,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
+import { defaultLandingSections } from '../constants/event.constants';
+import { Categories } from './category.entity';
+import { Activity } from 'src/activities/entities/activity.entity';
+import { Survey } from 'src/survey/entities/survey.entity';
+import { Auction } from 'src/auction/entities/auction.entity';
+import { Collaborator } from 'src/collaborator/entities';
+import { Bingo } from 'src/bingo/entities/bingo.entity';
+import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-game.entity';
 @Entity('events')
 export class Event {
-  @Index()
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+	@Index()
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
 	// 🟢 Columnas normales
 	@Column({ nullable: false })
@@ -52,8 +47,8 @@ export class Event {
 	@Column({ nullable: false })
 	finishDate: Date;
 
-  	@Column({ nullable: false, default: "without description" })
-  	description: string;
+	@Column({ nullable: false, default: 'without description' })
+	description: string;
 
 	@Column({
 		type: 'jsonb',
@@ -142,7 +137,7 @@ export class Event {
 		eager: false,
 	})
 	collaborators: Collaborator[];
-	
+
 	@OneToMany(() => Auction, (auction) => auction.event, {
 		eager: false,
 	})
@@ -163,8 +158,6 @@ export class Event {
 	})
 	createdBy: User;
 
-	@ManyToOne(() => User, (user) => user.events, {
-		eager: false,
-	})
-	elementHuntGames:ElementHuntGame[]
+	@OneToOne(() => ElementHuntGame, (elementHuntGame) => elementHuntGame.event)
+	elementHuntGame: ElementHuntGame;
 }
