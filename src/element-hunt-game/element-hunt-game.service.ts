@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ElementHuntGame } from './entities/element-hunt-game.entity';
@@ -27,7 +27,11 @@ export class ElementHuntGameService {
 	}
 
 	async findOne(id: string) {
-		return await this.gameRepository.findOneBy({ id });
+		const elementHunt = await this.gameRepository.findOneBy({ id });
+		if (!elementHunt) {
+			throw new NotFoundException('Element Hunt game not found');
+		}
+		return { elementHunt };
 	}
 
 	async findByEventId(eventId: string) {
