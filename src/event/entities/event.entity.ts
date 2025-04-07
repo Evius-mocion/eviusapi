@@ -26,7 +26,7 @@ import { Survey } from "src/survey/entities/survey.entity";
 import { Auction } from "src/auction/entities/auction.entity";
 import { Collaborator } from "src/collaborator/entities";
 import { Bingo } from "src/bingo/entities/bingo.entity";
-
+import { ElementHuntGame } from "src/element-hunt-game/entities/element-hunt-game.entity";
 @Entity('events')
 export class Event {
   @Index()
@@ -162,4 +162,9 @@ export class Event {
 		eager: false,
 	})
 	createdBy: User;
+
+	@ManyToOne(() => User, (user) => user.events, {
+		eager: false,
+	})
+	elementHuntGames:ElementHuntGame[]
 }
