@@ -25,8 +25,8 @@ export class AttendeeService {
 		@InjectRepository(Event)
 		private eventRepository: Repository<Event>,
 		@InjectRepository(User)
-		private userRepository: Repository<User>,
-	) { }
+		private userRepository: Repository<User>
+	) {}
 
 	async create(createAssistantDto: AssistantDto) {
 		const attendee = this.attendeeRepository.create(createAssistantDto);
@@ -44,6 +44,11 @@ export class AttendeeService {
 			},
 			relations: ['user'],
 		});
+
+		if (!attendee) {
+			throw new NotFoundException(`Attendee with ID ${attendeeId} not found`);
+		}
+
 		return { attendee };
 	}
 
@@ -60,22 +65,21 @@ export class AttendeeService {
 		return { attendee };
 	}
 	async checkIn(id: string, checkInData: checkInDto) {
-			const { date, stationID, type } = checkInData;
-			let station = null;
+		const { date, stationID, type } = checkInData;
+		let station = null;
 
-			if (stationID) {
-				station = await this.stationRepository.findOneBy({ id: stationID });
-				if (!station) throw new NotFoundException();
-			}
-			const result = await this.attendeeRepository.update(id, {
-				checkInAt: date ?? new Date().toString(),
-				station: station,
-				checkInType: type,
-			});
-			const { raw } = result;
-			const attendee = raw[0];
-			return { message: 'check in successfully', attendee };
-		
+		if (stationID) {
+			station = await this.stationRepository.findOneBy({ id: stationID });
+			if (!station) throw new NotFoundException();
+		}
+		const result = await this.attendeeRepository.update(id, {
+			checkInAt: date ?? new Date().toString(),
+			station: station,
+			checkInType: type,
+		});
+		const { raw } = result;
+		const attendee = raw[0];
+		return { message: 'check in successfully', attendee };
 	}
 
 	async getAttendeeByEvent(eventId: string, pagination: PaginationArgs, Filter: Partial<FilterAttendeeArgs>) {
@@ -85,7 +89,7 @@ export class AttendeeService {
 		const [attendees, total] = await this.attendeeRepository.findAndCount({
 			where: {
 				eventId,
-				...where
+				...where,
 			},
 			select: ['id', 'fullName', 'email', 'checkInAt', 'checkInType', 'country', 'city', 'plataform', 'browser', 'createAt'],
 			take: limit,
@@ -113,9 +117,9 @@ export class AttendeeService {
 				id: In(attendeeIds),
 				eventId,
 			},
-		})
+		});
 
-		attendeesChecked = attendees.map(attendee => {
+		attendeesChecked = attendees.map((attendee) => {
 			attendee.checkInAt = date;
 			attendee.checkInType = CheckInType.CMS;
 			return attendee;
@@ -124,48 +128,47 @@ export class AttendeeService {
 		await this.attendeeRepository.save(attendeesChecked);
 
 		return {
-			message: 'check in successfully', 
-			attendeesChecked: attendeesChecked.map(attendee => ({
+			message: 'check in successfully',
+			attendeesChecked: attendeesChecked.map((attendee) => ({
 				id: attendee.id,
 				email: attendee.email,
 				checkInAt: attendee.checkInAt,
-			}))
+			})),
 		};
-
 	}
 	async statisticsEvent(eventId: string) {
+		const event = await this.eventRepository.findOneBy({ id: eventId });
 
-	const event = await this.eventRepository.findOneBy({ id: eventId });
+		if (!event) throw new NotFoundException('event not found');
 
-	if (!event) throw new NotFoundException('event not found');
+		const totalAttendees = await this.attendeeRepository.count({
+			where: {
+				eventId,
+			},
+		});
 
-	const totalAttendees = await this.attendeeRepository.count({
-		where: {
-			eventId,
-		}})
-	
 		const totalAttendeesCheckIn = await this.attendeeRepository.count({
 			where: {
-			  eventId,
-			  checkInAt: Not(IsNull()),
+				eventId,
+				checkInAt: Not(IsNull()),
 			},
-		  });
-		
-	return {
-		totalAttendees,
-		totalAttendeesCheckIn,
-		attendeesCheckInPercent: ((totalAttendeesCheckIn / totalAttendees) * 100) || 0,
-		capacity: Number(event.capacity)
-	};
+		});
+
+		return {
+			totalAttendees,
+			totalAttendeesCheckIn,
+			attendeesCheckInPercent: (totalAttendeesCheckIn / totalAttendees) * 100 || 0,
+			capacity: Number(event.capacity),
+		};
 	}
 
 	async exportAttendees(eventId: string) {
 		const attendees = await this.attendeeRepository.find({
 			where: {
 				eventId,
-			}
+			},
 		});
-		return attendees.map(attendee => ({
+		return attendees.map((attendee) => ({
 			name: attendee.fullName,
 			email: attendee.email,
 			country: attendee.country ?? '',
@@ -179,34 +182,35 @@ export class AttendeeService {
 
 	//Method to import attendees in an event from an excel file
 	async registerAttendeesInEvent(data: CreateMasiveAssistantDto) {
-		const { attendees, eventId } = data
+		const { attendees, eventId } = data;
 		const errors = [];
 
 		const event = await this.eventRepository.findOneBy({ id: eventId }); //find event
 
-		if (!event) throw new NotFoundException('event not found');	//if event not found throw error
+		if (!event) throw new NotFoundException('event not found'); //if event not found throw error
 
-		const emails = attendees.map(attendee => attendee.email);
+		const emails = attendees.map((attendee) => attendee.email);
 		const userRegistered = await this.userRepository.find({ where: { email: In(emails) } }); //find users with the emails in the excel file
 
 		const attendeesWithUser = attendees.map((attendee) => ({
 			...attendee,
-			user: userRegistered.find(user => user.email === attendee.email)	// add user to the attendee object
-		}))
+			user: userRegistered.find((user) => user.email === attendee.email), // add user to the attendee object
+		}));
 
 		const preRegistered = [];
 
-		for (const attendee of attendeesWithUser) {	//loop through the attendees
+		for (const attendee of attendeesWithUser) {
+			//loop through the attendees
 			const validation = validateAttendeesData(attendee, event.registrationFields); //validate the attendee data, check if the data is valid
 			const { email, fullName, ...properties } = attendee;
-				delete attendee.user;
+			delete attendee.user;
 			if (!validation.isValid) {
 				errors.push({ fullName, email: email + '', errors: validation.errors });
 				continue;
 			}
 
-
-			if (!attendee.user) {  // if the user is not registered, create a new user
+			if (!attendee.user) {
+				// if the user is not registered, create a new user
 				try {
 					const newUser = await this.userRepository.save(attendee);
 					attendee.user = newUser;
@@ -216,22 +220,20 @@ export class AttendeeService {
 				}
 			}
 
-
 			const attendeeCreated = this.attendeeRepository.create({
 				properties, //add the properties to the attendee object
 				event,
 				origin: CheckInType.CMS,
 				...attendee,
-			})
+			});
 
 			preRegistered.push(attendeeCreated);
 		}
 
 		const resultImport = await this.attendeeRepository.save(preRegistered, { reload: true });
-		const result = resultImport.map(attendee => ({ new: attendee.id !== undefined, email: attendee.email }));
+		const result = resultImport.map((attendee) => ({ new: attendee.id !== undefined, email: attendee.email }));
 
 		return { message: 'import successfully', errors, errorsCount: errors.length, successCount: resultImport.length, success: result };
-
 	}
 
 	async getTotalAttendeesByEvent(eventId: string) {
@@ -248,11 +250,11 @@ export class AttendeeService {
 
 	async findOneByUserIdAndEventId(userID: string, event: string) {
 		return await this.attendeeRepository.findOne({
-			select: ['id', 'fullName', 'email', 'checkInAt',"properties"],
+			select: ['id', 'fullName', 'email', 'checkInAt', 'properties'],
 			where: {
 				userId: userID,
-			eventId: event,
-			}
+				eventId: event,
+			},
 		});
 	}
 
@@ -264,7 +266,6 @@ export class AttendeeService {
 		}
 		return { message: 'assistant updated successfully', attendee };
 	}
-
 
 	//Method to delete an attendee
 	async remove(id: string) {
