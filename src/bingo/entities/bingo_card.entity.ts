@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { IBoxValue } from "../interfaces";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Bingo } from "./bingo.entity";
 
 @Entity("bingo_card")
 export class BingoCard {
+    
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -10,8 +11,20 @@ export class BingoCard {
     code: string;
 
     @Column({ nullable: false, type: "jsonb" })
-    values: Array<Array<IBoxValue>>;
+    values: number[];
 
     @Column({ nullable: false,default: true, type: "boolean" })
     is_active: boolean;
+
+    @CreateDateColumn({ nullable: false })
+    created_at: Date;
+
+    @UpdateDateColumn({ nullable: false })
+    updated_at: Date;
+    
+    // relations
+
+    @ManyToOne(() => Bingo, (bingo) => bingo.cards)
+    bingo: Bingo;
+
 }

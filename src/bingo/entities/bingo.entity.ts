@@ -1,6 +1,8 @@
 import { Activity } from "src/activities/entities/activity.entity";
 import { Event } from "src/event/entities/event.entity";
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BingoCard } from "./bingo_card.entity";
+import { Ballots } from "./ballots.entity";
 
 @Entity("bingo")
 export class Bingo {
@@ -53,4 +55,9 @@ export class Bingo {
 	@JoinColumn()
     activity: Activity;
 
+    @OneToMany(() => BingoCard, (bingo_card) => bingo_card.bingo)
+    cards: BingoCard[];
+
+    @OneToMany(() => Ballots, (ballots) => ballots.bingo)
+    ballots: Ballots[];
 }
