@@ -1,7 +1,8 @@
 import { Event } from 'src/event/entities/event.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { HiddenPoints } from '../types/hidden-point';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
+import { DEFAULT_MAX_LIVES } from 'src/common/constants/elementHunt.constants';
 
 @Entity()
 export class ElementHuntGame {
@@ -23,11 +24,16 @@ export class ElementHuntGame {
 	@Column({ type: 'text', nullable: false, default: '' })
 	instruction: string;
 
-	@Column({ type: 'int', nullable: false, default: 3 })
-	max_attempts: number;
+	@Column({ type: 'int', nullable: false, default: DEFAULT_MAX_LIVES })
+	max_lives: number;
 
 	@Column({ nullable: true, type: 'jsonb', default: [] })
 	hidden_points: HiddenPoints[];
+
+	@CreateDateColumn({ type: 'timestamptz' })
+	created_at: Date;
+	@UpdateDateColumn({ type: 'timestamptz' })
+	updated_at: Date;
 
 	//* ----------------------------- Relaciones -----------------------------
 

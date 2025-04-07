@@ -1,4 +1,4 @@
-import { CreateDateColumn, Column, ManyToOne, JoinColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, Column, ManyToOne, JoinColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
 import { HiddenPoints } from '../types/hidden-point';
 import { ApiProperty } from '@nestjs/swagger';
@@ -24,4 +24,15 @@ export class ElementHuntSession {
 	@ApiProperty({ description: 'Points found during the session', type: [HiddenPoints] })
 	@Column({ type: 'jsonb', array: true, nullable: false })
 	found_points: HiddenPoints[];
+
+	@ApiProperty({ description: 'Number of remaining lives for the player', type: Number })
+	@Column({ type: 'int', nullable: false })
+	remaining_lives: number;
+
+	@ApiProperty({ description: 'Indicates if the session is finished', type: Boolean })
+	@Column({ type: 'boolean', default: false })
+	finished: boolean;
+
+	@UpdateDateColumn({ type: 'timestamptz' })
+	updated_at: Date;
 }

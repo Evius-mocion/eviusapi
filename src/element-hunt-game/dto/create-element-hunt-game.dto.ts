@@ -2,6 +2,7 @@ import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID
 import { ApiProperty } from '@nestjs/swagger';
 import { HiddenPoints } from '../types/hidden-point';
 import { Type } from 'class-transformer';
+import { DEFAULT_MAX_LIVES } from 'src/common/constants/elementHunt.constants';
 
 export class CreateElementHuntGameDto {
 	@ApiProperty()
@@ -13,6 +14,16 @@ export class CreateElementHuntGameDto {
 	@IsString()
 	@IsOptional()
 	image_url?: string = '';
+
+	@ApiProperty({
+		description: 'Maximum allowed lives for participants',
+		default: DEFAULT_MAX_LIVES,
+		required: false,
+	})
+	@IsNumber()
+	@IsPositive()
+	@IsOptional()
+	max_lives?: number;
 
 	@ValidateIf((o) => o.price !== undefined)
 	@ApiProperty({ required: false })
