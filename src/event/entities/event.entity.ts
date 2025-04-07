@@ -25,6 +25,7 @@ import { Activity } from "src/activities/entities/activity.entity";
 import { Survey } from "src/survey/entities/survey.entity";
 import { Auction } from "src/auction/entities/auction.entity";
 import { Collaborator } from "src/collaborator/entities";
+import { Bingo } from "src/bingo/entities/bingo.entity";
 
 @Entity('events')
 export class Event {
@@ -151,6 +152,11 @@ export class Event {
 		eager: false,
 	})
 	stations: Station[];
+
+	@OneToMany(() => Bingo, (bingo) => bingo.event, {
+		eager: false,
+	})
+	bingos: Bingo[];
 
 	@ManyToOne(() => User, (user) => user.events, {
 		eager: false,

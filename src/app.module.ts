@@ -17,6 +17,7 @@ import { ParticipationModule } from './participation/participation.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SurveyModule } from './survey/survey.module';
 import { AuctionModule } from './auction/auction.module';
+import { BingoModule } from './bingo/bingo.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AuctionModule } from './auction/auction.module';
     ActivitiesModule,
     SurveyModule,
     AuctionModule,
+    BingoModule,
   ],
   controllers: [],
   providers: [
