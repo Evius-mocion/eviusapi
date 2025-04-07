@@ -8,42 +8,43 @@ import { EventService } from '../event/event.service';
 
 @Injectable()
 export class ElementHuntGameService {
-  constructor(
-    @InjectRepository(ElementHuntGame)
-    private readonly gameRepository: Repository<ElementHuntGame>,
-    private readonly eventService: EventService, // Add EventService
-  ) {}
+	constructor(
+		@InjectRepository(ElementHuntGame)
+		private readonly gameRepository: Repository<ElementHuntGame>,
+		private readonly eventService: EventService // Add EventService
+	) {}
 
-  async create(createDto: CreateElementHuntGameDto) {
-    await this.eventService.findOneBy(createDto.eventId);
+	async create(createDto: CreateElementHuntGameDto) {
+		await this.eventService.findOneBy(createDto.eventId);
 
-    const game = this.gameRepository.create({
-      ...createDto,
-      event: { id: createDto.eventId } 
-    });
-    const event = await this.gameRepository.save(game);
+		const game = this.gameRepository.create({
+			...createDto,
+			event: { id: createDto.eventId },
+		});
+		const event = await this.gameRepository.save(game);
 
-    return { event }
-  }
+		return { event };
+	}
 
-  async findOne(id: string) {
-    return await this.gameRepository.findOneBy({ id });
-  }
+	async findOne(id: string) {
+		return await this.gameRepository.findOneBy({ id });
+	}
 
-  async findByEventId(eventId: string) {
-    return await this.gameRepository.findOne({
-      where: { event: { id: eventId } },
-      relations: ['event']
-    });
-  }
+	async findByEventId(eventId: string) {
+		await this.eventService.findOneBy(eventId);
+		const elementHunt = await this.gameRepository.findOne({
+			where: { event: { id: eventId } },
+		});
+		return { elementHunt };
+	}
 
-  async update(id: string, updateDto: UpdateElementHuntGameDto) {
-    await this.gameRepository.update(id, updateDto);
-    return this.findOne(id);
-  }
+	async update(id: string, updateDto: UpdateElementHuntGameDto) {
+		await this.gameRepository.update(id, updateDto);
+		return this.findOne(id);
+	}
 
-  async remove(id: string) {
-    await this.gameRepository.delete(id);
-    return { deleted: true };
-  }
+	async remove(id: string) {
+		await this.gameRepository.delete(id);
+		return { deleted: true };
+	}
 }
