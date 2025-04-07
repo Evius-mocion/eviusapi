@@ -1,36 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body } from '@nestjs/common';
 import { ElementHuntGameService } from './element-hunt-game.service';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
 import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
-import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('element-hunt-game')
-@Controller('element-hunt-game')
+@ApiTags('element-hunt-games')
+@Controller('element-hunt-games')
 export class ElementHuntGameController {
-	constructor(private readonly elementHuntGameService: ElementHuntGameService) {}
+  constructor(private readonly gameService: ElementHuntGameService) {}
 
-	@Post()
-	create(@Body() createElementHuntGameDto: CreateElementHuntGameDto) {
-		return this.elementHuntGameService.create(createElementHuntGameDto);
-	}
+  @Post()
+  create(@Body() createDto: CreateElementHuntGameDto) {
+    return this.gameService.create(createDto);
+  }
 
-	@Get()
-	findAll() {
-		return this.elementHuntGameService.findAll();
-	}
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.gameService.findOne(id);
+  }
 
-	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.elementHuntGameService.findOne(+id);
-	}
+  @Get('event/:eventId')
+  findByEvent(@Param('eventId') eventId: string) {
+    return this.gameService.findByEventId(eventId);
+  }
 
-	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateElementHuntGameDto: UpdateElementHuntGameDto) {
-		return this.elementHuntGameService.update(+id, updateElementHuntGameDto);
-	}
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateDto: UpdateElementHuntGameDto) {
+    return this.gameService.update(id, updateDto);
+  }
 
-	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.elementHuntGameService.remove(+id);
-	}
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.gameService.remove(id);
+  }
 }
