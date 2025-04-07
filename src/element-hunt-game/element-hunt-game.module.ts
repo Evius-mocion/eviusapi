@@ -5,16 +5,11 @@ import { ElementHuntParticipant } from './entities/element-hunt-participants.ent
 import { ElementHuntSession } from './entities/element-hunt-sessions';
 import { ElementHuntGameController } from './element-hunt-game.controller';
 import { ElementHuntGameService } from './element-hunt-game.service';
+import { EventModule } from './../event/event.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      ElementHuntGame,
-      ElementHuntParticipant,
-      ElementHuntSession
-    ])
-  ],
-  controllers: [ElementHuntGameController],
-  providers: [ElementHuntGameService],
+	imports: [TypeOrmModule.forFeature([ElementHuntGame, ElementHuntParticipant, ElementHuntSession]), EventModule],
+	controllers: [ElementHuntGameController],
+	providers: [ElementHuntGameService],
 })
 export class ElementHuntGameModule {}

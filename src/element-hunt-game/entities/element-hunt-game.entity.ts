@@ -11,22 +11,22 @@ export class ElementHuntGame {
 	@Column({ type: 'varchar', length: 255, nullable: false })
 	name: string;
 
-	@Column({ type: 'varchar', nullable: false })
+	@Column({ type: 'varchar', nullable: false, default: '' })
 	image_url: string;
 
-	@Column({ type: 'int', nullable: false })
+	@Column({ type: 'int', nullable: false, default: 0 })
 	image_width: number;
 
-	@Column({ type: 'int', nullable: false })
+	@Column({ type: 'int', nullable: false, default: 0 })
 	image_height: number;
 
-	@Column({ type: 'text', nullable: false })
+	@Column({ type: 'text', nullable: false, default: '' })
 	instruction: string;
 
-	@Column({ type: 'int', nullable: false })
+	@Column({ type: 'int', nullable: false, default: 3 })
 	max_attempts: number;
 
-	@Column({ type: 'jsonb', array: true, nullable: false })
+	@Column({ nullable: true, type: 'jsonb', default: [] })
 	hidden_points: HiddenPoints[];
 
 	//* ----------------------------- Relaciones -----------------------------

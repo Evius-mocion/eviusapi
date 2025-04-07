@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { HiddenPoints } from '../types/hidden-point';
 import { Type } from 'class-transformer';
@@ -9,36 +9,42 @@ export class CreateElementHuntGameDto {
 	@IsNotEmpty()
 	name: string;
 
-	@ApiProperty()
+	@ApiProperty({ required: false })
 	@IsString()
-	@IsNotEmpty()
-	image_url: string;
+	@IsOptional()
+	image_url?: string = '';
 
-	@ApiProperty()
+    @ValidateIf((o) => o.price !== undefined)
+    @ApiProperty({ required: false })
 	@IsNumber()
+	@IsOptional()
 	@IsPositive()
-	image_width: number;
+	image_width?: number = 0;
 
-	@ApiProperty()
+    @ValidateIf((o) => o.price !== undefined)
+	@ApiProperty({ required: false })
 	@IsNumber()
+	@IsOptional()
 	@IsPositive()
-	image_height: number;
+	image_height?: number = 0;
 
-	@ApiProperty()
+	@ApiProperty({ required: false })
 	@IsString()
-	@IsNotEmpty()
-	instruction: string;
+	@IsOptional()
+	instruction?: string = '';
 
-	@ApiProperty()
+	@ApiProperty({ required: false })
 	@IsNumber()
 	@IsPositive()
-	max_attempts: number;
+	@IsOptional()
+	max_attempts?: number = 3;
 
-	@ApiProperty({ type: [HiddenPoints] })
+	@ApiProperty({ type: [HiddenPoints], required: false })
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => HiddenPoints)
-	hidden_points: HiddenPoints[];
+	@IsOptional()
+	hidden_points?: HiddenPoints[] = [];
 
 	@ApiProperty()
 	@IsUUID()
