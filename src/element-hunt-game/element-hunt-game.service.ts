@@ -5,6 +5,7 @@ import { ElementHuntGame } from './entities/element-hunt-game.entity';
 import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
 import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
 import { EventService } from '../event/event.service';
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class ElementHuntGameService {
@@ -15,15 +16,25 @@ export class ElementHuntGameService {
 	) {}
 
 	async create(createDto: CreateElementHuntGameDto) {
+		// Validate event exists
 		await this.eventService.findOneBy(createDto.eventId);
 
+		// Check for existing game with this event ID
+		const existingGame = await this.gameRepository.findOne({
+			where: { event: { id: createDto.eventId } },
+		});
+
+		if (existingGame) {
+			throw new ConflictException('An Element Hunt game already exists for this event');
+		}
+
+		// Proceed with creation
 		const game = this.gameRepository.create({
 			...createDto,
 			event: { id: createDto.eventId },
 		});
-		const event = await this.gameRepository.save(game);
 
-		return { event };
+		return await this.gameRepository.save(game);
 	}
 
 	async findOne(id: string) {

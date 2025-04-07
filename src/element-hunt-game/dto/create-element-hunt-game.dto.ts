@@ -44,12 +44,6 @@ export class CreateElementHuntGameDto {
 	@IsOptional()
 	instruction?: string = '';
 
-	@ApiProperty({ required: false })
-	@IsNumber()
-	@IsPositive()
-	@IsOptional()
-	max_attempts?: number = 3;
-
 	@ApiProperty({ type: [HiddenPoints], required: false })
 	@IsArray()
 	@ValidateNested({ each: true })

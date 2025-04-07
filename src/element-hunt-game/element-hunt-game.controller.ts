@@ -4,8 +4,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
 import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
 
-@ApiTags('element-hunt-games')
-@Controller('element-hunt-games')
+@ApiTags('element-hunt/games')
+@Controller('element-hunt/games')
 export class ElementHuntGameController {
 	constructor(private readonly gameService: ElementHuntGameService) {}
 
