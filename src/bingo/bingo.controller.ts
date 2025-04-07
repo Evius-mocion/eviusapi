@@ -24,7 +24,7 @@ export class BingoController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBingoDto: UpdateBingoDto) {
-    return this.bingoService.update(+id, updateBingoDto);
+    return this.bingoService.update(id, updateBingoDto);
   }
 
   @Delete(':id')

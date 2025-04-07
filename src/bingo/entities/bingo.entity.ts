@@ -3,6 +3,7 @@ import { Event } from "src/event/entities/event.entity";
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BingoCard } from "./bingo_card.entity";
 import { Ballots } from "./ballots.entity";
+import { IBoxStyle } from "../interfaces";
 
 @Entity("bingo")
 export class Bingo {
@@ -19,8 +20,6 @@ export class Bingo {
     @Column({nullable: false})
     type: string;
 
-    @Column({nullable: false , type: "enum", enum: [3,4,5]})
-    size: number;
 
     @Column({nullable: true})
     banner: string;
@@ -38,7 +37,7 @@ export class Bingo {
     brands: string;
 
     @Column({nullable: false, type: "json", default: {}})
-    box_styles: string;
+    box_styles: IBoxStyle;
 
     @CreateDateColumn()
     created_at: Date;

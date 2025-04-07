@@ -8,7 +8,7 @@ export class BingoCard {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ nullable: false, unique: true, type: "alphanum" })
+    @Column({ nullable: false, unique: true })
     code: string;
 
     @Column({ nullable: false, type: "jsonb" })

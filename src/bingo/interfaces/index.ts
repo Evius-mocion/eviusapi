@@ -1,7 +1,8 @@
 
-export interface IBoxValue {
-    value: number;
-    image?: string;
+export interface IBoxStyle {
+    borderColor: string;
+    textColor: string;
+    backgroundColor: string;
 }
 
 export enum BingoType {

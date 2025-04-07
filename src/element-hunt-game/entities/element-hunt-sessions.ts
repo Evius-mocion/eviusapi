@@ -1,10 +1,11 @@
-import { CreateDateColumn, Column, ManyToOne, JoinColumn, Entity } from 'typeorm';
+import { CreateDateColumn, Column, ManyToOne, JoinColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
 import { HiddenPoints } from '../types/hidden-point';
 import { ApiProperty } from '@nestjs/swagger';
 @Entity()
 export class ElementHuntSession {
 	@ApiProperty({ description: 'Unique identifier for the session' })
+	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
 	@ApiProperty({ description: 'Participant associated with the session' })
