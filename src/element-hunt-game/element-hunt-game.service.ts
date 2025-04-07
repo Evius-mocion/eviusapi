@@ -43,12 +43,14 @@ export class ElementHuntGameService {
 	}
 
 	async update(id: string, updateDto: UpdateElementHuntGameDto) {
+		console.log('updateDto', updateDto);
 		await this.gameRepository.update(id, updateDto);
 		return this.findOne(id);
 	}
 
 	async remove(id: string) {
+		const { elementHunt } = await this.findOne(id);
 		await this.gameRepository.delete(id);
-		return { deleted: true };
+		return { elementHunt };
 	}
 }

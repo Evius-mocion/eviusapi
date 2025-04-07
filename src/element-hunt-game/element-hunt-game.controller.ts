@@ -25,7 +25,7 @@ export class ElementHuntGameController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateDto: UpdateElementHuntGameDto) {
+	update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateDto: UpdateElementHuntGameDto) {
 		return this.gameService.update(id, updateDto);
 	}
 

@@ -14,14 +14,14 @@ export class CreateElementHuntGameDto {
 	@IsOptional()
 	image_url?: string = '';
 
-    @ValidateIf((o) => o.price !== undefined)
-    @ApiProperty({ required: false })
+	@ValidateIf((o) => o.price !== undefined)
+	@ApiProperty({ required: false })
 	@IsNumber()
 	@IsOptional()
 	@IsPositive()
 	image_width?: number = 0;
 
-    @ValidateIf((o) => o.price !== undefined)
+	@ValidateIf((o) => o.price !== undefined)
 	@ApiProperty({ required: false })
 	@IsNumber()
 	@IsOptional()
@@ -44,7 +44,7 @@ export class CreateElementHuntGameDto {
 	@ValidateNested({ each: true })
 	@Type(() => HiddenPoints)
 	@IsOptional()
-	hidden_points?: HiddenPoints[] = [];
+	hidden_points?: HiddenPoints[];
 
 	@ApiProperty()
 	@IsUUID()
