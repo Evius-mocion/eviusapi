@@ -1,8 +1,9 @@
 import { Event } from 'src/event/entities/event.entity';
-import { Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { HiddenPoints } from '../types/hidden-point';
 import { ElementHuntParticipant } from './element-hunt-participants.entity';
 
+@Entity()
 export class ElementHuntGame {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

@@ -1,12 +1,15 @@
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ElementHuntGame } from './element-hunt-game.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { ElementHuntSession } from './element-hunt-sessions';
+import { Entity } from 'typeorm';
 
+@Entity() // <-- Agregar este decorador
 export class ElementHuntParticipant {
 	@ApiProperty({ description: 'Unique identifier for the participant' })
-	id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
 	@ApiProperty({ description: 'Attendee associated with the participant' })
 	@ManyToOne(() => Attendee, (attendee) => attendee.elementHuntParticipations, { eager: false })
@@ -15,7 +18,6 @@ export class ElementHuntParticipant {
 
 	@ApiProperty({ description: 'Game associated with the participant' })
 	@ManyToOne(() => ElementHuntGame, (elementHuntGame) => elementHuntGame.participants, { eager: false })
-	@JoinColumn({ name: 'elementHuntGameId', referencedColumnName: 'id' })
 	elementHuntGame: ElementHuntGame;
 
 	@ApiProperty({ description: 'Best time achieved by the participant', type: Number })
@@ -32,6 +34,5 @@ export class ElementHuntParticipant {
 
 	@ApiProperty({ description: 'Session associated with the participant' })
 	@ManyToOne(() => ElementHuntSession, (elementHuntSession) => elementHuntSession.participant, { eager: false })
-	@JoinColumn({ name: 'elementHuntSessionId', referencedColumnName: 'id' })
 	elementHuntSession: ElementHuntSession;
 }
