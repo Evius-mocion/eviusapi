@@ -9,12 +9,15 @@ import { ConflictException } from '@nestjs/common';
 import { HiddenPoints } from './types/hidden-point';
 import { v4 as uuid } from 'uuid';
 import { CreateHiddenPointDto } from './dto/create-hidden-point';
+import { ElementHuntSession } from './entities/element-hunt-sessions.entity';
 @Injectable()
 export class ElementHuntGameService {
 	constructor(
 		@InjectRepository(ElementHuntGame)
 		private readonly gameRepository: Repository<ElementHuntGame>,
-		private readonly eventService: EventService // Add EventService
+		@InjectRepository(ElementHuntSession)
+		private readonly sessionRepository: Repository<ElementHuntSession>,
+		private readonly eventService: EventService
 	) {}
 
 	async create(createDto: CreateElementHuntGameDto) {
@@ -62,8 +65,42 @@ export class ElementHuntGameService {
 			throw new BadRequestException('Cannot modify game during active play');
 		}
 
+		// If game is being set to not playing, finish all active participants
+		if (elementHunt.isPlaying && updateDto.isPlaying === false) {
+			await this.finishAllActiveParticipants(id);
+		}
+
 		await this.gameRepository.update(id, updateDto);
 		return this.findOne(id);
+	}
+
+	async finishAllActiveParticipants(gameId: string) {
+		await this.findOne(gameId);
+
+		// Get all participants with their active sessions
+		const participantsWithSessions = await this.gameRepository
+			.createQueryBuilder('game')
+			.leftJoinAndSelect('game.participants', 'participant')
+			.leftJoinAndSelect('participant.elementHuntSessions', 'session')
+			.where('game.id = :gameId', { gameId })
+			.andWhere('session.finished = false')
+			.getOne();
+
+		if (!participantsWithSessions?.participants?.length) return;
+
+		// Update all active sessions
+		const activeSessions = participantsWithSessions.participants.flatMap((p) => p.elementHuntSessions).filter((s) => !s.finished);
+
+		if (activeSessions.length === 0) return;
+
+		await this.sessionRepository.save(
+			activeSessions.map((session) => ({
+				...session,
+				finished: true,
+				end_time: new Date(),
+				remaining_lives: 0,
+			}))
+		);
 	}
 
 	async remove(id: string) {

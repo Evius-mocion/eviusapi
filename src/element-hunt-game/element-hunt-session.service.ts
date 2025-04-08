@@ -60,6 +60,7 @@ export class ElementHuntSessionService {
 
 		if (session.remaining_lives <= 0) {
 			session.finished = true;
+			session.end_time = new Date();
 		}
 		return {
 			session: await this.sessionRepo.save(session),
@@ -68,7 +69,6 @@ export class ElementHuntSessionService {
 
 	async recordPoint(id: string, pointId: string) {
 		const { session } = await this.findOne(id);
-
 
 		const pointExists = session.found_points.some((point) => point.id === pointId);
 
@@ -87,6 +87,7 @@ export class ElementHuntSessionService {
 
 		if (session.found_points.length === participant.elementHuntGame.hidden_points.length) {
 			session.finished = true;
+            session.end_time = new Date();
 		}
 
 		const updatedSession = await this.sessionRepo.save(session);
