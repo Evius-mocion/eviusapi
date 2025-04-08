@@ -67,18 +67,19 @@ export class ElementHuntParticipantService {
 	}
 
 	async findByAttendee(userId: string) {
-		return this.participantRepo.findOne({
+		const participation = await this.participantRepo.findOne({
 			where: { attendee: { id: userId } },
 			relations: ['elementHuntGame'],
 		});
+		return { participation };
 	}
 
-	async remove(id: string) {
+	/* async remove(id: string) {
 		const participant = await this.participantRepo.findOneBy({ id });
 		if (!participant) {
 			throw new NotFoundException('Participant not found');
 		}
 		await this.participantRepo.delete(id);
 		return participant;
-	}
+	} */
 }
