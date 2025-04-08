@@ -30,13 +30,12 @@ export class ElementHuntGameController {
 		return this.gameService.update(id, updateDto);
 	}
 
-	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.gameService.remove(id);
-	}
-
 	@Post(':id/hidden-points')
 	async addHiddenPoint(@Param('id', ParseUUIDPipe) id: string, @Body() point: CreateHiddenPointDto) {
 		return this.gameService.addHiddenPoint(id, point);
+	}
+	@Delete(':id/hidden-points/:pointId')
+	remove(@Param('id', ParseUUIDPipe) id: string, @Param('pointId', ParseUUIDPipe) pointId: string) {
+		return this.gameService.removeHiddenPoint(id, pointId);
 	}
 }
