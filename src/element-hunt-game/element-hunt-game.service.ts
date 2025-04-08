@@ -8,6 +8,7 @@ import { EventService } from '../event/event.service';
 import { ConflictException } from '@nestjs/common';
 import { HiddenPoints } from './types/hidden-point';
 import { v4 as uuid } from 'uuid';
+import { CreateHiddenPointDto } from './dto/create-hidden-point';
 @Injectable()
 export class ElementHuntGameService {
 	constructor(
@@ -66,7 +67,7 @@ export class ElementHuntGameService {
 		return { elementHunt };
 	}
 
-	async addHiddenPoint(gameId: string, newPoint: Omit<HiddenPoints, 'id'>) {
+	async addHiddenPoint(gameId: string, newPoint: CreateHiddenPointDto) {
 		const { elementHunt } = await this.findOne(gameId);
 
 		const hasCollision = elementHunt.hidden_points.some(
@@ -86,6 +87,6 @@ export class ElementHuntGameService {
 			hidden_points: [...elementHunt.hidden_points, pointWithId],
 		});
 
-		return pointWithId;
+		return { hiddenPoint: pointWithId };
 	}
 }
