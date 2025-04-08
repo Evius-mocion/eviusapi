@@ -30,12 +30,12 @@ export class ElementHuntGame {
 
 	@Column({ type: 'varchar', nullable: false, default: '' })
 	image_url: string;
-
+	/* 
 	@Column({ type: 'int', nullable: false, default: 0 })
 	image_width: number;
 
 	@Column({ type: 'int', nullable: false, default: 0 })
-	image_height: number;
+	image_height: number; */
 
 	@Column({ type: 'text', nullable: false, default: '' })
 	instruction: string;
