@@ -89,4 +89,25 @@ export class ElementHuntGameService {
 
 		return { hiddenPoint: pointWithId };
 	}
+
+	async removeHiddenPoint(gameId: string, pointId: string) {
+		const { elementHunt } = await this.findOne(gameId);
+
+		const pointIndex = elementHunt.hidden_points.findIndex((point) => point.id === pointId);
+
+		if (pointIndex === -1) {
+			throw new NotFoundException('Hidden point not found');
+		}
+
+		const updatedPoints = elementHunt.hidden_points.filter((point) => point.id !== pointId);
+
+		await this.gameRepository.update(gameId, {
+			hidden_points: updatedPoints,
+		});
+
+		return {
+			removedPoint: elementHunt.hidden_points[pointIndex],
+			remainingPoints: updatedPoints,
+		};
+	}
 }
