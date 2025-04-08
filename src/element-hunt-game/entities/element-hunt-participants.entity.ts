@@ -1,8 +1,8 @@
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { CreateDateColumn, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ElementHuntGame } from './element-hunt-game.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { ElementHuntSession } from './element-hunt-sessions';
+import { ElementHuntSession } from './element-hunt-sessions.entity';
 import { Entity } from 'typeorm';
 
 @Entity()
@@ -16,6 +16,11 @@ export class ElementHuntParticipant {
 	created_at: Date;
 	@UpdateDateColumn({ type: 'timestamptz' })
 	updated_at: Date;
+
+	@ApiProperty({ description: 'Foreign key for the associated game' })
+	@Column({ name: 'elementHuntGameId' })
+	elementHuntGameId: string;
+
 	//*-------------------------------- Relaciones -----------------------------
 
 	@ApiProperty({ description: 'Sessions associated with the participant' })

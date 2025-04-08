@@ -15,7 +15,7 @@ export class ElementHuntParticipantService {
 		private gameService: ElementHuntGameService
 	) {}
 
-	async findOne(id: string): Promise<ElementHuntParticipant> {
+	async findOne(id: string): Promise<{ participant: ElementHuntParticipant }> {
 		const participant = await this.participantRepo.findOne({
 			where: { id },
 			relations: ['attendee', 'elementHuntGame'],
@@ -25,7 +25,7 @@ export class ElementHuntParticipantService {
 			throw new NotFoundException('Participant not found');
 		}
 
-		return participant;
+		return { participant };
 	}
 	async create(createDto: CreateParticipantDto) {
 		const [attendeeResponse, gameResponse] = await Promise.all([
