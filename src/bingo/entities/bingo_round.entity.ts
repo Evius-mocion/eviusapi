@@ -6,8 +6,8 @@ import { Figure } from "./figure.entity";
 @Entity("bingo_round")
 export class BingoRound {
     
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column({ nullable: false, enum: StatusRoundBingo, default: StatusRoundBingo.active})
     status: StatusRoundBingo;
@@ -20,6 +20,15 @@ export class BingoRound {
 
     @Column({ nullable: false, type: "jsonb" })
     winners: object[];
+    
+    @Column({ nullable: false })
+    currentBallot: number;
+
+    @Column({ nullable: false, type: "jsonb" })
+    ballots: number[];
+    
+    @Column({ nullable: false, type: "jsonb" })
+    ballotsPlayed: number[];
 
     // relations
 

@@ -7,7 +7,7 @@ export class Ballots {
     id: number;
 
     @Column({ nullable: false,default: true, type: "boolean" })
-    active: boolean;
+    played: boolean;
 
     @Column({ nullable: false })
     value: number
