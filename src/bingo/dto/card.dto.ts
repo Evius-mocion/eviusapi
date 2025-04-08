@@ -1,4 +1,4 @@
-import { IsNumber, IsBoolean } from 'class-validator';
+import { IsNumber, IsBoolean, IsUUID } from 'class-validator';
 
 export class CardDto {
     @IsNumber()
@@ -6,4 +6,7 @@ export class CardDto {
 
     @IsBoolean()
     withAttendee: boolean;
+
+    @IsUUID()
+    bingoId: string;
 }
