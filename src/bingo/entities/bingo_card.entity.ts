@@ -5,8 +5,8 @@ import { Attendee } from "src/attendee/entities/attendee.entity";
 @Entity("bingo_card")
 export class BingoCard {
     
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column({ nullable: false, unique: true })
     code: string;

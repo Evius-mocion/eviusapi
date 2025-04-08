@@ -3,7 +3,7 @@ import { BingoRound } from './bingo_round.entity';
 
 @Entity("figures")
 export class Figure {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number;
 
   @Column()

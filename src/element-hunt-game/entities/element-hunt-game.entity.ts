@@ -23,10 +23,10 @@ export class ElementHuntGame {
 	@Column({ type: 'text', nullable: false })
 	instruction: string;
 
-	@Column({ type: 'int', nullable: false })
+	@Column({ type: 'int', nullable: true })
 	max_attempts: number;
 
-	@Column({ type: 'jsonb', array: true, nullable: false })
+	@Column({ type: 'jsonb', array: true, nullable: true })
 	hidden_points: HiddenPoints[];
 
 	//* ----------------------------- Relaciones -----------------------------
