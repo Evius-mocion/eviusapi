@@ -1,5 +1,5 @@
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { Column, CreateDateColumn, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ElementHuntGame } from './element-hunt-game.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { ElementHuntSession } from './element-hunt-sessions.entity';
@@ -32,7 +32,7 @@ export class ElementHuntParticipant {
 	elementHuntGame: ElementHuntGame;
 
 	@ApiProperty({ description: 'Attendee associated with the participant' })
-	@ManyToOne(() => Attendee, (attendee) => attendee.elementHuntParticipations, { eager: false })
+	@OneToOne(() => Attendee, (attendee) => attendee.elementHuntParticipations)
 	@JoinColumn({ name: 'attendeeId', referencedColumnName: 'id' })
 	attendee: Attendee;
 }

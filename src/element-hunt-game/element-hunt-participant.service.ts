@@ -45,7 +45,7 @@ export class ElementHuntParticipantService {
 		});
 
 		if (existing) {
-			throw new ConflictException('Participant already registered for this game');
+			throw new ConflictException('Participant already exists for this attendee and game');
 		}
 
 		// Create and save new participant
@@ -67,7 +67,7 @@ export class ElementHuntParticipantService {
 	}
 
 	async findByAttendee(userId: string) {
-		return this.participantRepo.find({
+		return this.participantRepo.findOne({
 			where: { attendee: { id: userId } },
 			relations: ['elementHuntGame'],
 		});

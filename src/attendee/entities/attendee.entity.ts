@@ -85,8 +85,8 @@ export class Attendee {
 	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
 	answers: SurveyAnswer[];
 
-	@OneToMany(() => ElementHuntParticipant, (elementHuntParticipant) => elementHuntParticipant.attendee)
-	elementHuntParticipations: ElementHuntParticipant[];
+	@OneToOne(() => ElementHuntParticipant, (elementHuntParticipant) => elementHuntParticipant.attendee)
+	elementHuntParticipations: ElementHuntParticipant;
 
 	@ManyToOne(() => Station, (station) => station.attendees, {
 		nullable: true,
