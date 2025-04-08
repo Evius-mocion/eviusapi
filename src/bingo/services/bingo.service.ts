@@ -1,19 +1,19 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBingoDto } from './dto/create-bingo.dto';
-import { UpdateBingoDto } from './dto/update-bingo.dto';
+import { CreateBingoDto } from '../dto/create-bingo.dto';
+import { UpdateBingoDto } from '../dto/update-bingo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Bingo } from './entities/bingo.entity';
+import { Bingo } from '../entities/bingo.entity';
 import { Repository } from 'typeorm';
-import { BingoRound } from './entities/bingo_round.entity';
-import { BingoCard } from './entities/bingo_card.entity';
-import { Ballots } from './entities/ballots.entity';
-import { Figure } from './entities/figure.entity';
+import { BingoRound } from '../entities/bingo_round.entity';
+import { BingoCard } from '../entities/bingo_card.entity';
+import { Figure } from '../entities/figure.entity';
 import { Event } from 'src/event/entities/event.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
-import { CardDto } from './dto/card.dto';
+import { CardDto } from '../dto/card.dto';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import { BINGO_CARD_SIZE, BINGO_MAX_BALLOTS } from './constants';
+import { BINGO_CARD_SIZE, BINGO_MAX_BALLOTS } from '../constants';
 import { PaginationArgs } from 'src/common/dto';
+import { StatusRoundBingo } from '../interfaces';
 
 @Injectable()
 export class BingoService {
@@ -32,9 +32,6 @@ export class BingoService {
 
 		@InjectRepository(BingoCard)
 		private readonly bingoCardRepository: Repository<BingoCard>,
-
-		@InjectRepository(Ballots)
-		private readonly ballotsRepository: Repository<Ballots>,
 
 		@InjectRepository(Figure)
 		private readonly figureRepository: Repository<Figure>
@@ -64,15 +61,44 @@ async findAll() {
 
 async findOne(id: string) {
     const bingo = await this.bingoRepository.findOne({
-        where: { id },
-        relations: ['ballots']
+        where: { 
+            event: { id },
+        }
     });
 
     if (!bingo) {
         throw new NotFoundException(`Bingo with id: ${id} not found`);
     }
 
-    return bingo;
+    return {
+        bingo
+    };
+}
+
+async findOneByActivity(id: string,attendeeId: string = "") {
+    const bingo = await this.bingoRepository.findOne({
+        select: ["id", "background_color", "background_image", "banner", "box_styles", "brands","footer","name","description"],
+        where: { 
+            activity: { id },
+        },
+        relations: {
+            cards: {
+                attendee: true
+            }
+        }
+    });
+
+    if (!bingo) {
+        throw new NotFoundException(`Bingo with id: ${id} not found`);
+    }
+
+    // Get attendee card if exists
+    const attendeeCard = bingo.cards?.find(card => card.attendee.id === attendeeId);
+
+    return {
+        ...bingo,
+        attendeeCard: attendeeCard || null
+    };
 }
 
 async update(id: string, updateBingoDto: UpdateBingoDto) {
@@ -123,21 +149,6 @@ async remove(id: string) {
     };
 }
 
-async generateBallots(id: string, amount: number) {
-  const bingo = await this.bingoRepository.findOneBy({id});
-  if (!bingo) {
-    throw new NotFoundException(`Bingo with id: ${id} not found`);
-  }
-
-  // Generate x amount(75 default) ballots (standard bingo)
-  const ballots = Array.from({ length: amount ?? 75 }, (_, i) => (this.ballotsRepository.create({
-    value: i + 1,
-    bingo: bingo,
-    played: true,
-  })));
-
-  return this.ballotsRepository.save(ballots);
-}
 
 
 async generateCards(bingoId: string, options: CardDto) {
