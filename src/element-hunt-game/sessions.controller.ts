@@ -27,4 +27,7 @@ export class ElementHuntSessionsController {
 	recordPoint(@Body() body: { sessionId: string; pointId: string }) {
 		return this.sessionService.recordPoint(body.sessionId, body.pointId);
 	}
+
+
+    
 }

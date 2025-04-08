@@ -69,7 +69,8 @@ export class ElementHuntSessionService {
 	async recordPoint(id: string, pointId: string) {
 		const { session } = await this.findOne(id);
 
-        const pointExists = session.found_points.some((point) => point.id === pointId);
+
+		const pointExists = session.found_points.some((point) => point.id === pointId);
 
 		if (pointExists) {
 			throw new BadRequestException('Hidden point has already been found');
@@ -83,9 +84,12 @@ export class ElementHuntSessionService {
 		}
 
 		session.found_points.push(hiddenPoint);
-        // return {session}
-		return {
-			session: await this.sessionRepo.save(session),
-		};
+
+		if (session.found_points.length === participant.elementHuntGame.hidden_points.length) {
+			session.finished = true;
+		}
+
+		const updatedSession = await this.sessionRepo.save(session);
+		return { session: updatedSession };
 	}
 }
