@@ -55,8 +55,14 @@ export class EventService {
     }
   }
   
+
+  
   async findOneBy(id: string) {
-    return this.eventRepository.findOneBy({ id });
+    const event = await this.eventRepository.findOneBy({ id });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return event;
   }
 
   async findAll(orgId: string) {
