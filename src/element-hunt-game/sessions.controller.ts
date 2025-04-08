@@ -2,6 +2,7 @@ import { Controller, Post, Get, Param, Body, ParseUUIDPipe } from '@nestjs/commo
 import { ApiTags } from '@nestjs/swagger';
 import { ElementHuntSessionService } from './element-hunt-session.service';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { HiddenPoints } from './types/hidden-point';
 
 @ApiTags('element-hunt/sessions')
 @Controller('element-hunt/sessions')
@@ -23,8 +24,8 @@ export class ElementHuntSessionsController {
 		return this.sessionService.recordFault(id);
 	}
 
-	/* @Post(':id/point')
-	recordPoint(@Param('id', ParseUUIDPipe) id: string) {
-		return this.sessionService.recordPoint(id);
-	} */
+	@Post(':id/point')
+	recordPoint(@Param('id', ParseUUIDPipe) id: string, @Body() pointData: { hiddenPoint: HiddenPoints }) {
+		return this.sessionService.recordPoint(id, pointData.hiddenPoint);
+	}
 }

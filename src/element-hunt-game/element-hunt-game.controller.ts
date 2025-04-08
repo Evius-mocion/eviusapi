@@ -3,6 +3,7 @@ import { ElementHuntGameService } from './element-hunt-game.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
 import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
+import { HiddenPoints } from './types/hidden-point';
 
 @ApiTags('element-hunt/games')
 @Controller('element-hunt/games')
@@ -32,5 +33,10 @@ export class ElementHuntGameController {
 	@Delete(':id')
 	remove(@Param('id') id: string) {
 		return this.gameService.remove(id);
+	}
+
+	@Post(':id/hidden-points')
+	async addHiddenPoint(@Param('id', ParseUUIDPipe) id: string, @Body() point: Omit<HiddenPoints, 'id'>) {
+		return this.gameService.addHiddenPoint(id, point);
 	}
 }

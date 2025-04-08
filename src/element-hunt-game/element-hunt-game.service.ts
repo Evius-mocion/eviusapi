@@ -6,7 +6,8 @@ import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
 import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
 import { EventService } from '../event/event.service';
 import { ConflictException } from '@nestjs/common';
-
+import { HiddenPoints } from './types/hidden-point';
+import { v4 as uuid } from 'uuid';
 @Injectable()
 export class ElementHuntGameService {
 	constructor(
@@ -63,5 +64,28 @@ export class ElementHuntGameService {
 		const { elementHunt } = await this.findOne(id);
 		await this.gameRepository.delete(id);
 		return { elementHunt };
+	}
+
+	async addHiddenPoint(gameId: string, newPoint: Omit<HiddenPoints, 'id'>) {
+		const { elementHunt } = await this.findOne(gameId);
+
+		const hasCollision = elementHunt.hidden_points.some(
+			(point) => point.x_value === newPoint.x_value && point.y_value === newPoint.y_value
+		);
+
+		if (hasCollision) {
+			throw new ConflictException('A point already exists at these coordinates');
+		}
+
+		const pointWithId: HiddenPoints = {
+			id: uuid(),
+			...newPoint,
+		};
+
+		await this.gameRepository.update(gameId, {
+			hidden_points: [...elementHunt.hidden_points, pointWithId],
+		});
+
+		return pointWithId;
 	}
 }
