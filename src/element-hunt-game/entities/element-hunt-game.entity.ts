@@ -22,8 +22,8 @@ export class ElementHuntGame {
 	@Column({ type: 'varchar', length: 255, nullable: false })
 	name: string;
 
-	@Column({ type: 'uuid', nullable: false })
 	@Index()
+	@Column({ type: 'uuid', nullable: false })
 	eventId: string;
 
 	@Column({ type: 'varchar', nullable: false, default: '' })
