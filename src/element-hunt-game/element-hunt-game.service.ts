@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ElementHuntGame } from './entities/element-hunt-game.entity';
@@ -56,7 +56,12 @@ export class ElementHuntGameService {
 	}
 
 	async update(id: string, updateDto: UpdateElementHuntGameDto) {
-		console.log('updateDto', updateDto);
+		const { elementHunt } = await this.findOne(id);
+
+		if (elementHunt.isPlaying && updateDto.isPlaying !== false) {
+			throw new BadRequestException('Cannot modify game during active play');
+		}
+
 		await this.gameRepository.update(id, updateDto);
 		return this.findOne(id);
 	}

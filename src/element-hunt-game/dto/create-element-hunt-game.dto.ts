@@ -1,4 +1,15 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator';
+import {
+	IsArray,
+	IsBoolean,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsPositive,
+	IsString,
+	IsUUID,
+	ValidateIf,
+	ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { HiddenPoints } from '../types/hidden-point';
 import { Type } from 'class-transformer';
@@ -55,4 +66,9 @@ export class CreateElementHuntGameDto {
 	@IsUUID()
 	@IsNotEmpty()
 	eventId: string;
+
+	@ApiProperty({ required: false, default: false })
+	@IsBoolean()
+	@IsOptional()
+	isPlaying?: boolean
 }
