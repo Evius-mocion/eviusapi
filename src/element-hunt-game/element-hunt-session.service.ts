@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ElementHuntSession } from './entities/element-hunt-sessions.entity';
 import { ElementHuntParticipantService } from './element-hunt-participant.service';
 import { CreateSessionDto } from './dto/create-session.dto';
-import { UpdateSessionDto } from './dto/update-session.dto';
 import { ElementHuntGameService } from './element-hunt-game.service';
 
 @Injectable()
@@ -47,17 +46,23 @@ export class ElementHuntSessionService {
 		});
 
 		if (!session) throw new NotFoundException('Session not found');
-		return session;
+		return { session };
 	}
 
-	async update(id: string, updateDto: UpdateSessionDto) {
-		await this.sessionRepo.update(id, updateDto);
-		return this.findOne(id);
-	}
+	async recordFault(id: string) {
+		const { session } = await this.findOne(id);
 
-	async remove(id: string) {
-		const session = await this.findOne(id);
-		await this.sessionRepo.delete(id);
-		return session;
+		if (session.remaining_lives <= 0) {
+			throw new BadRequestException('Cannot record fault: participant has no remaining lives');
+		}
+
+		session.remaining_lives -= 1;
+
+		if (session.remaining_lives <= 0) {
+			session.finished = true;
+		}
+		return {
+			session: await this.sessionRepo.save(session),
+		};
 	}
 }
