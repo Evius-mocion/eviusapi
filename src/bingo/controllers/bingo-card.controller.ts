@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
-import { Public, SuperAdmin } from 'src/common/decorators';
+import { SuperAdmin } from 'src/common/decorators';
 import { PaginationArgs } from 'src/common/dto';
 import { BingoCardService } from '../services/bingo-card.service';
 import { CardDto } from '../dto/card.dto';
@@ -8,7 +8,8 @@ import { UpdateBingoDto } from '../dto/update-bingo.dto';
 @Controller('bingo/cards')
 export class BingoCardController {
   constructor(private readonly bingoCardService: BingoCardService) {}
-  
+ 
+  @SuperAdmin()
   @Post('generate-cards')
   generateCards(
     @Body() cardDto: CardDto

@@ -1,18 +1,16 @@
-import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
-import { Public, SuperAdmin } from 'src/common/decorators';
-import { BingoCardService } from '../services/bingo-card.service';
-import { CardDto } from '../dto/card.dto';
-@Controller('bingo/cards')
+import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common'
+import { CreateBingoRoundDto } from '../dto/create-roundd.dto';
+import { BingoRoundService } from '../services/bingo-round.service';
+@Controller('bingo/round')
 export class BingoRoundController {
-  constructor(private readonly bingoCardService: BingoCardService) {}
+  constructor(private readonly bingoRoundService: BingoRoundService) {}
   
     
-  @Public()
-  @Post(':id/create-round')
+  @Post('create')
   createRound(
-    @Param('id') id: string,
-    @Body() cardDto: CardDto
+    @Body() roundDto: CreateBingoRoundDto
   ) {
-    return "" 
+    return this.bingoRoundService.create(roundDto)
   }
+  
 }

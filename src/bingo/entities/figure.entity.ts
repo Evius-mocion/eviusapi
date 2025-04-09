@@ -4,9 +4,9 @@ import { BingoRound } from './bingo_round.entity';
 @Entity("figures")
 export class Figure {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
-  @Column()
+  @Column({nullable: false})
   name: string;
 
   @Column('jsonb')

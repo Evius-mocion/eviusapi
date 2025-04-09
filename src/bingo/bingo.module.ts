@@ -10,10 +10,13 @@ import { Event } from 'src/event/entities/event.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { BingoCardService } from './services/bingo-card.service';
 import { BingoCardController } from './controllers/bingo-card.controller';
+import { BingoRoundService } from './services/bingo-round.service';
+import { BingoRoundController } from './controllers/bingo-round.controller';
+import { BingoRoundGateway } from './gateways/bingo-round.gateway';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Bingo,BingoCard,BingoRound,Figure,Event,Activity])],
-  controllers: [BingoController,BingoCardController],
-  providers: [BingoService,BingoCardService],
+  controllers: [BingoController,BingoCardController,BingoRoundController],
+  providers: [BingoService,BingoCardService,BingoRoundService,BingoRoundGateway],
 })
 export class BingoModule {}
