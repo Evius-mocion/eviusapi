@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { DEFAULT_MAX_LIVES } from 'src/common/constants/elementHunt.constants';
 
@@ -54,8 +54,8 @@ export class CreateElementHuntGameDto {
 	@IsNotEmpty()
 	eventId: string;
 
-	@ApiProperty({ required: false, default: false })
+	/* @ApiProperty({ required: false, default: false })
 	@IsBoolean()
 	@IsOptional()
-	isPlaying?: boolean;
+	isPlaying?: boolean; */
 }

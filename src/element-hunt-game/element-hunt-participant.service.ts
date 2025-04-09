@@ -37,24 +37,30 @@ export class ElementHuntParticipantService {
 			throw new ConflictException("Attendee does not belong to the game's event");
 		}
 
+		
+		
 		const existing = await this.participantRepo.findOne({
 			where: {
 				attendee: { id: createDto.attendeeId },
 				elementHuntGame: { id: createDto.gameId },
 			},
 		});
-
+		
 		if (existing) {
 			throw new ConflictException('Participant already exists for this attendee and game');
 		}
 
+console.log('!gameResponse.elementHunt.isPlaying', gameResponse.elementHunt)
+
+		if(!gameResponse.elementHunt.isPlaying) throw new ConflictException("Game is not playing");
+		
 		// Create and save new participant
 		const participant = this.participantRepo.create({
 			attendee: { id: createDto.attendeeId },
 			elementHuntGame: { id: createDto.gameId },
 		});
-		const elementHunt = await this.participantRepo.save(participant);
-		return { elementHunt };
+		const elementHuntParticipant = await this.participantRepo.save(participant);
+		return { elementHuntParticipant };
 	}
 
 	async findByGame(gameId: string) {

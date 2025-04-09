@@ -59,16 +59,7 @@ export class ElementHuntGameService {
 	}
 
 	async update(id: string, updateDto: UpdateElementHuntGameDto) {
-		const { elementHunt } = await this.findOne(id);
-
-		if (elementHunt.isPlaying && updateDto.isPlaying !== false) {
-			throw new BadRequestException('Cannot modify game during active play');
-		}
-
-		// If game is being set to not playing, finish all active participants
-		if (elementHunt.isPlaying && updateDto.isPlaying === false) {
-			await this.finishAllActiveParticipants(id);
-		}
+		await this.findOne(id);
 
 		await this.gameRepository.update(id, updateDto);
 		return this.findOne(id);
@@ -151,5 +142,27 @@ export class ElementHuntGameService {
 			removedPoint: elementHunt.hidden_points[pointIndex],
 			remainingPoints: updatedPoints,
 		};
+	}
+
+	async setGameState(id: string, isPlaying: boolean) {
+		const { elementHunt } = await this.findOne(id);
+		if (isPlaying) {
+			if (elementHunt.hidden_points.length === 0) {
+				throw new BadRequestException('Cannot activate game without hidden points');
+			}
+			await this.gameRepository.update(id, { isPlaying });
+			return {
+				isPlaying
+			}
+		}
+
+		// Deactivation logic
+		if (elementHunt.isPlaying) {
+			await this.finishAllActiveParticipants(id);
+		}
+		await this.gameRepository.update(id, { isPlaying });
+		return {
+			isPlaying
+		}
 	}
 }

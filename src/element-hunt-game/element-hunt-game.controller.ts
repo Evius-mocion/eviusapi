@@ -2,7 +2,7 @@ import { Controller, Post, Get, Patch, Delete, Param, Body, ParseUUIDPipe } from
 import { ElementHuntGameService } from './element-hunt-game.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
-import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
+import { UpdateElementHuntGameDto, UpdateElementHuntGameStateDto } from './dto/update-element-hunt-game.dto';
 import { CreateHiddenPointDto } from './dto/create-hidden-point';
 
 @ApiTags('element-hunt/games')
@@ -37,5 +37,10 @@ export class ElementHuntGameController {
 	@Delete(':id/hidden-points/:pointId')
 	removeHiddenPoint(@Param('id', ParseUUIDPipe) id: string, @Param('pointId', ParseUUIDPipe) pointId: string) {
 		return this.gameService.removeHiddenPoint(id, pointId);
+	}
+
+	@Post(':id/state')
+	setGameState(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateElementHuntGameStateDto) {
+		return this.gameService.setGameState(id, body.isPlaying);
 	}
 }
