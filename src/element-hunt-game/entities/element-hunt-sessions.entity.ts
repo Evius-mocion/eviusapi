@@ -3,8 +3,6 @@ import { ElementHuntParticipant } from './element-hunt-participants.entity';
 import { HiddenPoints } from '../types/hidden-point';
 import { ApiProperty } from '@nestjs/swagger';
 
-
-
 @Entity()
 export class ElementHuntSession {
 	@ApiProperty({ description: 'Unique identifier for the session' })
@@ -16,6 +14,10 @@ export class ElementHuntSession {
 	@JoinColumn({ name: 'participantId', referencedColumnName: 'id' })
 	participant: ElementHuntParticipant;
 
+	@ApiProperty({ description: 'ID of the participant associated with the session' })
+	@Column({ name: 'participantId' })
+	participantId: string;
+
 	@ApiProperty({ description: 'Start time of the session', type: Date })
 	@CreateDateColumn({ type: 'timestamptz' })
 	start_time: Date;
@@ -25,7 +27,7 @@ export class ElementHuntSession {
 	end_time: Date;
 
 	@ApiProperty({ description: 'Points found during the session', type: [HiddenPoints] })
-	@Column({ type: 'jsonb', array: true, nullable: true, default: [] })
+	@Column({ nullable: true, type: 'jsonb', default: [] })
 	found_points: HiddenPoints[];
 
 	@ApiProperty({ description: 'Number of remaining lives for the player', type: Number })

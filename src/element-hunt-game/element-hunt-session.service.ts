@@ -5,7 +5,6 @@ import { ElementHuntSession } from './entities/element-hunt-sessions.entity';
 import { ElementHuntParticipantService } from './element-hunt-participant.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { ElementHuntGameService } from './element-hunt-game.service';
-import { HiddenPoints } from './types/hidden-point';
 
 @Injectable()
 export class ElementHuntSessionService {
@@ -61,24 +60,37 @@ export class ElementHuntSessionService {
 
 		if (session.remaining_lives <= 0) {
 			session.finished = true;
+			session.end_time = new Date();
 		}
 		return {
 			session: await this.sessionRepo.save(session),
 		};
 	}
 
-	async recordPoint(id: string, hiddenPoint: HiddenPoints) {
+	async recordPoint(id: string, pointId: string) {
 		const { session } = await this.findOne(id);
 
-		const pointExists = session.found_points.some((point) => point.id === hiddenPoint.id);
+		const pointExists = session.found_points.some((point) => point.id === pointId);
 
 		if (pointExists) {
 			throw new BadRequestException('Hidden point has already been found');
 		}
 
+		const { participant } = await this.participantService.findOne(session.participantId);
+		const hiddenPoint = participant.elementHuntGame.hidden_points.find((point) => point.id === pointId);
+
+		if (!hiddenPoint) {
+			throw new NotFoundException('Hidden point not found');
+		}
+
 		session.found_points.push(hiddenPoint);
-		return {
-			session: await this.sessionRepo.save(session),
-		};
+
+		if (session.found_points.length === participant.elementHuntGame.hidden_points.length) {
+			session.finished = true;
+            session.end_time = new Date();
+		}
+
+		const updatedSession = await this.sessionRepo.save(session);
+		return { session: updatedSession };
 	}
 }

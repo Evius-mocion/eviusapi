@@ -37,24 +37,30 @@ export class ElementHuntParticipantService {
 			throw new ConflictException("Attendee does not belong to the game's event");
 		}
 
+		
+		
 		const existing = await this.participantRepo.findOne({
 			where: {
 				attendee: { id: createDto.attendeeId },
 				elementHuntGame: { id: createDto.gameId },
 			},
 		});
-
+		
 		if (existing) {
-			throw new ConflictException('Participant already registered for this game');
+			throw new ConflictException('Participant already exists for this attendee and game');
 		}
 
+console.log('!gameResponse.elementHunt.isPlaying', gameResponse.elementHunt)
+
+		if(!gameResponse.elementHunt.isPlaying) throw new ConflictException("Game is not playing");
+		
 		// Create and save new participant
 		const participant = this.participantRepo.create({
 			attendee: { id: createDto.attendeeId },
 			elementHuntGame: { id: createDto.gameId },
 		});
-		const elementHunt = await this.participantRepo.save(participant);
-		return { elementHunt };
+		const elementHuntParticipant = await this.participantRepo.save(participant);
+		return { elementHuntParticipant };
 	}
 
 	async findByGame(gameId: string) {
@@ -67,18 +73,19 @@ export class ElementHuntParticipantService {
 	}
 
 	async findByAttendee(userId: string) {
-		return this.participantRepo.find({
+		const participation = await this.participantRepo.findOne({
 			where: { attendee: { id: userId } },
 			relations: ['elementHuntGame'],
 		});
+		return { participation };
 	}
 
-	async remove(id: string) {
+	/* async remove(id: string) {
 		const participant = await this.participantRepo.findOneBy({ id });
 		if (!participant) {
 			throw new NotFoundException('Participant not found');
 		}
 		await this.participantRepo.delete(id);
 		return participant;
-	}
+	} */
 }

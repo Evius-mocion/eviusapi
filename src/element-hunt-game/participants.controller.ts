@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Delete, Param, Body, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ElementHuntParticipantService } from './element-hunt-participant.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
@@ -26,8 +26,8 @@ export class ElementHuntParticipantController {
 		return this.participantService.findByAttendee(attendeeId);
 	}
 
-	@Delete(':id')
+	/* @Delete(':id')
 	remove(@Param('id', ParseUUIDPipe) id: string) {
 		return this.participantService.remove(id);
-	}
+	} */
 }

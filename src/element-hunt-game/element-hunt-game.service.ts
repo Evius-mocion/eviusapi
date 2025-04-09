@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ElementHuntGame } from './entities/element-hunt-game.entity';
@@ -9,12 +9,15 @@ import { ConflictException } from '@nestjs/common';
 import { HiddenPoints } from './types/hidden-point';
 import { v4 as uuid } from 'uuid';
 import { CreateHiddenPointDto } from './dto/create-hidden-point';
+import { ElementHuntSession } from './entities/element-hunt-sessions.entity';
 @Injectable()
 export class ElementHuntGameService {
 	constructor(
 		@InjectRepository(ElementHuntGame)
 		private readonly gameRepository: Repository<ElementHuntGame>,
-		private readonly eventService: EventService // Add EventService
+		@InjectRepository(ElementHuntSession)
+		private readonly sessionRepository: Repository<ElementHuntSession>,
+		private readonly eventService: EventService
 	) {}
 
 	async create(createDto: CreateElementHuntGameDto) {
@@ -56,9 +59,39 @@ export class ElementHuntGameService {
 	}
 
 	async update(id: string, updateDto: UpdateElementHuntGameDto) {
-		console.log('updateDto', updateDto);
+		await this.findOne(id);
+
 		await this.gameRepository.update(id, updateDto);
 		return this.findOne(id);
+	}
+
+	async finishAllActiveParticipants(gameId: string) {
+		await this.findOne(gameId);
+
+		// Get all participants with their active sessions
+		const participantsWithSessions = await this.gameRepository
+			.createQueryBuilder('game')
+			.leftJoinAndSelect('game.participants', 'participant')
+			.leftJoinAndSelect('participant.elementHuntSessions', 'session')
+			.where('game.id = :gameId', { gameId })
+			.andWhere('session.finished = false')
+			.getOne();
+
+		if (!participantsWithSessions?.participants?.length) return;
+
+		// Update all active sessions
+		const activeSessions = participantsWithSessions.participants.flatMap((p) => p.elementHuntSessions).filter((s) => !s.finished);
+
+		if (activeSessions.length === 0) return;
+
+		await this.sessionRepository.save(
+			activeSessions.map((session) => ({
+				...session,
+				finished: true,
+				end_time: new Date(),
+				remaining_lives: 0,
+			}))
+		);
 	}
 
 	async remove(id: string) {
@@ -109,5 +142,27 @@ export class ElementHuntGameService {
 			removedPoint: elementHunt.hidden_points[pointIndex],
 			remainingPoints: updatedPoints,
 		};
+	}
+
+	async setGameState(id: string, isPlaying: boolean) {
+		const { elementHunt } = await this.findOne(id);
+		if (isPlaying) {
+			if (elementHunt.hidden_points.length === 0) {
+				throw new BadRequestException('Cannot activate game without hidden points');
+			}
+			await this.gameRepository.update(id, { isPlaying });
+			return {
+				isPlaying
+			}
+		}
+
+		// Deactivation logic
+		if (elementHunt.isPlaying) {
+			await this.finishAllActiveParticipants(id);
+		}
+		await this.gameRepository.update(id, { isPlaying });
+		return {
+			isPlaying
+		}
 	}
 }
