@@ -85,11 +85,42 @@ async getActiveRound(bingoId: string) {
             status: StatusRoundBingo.active
         },
     });
-    
-    console.log(activeRound);
-    
-
     return activeRound ?? "";
+}
+
+async getRoundById(roundId: string) {
+    const round = await this.bingoRoundRepository.findOne({
+        where: { id: roundId },
+    });
+
+    if (!round) {
+        throw new NotFoundException(`Round with id ${roundId} not found`);
+    }
+
+    return "xdd";
+}
+async findOne(id: string) {
+    const round = await this.bingoRoundRepository.findOne({
+        where: { id },
+        relations: ['figure']
+    });
+
+    if (!round) {
+        throw new NotFoundException(`Round with id ${id} not found`);
+    }
+
+    return round;
+}
+
+async remove(id: string) {
+    const round = await this.findOne(id);
+    
+    await this.bingoRoundRepository.remove(round);
+    
+    return {
+        message: `Round with id ${id} has been deleted`,
+        id
+    };
 }
 
 }
