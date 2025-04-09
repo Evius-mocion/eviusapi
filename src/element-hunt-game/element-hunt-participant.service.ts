@@ -50,7 +50,7 @@ export class ElementHuntParticipantService {
 			throw new ConflictException('Participant already exists for this attendee and game');
 		}
 
-console.log('!gameResponse.elementHunt.isPlaying', gameResponse.elementHunt)
+
 
 		if(!gameResponse.elementHunt.isPlaying) throw new ConflictException("Game is not playing");
 		

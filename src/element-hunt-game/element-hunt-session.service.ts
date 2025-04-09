@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ElementHuntSession } from './entities/element-hunt-sessions.entity';
@@ -19,6 +19,8 @@ export class ElementHuntSessionService {
 		const { participant } = await this.participantService.findOne(createDto.participantId);
 
 		const { elementHunt } = await this.elementHuntGameService.findOne(participant.elementHuntGameId);
+
+		if (!elementHunt.isPlaying) throw new ConflictException('Game is not playing');
 
 		const existingSession = await this.sessionRepo.findOne({
 			where: {
@@ -51,7 +53,7 @@ export class ElementHuntSessionService {
 
 	async recordFault(id: string) {
 		const { session } = await this.findOne(id);
-
+		if(session.finished) throw new BadRequestException('Cannot record fault: session has finished')
 		if (session.remaining_lives <= 0) {
 			throw new BadRequestException('Cannot record fault: participant has no remaining lives');
 		}
@@ -69,7 +71,7 @@ export class ElementHuntSessionService {
 
 	async recordPoint(id: string, pointId: string) {
 		const { session } = await this.findOne(id);
-
+		if(session.finished) throw new BadRequestException('Cannot record point: session has finished')
 		const pointExists = session.found_points.some((point) => point.id === pointId);
 
 		if (pointExists) {
@@ -87,7 +89,7 @@ export class ElementHuntSessionService {
 
 		if (session.found_points.length === participant.elementHuntGame.hidden_points.length) {
 			session.finished = true;
-            session.end_time = new Date();
+			session.end_time = new Date();
 		}
 
 		const updatedSession = await this.sessionRepo.save(session);
