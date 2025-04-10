@@ -7,8 +7,8 @@ export class TemplateController {
 	constructor(private readonly templateService: TemplateService) {}
 
 	@Post()
-	async create(@Body() createTemplateDto: CreateTemplateDto) {
-		const template = await this.templateService.create(createTemplateDto);
+	async create(@Body() createTemplateDto: CreateTemplateDto, @Body('predefinedTemplateId') predefinedTemplateId?: string) {
+		const template = await this.templateService.create(createTemplateDto, predefinedTemplateId);
 		return { template };
 	}
 
@@ -40,5 +40,11 @@ export class TemplateController {
 	async findByEventId(@Param('eventId') eventId: string) {
 		const templates = await this.templateService.findByEventId(eventId);
 		return { templates };
+	}
+
+	@Get('predefined')
+	async findPredefinedTemplates() {
+		const predefinedTemplates = await this.templateService.findPredefinedTemplates();
+		return { predefinedTemplates };
 	}
 }

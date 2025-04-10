@@ -1,22 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailTemplate } from './entities/template.entity';
 import { CreateTemplateDto } from './dto/create-template.dto';
-import { EventService } from '../event/event.service'; // Import EventService
-import { UpdateTemplateDto } from './dto/update-template.dto';
+import { EventService } from '../event/event.service';
 
 @Injectable()
 export class TemplateService {
 	constructor(
 		@InjectRepository(EmailTemplate)
 		private templateRepository: Repository<EmailTemplate>,
-		private eventService: EventService // Inject EventService
+		private eventService: EventService
 	) {}
 
-	async create(createTemplateDto: CreateTemplateDto): Promise<EmailTemplate> {
+	async create(createTemplateDto: CreateTemplateDto, predefinedTemplateId?: string): Promise<EmailTemplate> {
 		await this.eventService.findOneBy(createTemplateDto.eventId);
-		const template = this.templateRepository.create({ ...createTemplateDto, event: { id: createTemplateDto.eventId } });
+
+		let templateData = createTemplateDto;
+		if (predefinedTemplateId) {
+			const predefinedTemplate = await this.findOne(predefinedTemplateId);
+			if (!predefinedTemplate.isPredefined) {
+				throw new BadRequestException('Template is not predefined');
+			}
+			templateData = { ...predefinedTemplate, ...createTemplateDto };
+		}
+
+		const template = this.templateRepository.create(templateData);
 		return this.templateRepository.save(template);
 	}
 
@@ -32,12 +41,7 @@ export class TemplateService {
 		return template;
 	}
 
-	async update(id: string, updateTemplateDto: UpdateTemplateDto): Promise<EmailTemplate> {
-		const existingTemplate = await this.findOne(id);
-		if (!existingTemplate) {
-			throw new NotFoundException(`Template with ID ${id} not found`);
-		}
-
+	async update(id: string, updateTemplateDto: Partial<CreateTemplateDto>): Promise<EmailTemplate> {
 		await this.templateRepository.update(id, updateTemplateDto);
 		return this.findOne(id);
 	}
@@ -50,7 +54,6 @@ export class TemplateService {
 	}
 
 	async findByEventId(eventId: string): Promise<EmailTemplate[]> {
-		// Validate event exists
 		await this.eventService.findOneBy(eventId);
 
 		const templates = await this.templateRepository.find({
@@ -58,5 +61,11 @@ export class TemplateService {
 		});
 
 		return templates;
+	}
+
+	async findPredefinedTemplates(): Promise<EmailTemplate[]> {
+		return this.templateRepository.find({
+			where: { isPredefined: true },
+		});
 	}
 }

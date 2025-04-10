@@ -30,6 +30,9 @@ export class EmailTemplate {
 	event: Event;
 
 	@Index()
-	@Column({ type: 'uuid', nullable: false })
+	@Column({ type: 'uuid', nullable: true })
 	eventId: string;
+
+	@Column({ type: 'boolean', default: false })
+	isPredefined: boolean;
 }
