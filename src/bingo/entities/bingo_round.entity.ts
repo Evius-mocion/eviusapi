@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, Prim
 import { Bingo } from "./bingo.entity";
 import { StatusRoundBingo } from "../interfaces";
 import { Figure } from "./figure.entity";
+import { BingoHistory } from "./bingo_history.entity";
 
 @Entity("bingo_round")
 export class BingoRound {
@@ -38,4 +39,7 @@ export class BingoRound {
     @OneToOne(() => Figure, (figure) => figure.round)
     @JoinColumn()
     figure: Figure;
+
+    @OneToOne(() => BingoHistory, (history) => history.round)
+    history: BingoHistory[]
 }

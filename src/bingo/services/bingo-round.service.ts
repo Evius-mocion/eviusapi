@@ -8,6 +8,8 @@ import { Figure } from '../entities/figure.entity';
 import { FigureType, StatusRoundBingo } from '../interfaces';
 import { CreateBingoRoundDto } from '../dto/create-roundd.dto';
 import { BINGO_MAX_BALLOTS } from '../constants';
+import { CreateBingoHistoryDto } from '../dto/create-bingo-history.dto';
+import { BingoHistory } from '../entities/bingo_history.entity';
 
 @Injectable()
 export class BingoRoundService {
@@ -22,7 +24,10 @@ export class BingoRoundService {
 		private readonly bingoCardRepository: Repository<BingoCard>,
 
 		@InjectRepository(Figure)
-		private readonly figureRepository: Repository<Figure>
+		private readonly figureRepository: Repository<Figure>,
+    
+        @InjectRepository(BingoHistory)
+		private readonly bingoHistoryRepository: Repository<BingoHistory>,
 	) {}
 
 async create(createBingoDto: CreateBingoRoundDto) {
@@ -165,4 +170,23 @@ async validateCard(cardId: string, cardCode: string, roundId: string) {
     };
 }
 
+
+
+    async createHistory(createHistoryDto: CreateBingoHistoryDto) {
+        const { roundId, cardId, code, attendee_id } = createHistoryDto;
+
+        const round = await this.bingoRoundRepository.findOneBy({ id: roundId });
+        if (!round) {
+            throw new NotFoundException(`Round with id ${roundId} not found`);
+        }
+
+        const history = this.bingoHistoryRepository.create({
+            round,
+            cardId,
+            code,
+            attendee_id,
+        });
+
+        return this.bingoHistoryRepository.save(history);
+    }
 }

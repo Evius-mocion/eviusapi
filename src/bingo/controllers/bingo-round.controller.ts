@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common'
 import { CreateBingoRoundDto } from '../dto/create-roundd.dto';
 import { BingoRoundService } from '../services/bingo-round.service';
+import { CreateBingoHistoryDto } from '../dto/create-bingo-history.dto';
+
 @Controller('bingo/round')
 export class BingoRoundController {
   constructor(private readonly bingoRoundService: BingoRoundService) {}
@@ -29,5 +31,9 @@ export class BingoRoundController {
     return this.bingoRoundService.validateCard(cardId,cardCode, roundId);
   }
 
-
+    
+    @Post('history')
+    createHistory(@Body() createHistoryDto: CreateBingoHistoryDto) {
+        return this.bingoRoundService.createHistory(createHistoryDto);
+    }
 }
