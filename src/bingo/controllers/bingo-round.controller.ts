@@ -22,4 +22,12 @@ export class BingoRoundController {
   remove(@Param('id') id: string) {
     return this.bingoRoundService.remove(id);
   }
+
+  @Post('validate-card')
+  validateCard(@Body() body: any) {
+    const {  cardId, cardCode,  roundId } = body;
+    return this.bingoRoundService.validateCard(cardId,cardCode, roundId);
+  }
+
+
 }

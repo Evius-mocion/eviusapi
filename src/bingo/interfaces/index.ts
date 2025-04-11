@@ -6,8 +6,13 @@ export interface IBoxStyle {
 }
 
 export enum BingoType {
-    "normal" = "normal",
-    "free" = "free"
+    normal = "normal",
+    free = "free"
+}
+
+export enum FigureType {
+    full = "normal",
+    figure = "figure"
 }
 
 export enum StatusRoundBingo {
