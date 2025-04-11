@@ -9,9 +9,10 @@ import { CollaboratorModule } from 'src/collaborator';
 import { accessCode, Accounts, RecoveryCode, User } from 'src/common/entities';
 import { ExperiencesModule } from 'src/experiences/experiences.module';
 import { Categories } from './entities/category.entity';
+import { EmailTemplate } from 'src/template/entities/template.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, User,RecoveryCode,accessCode,Accounts,Categories]),
+  imports: [TypeOrmModule.forFeature([Event, User,RecoveryCode,accessCode,Accounts,Categories, EmailTemplate]),
     OrganizationModule,
     attendeeModule,
     CollaboratorModule,
