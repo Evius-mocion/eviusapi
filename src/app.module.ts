@@ -20,6 +20,7 @@ import { SurveyModule } from './survey/survey.module';
 import { AuctionModule } from './auction/auction.module';
 import { BingoModule } from './bingo/bingo.module';
 import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.module";
+import { MillionaireModule } from './millionaire/millionaire.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.mod
     SurveyModule,
     AuctionModule,
     BingoModule,
-    ElementHuntGameModule
+    ElementHuntGameModule,
+    MillionaireModule
   ],
   controllers: [],
   providers: [
