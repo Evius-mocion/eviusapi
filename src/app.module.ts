@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TemplateModule } from './template/template.module';
 import { OrganizationModule } from "./organization/organization.module";
 import { EventModule } from "./event/event.module";
 import { CollaboratorModule } from "./collaborator/collaborator.module";
@@ -56,7 +55,6 @@ import { MillionaireModule } from './millionaire/millionaire.module';
     RequestIpModule.forRoot({
       localIpAddress: "167.0.239.51", // this ip is used when the request is local
     }),
-    TemplateModule,
     OrganizationModule,
     EventModule,
     CollaboratorModule,
