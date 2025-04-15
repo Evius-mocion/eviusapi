@@ -19,16 +19,16 @@ export class MillionaireController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.millionaireService.findOne(+id);
+    return this.millionaireService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMillionaireDto: UpdateMillionaireDto) {
-    return this.millionaireService.update(+id, updateMillionaireDto);
+    return this.millionaireService.update(id, updateMillionaireDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.millionaireService.remove(+id);
+    return this.millionaireService.remove(id);
   }
 }
