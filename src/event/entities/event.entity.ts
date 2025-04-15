@@ -22,7 +22,6 @@ import { Auction } from 'src/auction/entities/auction.entity';
 import { Collaborator } from 'src/collaborator/entities';
 import { Bingo } from 'src/bingo/entities/bingo.entity';
 import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-game.entity';
-import { EmailTemplate } from 'src/template/entities/template.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -161,8 +160,4 @@ export class Event {
 	@OneToOne(() => ElementHuntGame, (elementHuntGame) => elementHuntGame.event)
 	elementHuntGame: ElementHuntGame;
 
-	@OneToMany(() => EmailTemplate, (emailTemplate) => emailTemplate.event, {
-		eager: false,
-	})
-	emailTemplates: EmailTemplate[];
 }
