@@ -5,7 +5,15 @@ import { MillionaireOption } from './millionaire_options.entity';
 @Entity()
 export class MillionaireAnswer {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
+
+    @Column({ nullable: false})
+    isCorrect: boolean;
+
+    @Column({nullable: false})
+    points: number;
+
+    // relations 
 
     @ManyToOne(() => MillionaireQuestion, question => question.answers)
     question: MillionaireQuestion;
@@ -13,6 +21,4 @@ export class MillionaireAnswer {
     @ManyToOne(() => MillionaireOption)
     selectedOption: MillionaireOption;
 
-    @Column()
-    isCorrect: boolean;
 }

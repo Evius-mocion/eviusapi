@@ -4,7 +4,7 @@ import { MillionaireQuestion } from './millionaire_question.entity';
 @Entity()
 export class Millionaire {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({ nullable: false})
     name: string;
@@ -24,6 +24,6 @@ export class Millionaire {
     @Column({ nullable: false})
     rules: string;
 
-    @OneToMany(() => MillionaireQuestion, question => question)
+    @OneToMany(() => MillionaireQuestion, question => question, {eager: true})
     questions: MillionaireQuestion[];
 }

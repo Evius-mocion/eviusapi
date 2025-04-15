@@ -4,14 +4,15 @@ import { MillionaireQuestion } from './millionaire_question.entity';
 @Entity()
 export class MillionaireOption {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
-
-    @ManyToOne(() => MillionaireQuestion, question => question.options)
-    question: MillionaireQuestion;
-
+    id: string;
+    
     @Column()
     text: string;
-
+    
     @Column()
     isCorrect: boolean;
+    
+    // relations 
+    @ManyToOne(() => MillionaireQuestion, question => question.options)
+    question: MillionaireQuestion;
 }

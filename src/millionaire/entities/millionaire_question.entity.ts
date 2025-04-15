@@ -5,14 +5,26 @@ import { MillionaireAnswer } from './millionaire_answer.entity';
 @Entity()
 export class MillionaireQuestion {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column()
     text: string;
 
-    @OneToMany(() => MillionaireOption, option => option.question)
+    @Column({ type: 'boolean', nullable: false, default: false})
+    check_point: boolean;
+
+    @Column({ nullable: false})
+    points: number;
+
+    @Column({ nullable: false})
+    order: number;
+
+    @Column({ nullable: true})
+    image: string; 
+
+    @OneToMany(() => MillionaireOption, option => option.question, { eager: true})
     options: MillionaireOption[];
 
-    @OneToMany(() => MillionaireAnswer, answer => answer.question)
+    @OneToMany(() => MillionaireAnswer, answer => answer.question, {eager: false})
     answers: MillionaireAnswer[];
 }
