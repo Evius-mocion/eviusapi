@@ -20,6 +20,7 @@ import { AuctionModule } from './auction/auction.module';
 import { BingoModule } from './bingo/bingo.module';
 import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.module";
 import { MillionaireModule } from './millionaire/millionaire.module';
+import { NetworkingModule } from './networking/networking.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { MillionaireModule } from './millionaire/millionaire.module';
     AuctionModule,
     BingoModule,
     ElementHuntGameModule,
-    MillionaireModule
+    MillionaireModule,
+    NetworkingModule
   ],
   controllers: [],
   providers: [

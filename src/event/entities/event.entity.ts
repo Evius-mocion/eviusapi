@@ -22,6 +22,7 @@ import { Auction } from 'src/auction/entities/auction.entity';
 import { Collaborator } from 'src/collaborator/entities';
 import { Bingo } from 'src/bingo/entities/bingo.entity';
 import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-game.entity';
+import { Networking } from 'src/networking/entities/networking.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -160,4 +161,8 @@ export class Event {
 	@OneToOne(() => ElementHuntGame, (elementHuntGame) => elementHuntGame.event)
 	elementHuntGame: ElementHuntGame;
 
+	@OneToOne(() => Networking, (networking) => networking.event, {
+		eager: false,
+	})
+	networking: Networking;
 }
