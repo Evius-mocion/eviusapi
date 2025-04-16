@@ -26,8 +26,6 @@ export class NetworkingService {
 		return savedNetworking;
 	}
 
-	findAll() {}
-
 	async findOne(id: string) {
 		const networking = await this.networkingRepository.findOne({ where: { id } });
 		if (!networking) {
@@ -36,11 +34,43 @@ export class NetworkingService {
 		return networking;
 	}
 
-	update(id: string, updateNetworkingDto: UpdateNetworkingDto) {
-		return `This action updates a #${id} networking`;
+	async getByEventId(eventId: string) {
+		const networking = await this.networkingRepository.findOne({
+			where: { event: { id: eventId } },
+		});
+
+		if (!networking) {
+			throw new NotFoundException(`No networking sessions found for event ID ${eventId}`);
+		}
+
+		return networking;
+	}
+
+	async update(id: string, updateNetworkingDto: UpdateNetworkingDto) {
+		await this.canEditNetworking(id);
+
+		const networking = await this.networkingRepository.preload({
+			id,
+			...updateNetworkingDto,
+		});
+
+		if (!networking) {
+			throw new NotFoundException(`Networking with ID ${id} not found`);
+		}
+
+		const updatedNetworking = await this.networkingRepository.save(networking);
+
+		return updatedNetworking;
 	}
 
 	remove(id: string) {
 		return `This action removes a #${id} networking`;
+	}
+
+	async canEditNetworking(networkingId: string) {
+		const networking = await this.findOne(networkingId);
+		if (networking.active) {
+			throw new Error('Cannot edit an active networking session');
+		}
 	}
 }

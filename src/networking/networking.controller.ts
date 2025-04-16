@@ -8,27 +8,26 @@ export class NetworkingController {
 	constructor(private readonly networkingService: NetworkingService) {}
 
 	@Post()
-	create(@Body() createNetworkingDto: CreateNetworkingDto) {
-		return this.networkingService.create(createNetworkingDto);
+	async create(@Body() createNetworkingDto: CreateNetworkingDto) {
+		const networking = await this.networkingService.create(createNetworkingDto);
+		return { networking };
 	}
 
-	@Get()
-	findAll() {
-		return this.networkingService.findAll();
-	}
-
-	@Get(':id')
-	findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-		return this.networkingService.findOne(id);
+	@Get(':eventId')
+	async findOneByEvent(@Param('eventId', new ParseUUIDPipe()) eventId: string) {
+		const networking = await this.networkingService.getByEventId(eventId);
+		return { networking };
 	}
 
 	@Patch(':id')
-	update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateNetworkingDto: UpdateNetworkingDto) {
-		return this.networkingService.update(id, updateNetworkingDto);
+	async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateNetworkingDto: UpdateNetworkingDto) {
+		const networking = await this.networkingService.update(id, updateNetworkingDto);
+		return { networking };
 	}
 
 	@Delete(':id')
-	remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		return this.networkingService.remove(id);
+	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+		const networking = await this.networkingService.remove(id);
+		return { networking };
 	}
 }

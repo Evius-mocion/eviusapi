@@ -13,6 +13,10 @@ export class CreateNetworkingDto {
 	@IsOptional()
 	description?: string;
 
+	@IsBoolean()
+	@IsOptional()
+	active?: boolean;
+
 	@IsDateString()
 	@IsNotEmpty()
 	opening_date: Date;

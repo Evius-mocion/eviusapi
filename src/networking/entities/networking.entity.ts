@@ -13,6 +13,9 @@ export class Networking {
 	@Column({ type: 'text', nullable: true })
 	description: string;
 
+	@Column({ type: 'boolean', default: true })
+	active: boolean;
+
 	@Column({ type: 'timestamp' })
 	opening_date: Date;
 
