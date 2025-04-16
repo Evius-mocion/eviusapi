@@ -25,6 +25,12 @@ export class NetworkingController {
 		return { networking };
 	}
 
+	@Patch(':id')
+	async changeActive(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: { active: boolean }) {
+		const networking = await this.networkingService.changeActive(id, body.active);
+		return { networking };
+	}
+
 	@Delete(':id')
 	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
 		const networking = await this.networkingService.remove(id);

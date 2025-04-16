@@ -15,12 +15,10 @@ export class NetworkingService {
 	) {}
 	async create(createNetworkingDto: CreateNetworkingDto) {
 		await this.eventService.findOne(createNetworkingDto.eventId);
-
 		const networking = this.networkingRepository.create({
 			...createNetworkingDto,
 			event: { id: createNetworkingDto.eventId },
 		});
-
 		const savedNetworking = await this.networkingRepository.save(networking);
 
 		return savedNetworking;
@@ -62,6 +60,15 @@ export class NetworkingService {
 
 		return updatedNetworking;
 	}
+	async changeActive(id: string, active: boolean) {
+		const networking = await this.findOne(id);
+
+		networking.active = active;
+
+		const updatedNetworking = await this.networkingRepository.save(networking);
+
+		return updatedNetworking;
+	}
 
 	remove(id: string) {
 		return `This action removes a #${id} networking`;
@@ -72,5 +79,6 @@ export class NetworkingService {
 		if (networking.active) {
 			throw new Error('Cannot edit an active networking session');
 		}
+		return true;
 	}
 }

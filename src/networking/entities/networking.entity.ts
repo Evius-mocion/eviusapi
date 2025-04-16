@@ -10,10 +10,10 @@ export class Networking {
 	@Column({ nullable: false })
 	name: string;
 
-	@Column({ type: 'text', nullable: true })
+	@Column({ type: 'text', default: '', nullable: true })
 	description: string;
 
-	@Column({ type: 'boolean', default: true })
+	@Column({ type: 'boolean', default: false })
 	active: boolean;
 
 	@Column({ type: 'timestamp' })
@@ -44,16 +44,16 @@ export class Networking {
 	@Column({ type: 'int', default: 30 })
 	meeting_time: number;
 
-	@CreateDateColumn({ type: 'timestamp' })
-	created_at: Date;
-
-	@UpdateDateColumn({ type: 'timestamp' })
-	updated_at: Date;
-
 	@OneToOne(() => Event, (event) => event.networking)
 	@JoinColumn({ name: 'event_id' })
 	event: Event;
 
 	@RelationId((networking: Networking) => networking.event)
 	eventId: string;
+
+	@CreateDateColumn({ type: 'timestamp' })
+	created_at: Date;
+
+	@UpdateDateColumn({ type: 'timestamp' })
+	updated_at: Date;
 }
