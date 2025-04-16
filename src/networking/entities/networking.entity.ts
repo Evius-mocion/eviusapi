@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
 import { AdmissionTypes } from '../types/admissionType';
 import { Event } from 'src/event/entities/event.entity';
+import { MeetingConfig } from '../interfaces/networking.interface';
+import { meetingConfigInitial } from '../constants/networking.constants';
 
 @Entity('networking')
 export class Networking {
@@ -32,12 +34,6 @@ export class Networking {
 	@Column({ nullable: true })
 	role_admission: string;
 
-	@Column({ default: true })
-	chat_open: boolean;
-
-	@Column({ default: false })
-	enable_face_to_face_chat: boolean;
-
 	@Column({ default: 10 })
 	max_quantity_per_called: number;
 
@@ -56,4 +52,7 @@ export class Networking {
 
 	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
+
+	@Column('jsonb', { nullable: true, default: () => `'${JSON.stringify(meetingConfigInitial)}'` })
+	meeting_config: MeetingConfig;
 }

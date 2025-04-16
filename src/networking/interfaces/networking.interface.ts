@@ -8,3 +8,11 @@ export enum RequestOfMeetingStatus {
 	REJECTED = 'rejected',
 	ACCEPTED = 'accepted',
 }
+
+export interface MeetingConfig {
+	chat_open?: boolean;
+	enable_face_to_face_chat?: boolean;
+	video_call_enabled?: boolean;
+	screen_share_enabled?: boolean;
+	raise_hand_enabled?: boolean;
+}

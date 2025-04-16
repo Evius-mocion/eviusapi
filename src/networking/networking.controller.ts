@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseUUIDPipe } from '@nestjs/common';
 import { NetworkingService } from './networking.service';
 import { CreateNetworkingDto } from './dto/create-networking.dto';
 import { UpdateNetworkingDto } from './dto/update-networking.dto';
@@ -28,12 +28,6 @@ export class NetworkingController {
 	@Patch(':id')
 	async changeActive(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: { active: boolean }) {
 		const networking = await this.networkingService.changeActive(id, body.active);
-		return { networking };
-	}
-
-	@Delete(':id')
-	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		const networking = await this.networkingService.remove(id);
 		return { networking };
 	}
 }

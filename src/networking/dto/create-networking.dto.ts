@@ -1,6 +1,29 @@
-import { IsString, IsNotEmpty, IsDateString, IsOptional, IsEnum, IsBoolean, IsNumber, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsDateString, IsOptional, IsEnum, IsBoolean, IsNumber, IsUUID, ValidateNested } from 'class-validator';
 import { AdmissionTypes } from '../types/admissionType';
+import { MeetingConfig } from '../interfaces/networking.interface';
+import { Type } from 'class-transformer';
 
+class MeetingConfigDto implements MeetingConfig {
+	@IsBoolean()
+	@IsOptional()
+	chat_open?: boolean;
+
+	@IsBoolean()
+	@IsOptional()
+	enable_face_to_face_chat?: boolean;
+
+	@IsBoolean()
+	@IsOptional()
+	video_call_enabled?: boolean;
+
+	@IsBoolean()
+	@IsOptional()
+	screen_share_enabled?: boolean;
+
+	@IsBoolean()
+	@IsOptional()
+	raise_hand_enabled?: boolean;
+}
 export class CreateNetworkingDto {
 	@IsString()
 	@IsNotEmpty()
@@ -48,4 +71,9 @@ export class CreateNetworkingDto {
 	@IsNumber()
 	@IsOptional()
 	meeting_time?: number;
+
+	@ValidateNested()
+	@Type(() => MeetingConfigDto)
+	@IsOptional()
+	meeting_config?: MeetingConfigDto;
 }
