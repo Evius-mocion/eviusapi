@@ -7,6 +7,7 @@ import { Survey } from 'src/survey/entities/survey.entity';
 import { CheckInActivity } from 'src/attendee/entities/checkIn.entity';
 import { Auction } from 'src/auction/entities/auction.entity';
 import { Bingo } from 'src/bingo/entities/bingo.entity';
+import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
 
 @Entity('activities')
 export class Activity {
@@ -81,4 +82,9 @@ export class Activity {
 
 	@OneToOne(() => Bingo, (bingo) => bingo.activity)
 	bingo: Bingo
+	
+	@OneToOne(() => Millionaire, (millionaire) => millionaire.activity)
+	millionaires: Millionaire;
+
+
 }

@@ -8,15 +8,14 @@ import { Public, SuperAdmin } from 'src/common/decorators';
 export class BingoController {
   constructor(private readonly bingoService: BingoService) {}
 
-  @Public()
   @Post()
   create(@Body() createBingoDto: CreateBingoDto) {
     return this.bingoService.create(createBingoDto);
   }
 
-  @Get("all")
-  findAll() {
-    return this.bingoService.findAll();
+  @Get("all/:eventId")
+  findAll(@Param('eventId') eventId: string) {
+    return this.bingoService.findAll(eventId);
   }
 
   @Get(':id')

@@ -8,17 +8,17 @@ export class MillionaireAnswer {
     id: string;
 
     @Column({ nullable: false})
-    isCorrect: boolean;
+    is_correct: boolean;
 
     @Column({nullable: false})
     points: number;
 
     // relations 
 
-    @ManyToOne(() => MillionaireQuestion, question => question.answers)
+    @ManyToOne(() => MillionaireQuestion, question => question.answers, {cascade: ["remove"]})
     question: MillionaireQuestion;
 
-    @ManyToOne(() => MillionaireOption)
-    selectedOption: MillionaireOption;
+    @ManyToOne(() => MillionaireOption, option => option.answers, {cascade: ["remove"]})
+    selected_option: MillionaireOption;
 
 }

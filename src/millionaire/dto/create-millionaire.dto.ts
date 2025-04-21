@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateMillionaireDto {
     // Define the properties needed for creating a Millionaire
@@ -9,5 +9,8 @@ export class CreateMillionaireDto {
     @IsString()
     @IsOptional()
     rules: string;
+
+    @IsUUID()
+    eventId: string;
     // Add other properties as needed
 }

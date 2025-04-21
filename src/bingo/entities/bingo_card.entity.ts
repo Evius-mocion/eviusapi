@@ -25,10 +25,10 @@ export class BingoCard {
 
     // relations
 
-    @ManyToOne(() => Bingo, (bingo) => bingo.cards)
+    @ManyToOne(() => Bingo, (bingo) => bingo.cards, {cascade: ["remove"], onDelete: "CASCADE"})
     bingo: Bingo;
 
-  @OneToOne(() => Attendee, (attendee) => attendee.bingoCard, { nullable: true, cascade: true })
+  @OneToOne(() => Attendee, (attendee) => attendee.bingoCard, { nullable: true, cascade: ["remove"] })
   @JoinColumn() 
   attendee?: Attendee;
 }

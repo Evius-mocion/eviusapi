@@ -51,13 +51,13 @@ export class Bingo {
     event: Event;
 
     @OneToOne(() => Activity, (activity) => activity.bingo)
-	@JoinColumn()
+    @JoinColumn({ name: 'activity_id' , foreignKeyConstraintName: 'id'})
     activity: Activity;
 
     @OneToMany(() => BingoCard, (bingo_card) => bingo_card.bingo)
     cards: BingoCard[];
     
-    @OneToMany(() => BingoRound, (bingo_round) => bingo_round.bingo)
+    @OneToMany(() => BingoRound, (bingo_round) => bingo_round.bingo,{cascade: ["remove"] , onDelete: 'CASCADE'})
     rounds: BingoRound[];
 
   

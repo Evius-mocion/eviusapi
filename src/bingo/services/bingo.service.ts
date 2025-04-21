@@ -38,8 +38,13 @@ export class BingoService {
 	) {}
 
 	async create(createBingoDto: CreateBingoDto) {
-    const event = await this.eventRepository.findOneBy({id: createBingoDto.eventId })
-
+        
+    const event = await this.eventRepository.findOne({
+        where: {
+            id: createBingoDto.eventId ?? null,	
+        }
+    })
+        
     if (!event) throw new NotFoundException(`Event with id: ${createBingoDto.eventId} not found`);	
 
 		const bingo = this.bingoRepository.create({
@@ -49,9 +54,13 @@ export class BingoService {
 		return await this.bingoRepository.save(bingo);
 	}
 
-async findAll() {
+async findAll(eventId: string) {
     const bingos = await this.bingoRepository.find({
+        where: {
+            event: { id: eventId },	
+        },
         order: {
+            updated_at: 'DESC',
             created_at: 'DESC'
         }
     });
@@ -61,9 +70,7 @@ async findAll() {
 
 async findOne(id: string) {
     const bingo = await this.bingoRepository.findOne({
-        where: { 
-            event: { id },
-        }
+        where: { id },
     });
 
     if (!bingo) {
