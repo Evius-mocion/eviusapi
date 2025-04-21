@@ -24,6 +24,11 @@ export class Networking {
 	@Column({ type: 'timestamp' })
 	closing_date: Date;
 
+	// Fields related to networking participants:
+	// admission_type: Controls who can participate in networking (ALL, SPECIFIC_ROLES, etc.)
+	// role_admission: Specifies which roles are allowed when admission_type is SPECIFIC_ROLES
+	// meeting_config: Contains configuration for participant meetings including duration, max participants, etc.
+
 	@Column({
 		type: 'enum',
 		enum: AdmissionTypes,
@@ -32,14 +37,7 @@ export class Networking {
 	admission_type: AdmissionTypes;
 
 	@Column({ nullable: true })
-	role_admission: string;
-
-	// Remove these columns:
-	// @Column({ default: 10 })
-	// max_quantity_per_called: number;
-
-	// @Column({ type: 'int', default: 30 })
-	// meeting_time: number;
+	role_admission?: string;
 
 	@OneToOne(() => Event, (event) => event.networking)
 	@JoinColumn({ name: 'event_id' })

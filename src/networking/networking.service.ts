@@ -62,7 +62,7 @@ export class NetworkingService {
 	async update(id: string, updateNetworkingDto: UpdateNetworkingDto) {
 		console.log('1');
 		await this.canEditNetworking(id);
-		console.log('updateNetworkingDto', updateNetworkingDto)
+		console.log('updateNetworkingDto', updateNetworkingDto);
 		const { meeting_config, ...rest } = updateNetworkingDto;
 		console.log('meeting_config', meeting_config);
 
@@ -98,10 +98,9 @@ export class NetworkingService {
 	}
 
 	async canEditNetworking(networkingId: string) {
-		console.log('networkingId', networkingId)
 		const networking = await this.findOne(networkingId);
 		if (networking.active) {
-			throw new Error('Cannot edit an active networking session');
+			throw new BadRequestException('Cannot modify networking settings while session is active. Please deactivate the session first.');
 		}
 		return true;
 	}

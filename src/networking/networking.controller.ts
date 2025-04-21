@@ -13,7 +13,7 @@ export class NetworkingController {
 		return { networking };
 	}
 
-	@Get(':eventId')
+	@Get('byEvent/:eventId')
 	async findOneByEvent(@Param('eventId', new ParseUUIDPipe()) eventId: string) {
 		const networking = await this.networkingService.getByEventId(eventId);
 		return { networking };
