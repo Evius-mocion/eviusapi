@@ -6,4 +6,6 @@ export const meetingConfigInitial: MeetingConfig = {
 	video_call_enabled: true,
 	screen_share_enabled: true,
 	raise_hand_enabled: true,
+	max_quantity_per_called: 10,
+	meeting_time: 30,
 };

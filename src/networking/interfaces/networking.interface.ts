@@ -15,4 +15,6 @@ export interface MeetingConfig {
 	video_call_enabled?: boolean;
 	screen_share_enabled?: boolean;
 	raise_hand_enabled?: boolean;
+	max_quantity_per_called?: number;
+	meeting_time?: number;
 }

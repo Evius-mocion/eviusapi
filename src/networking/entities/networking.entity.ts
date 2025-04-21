@@ -34,11 +34,12 @@ export class Networking {
 	@Column({ nullable: true })
 	role_admission: string;
 
-	@Column({ default: 10 })
-	max_quantity_per_called: number;
+	// Remove these columns:
+	// @Column({ default: 10 })
+	// max_quantity_per_called: number;
 
-	@Column({ type: 'int', default: 30 })
-	meeting_time: number;
+	// @Column({ type: 'int', default: 30 })
+	// meeting_time: number;
 
 	@OneToOne(() => Event, (event) => event.networking)
 	@JoinColumn({ name: 'event_id' })

@@ -23,6 +23,14 @@ class MeetingConfigDto implements MeetingConfig {
 	@IsBoolean()
 	@IsOptional()
 	raise_hand_enabled?: boolean;
+
+	@IsNumber()
+	@IsOptional()
+	max_quantity_per_called?: number;
+
+	@IsNumber()
+	@IsOptional()
+	meeting_time?: number;
 }
 export class CreateNetworkingDto {
 	@IsString()
@@ -64,13 +72,14 @@ export class CreateNetworkingDto {
 	@IsOptional()
 	enable_face_to_face_chat?: boolean;
 
-	@IsNumber()
-	@IsOptional()
-	max_quantity_per_called?: number;
+	// Remove these from here:
+	// @IsNumber()
+	// @IsOptional()
+	// max_quantity_per_called?: number;
 
-	@IsNumber()
-	@IsOptional()
-	meeting_time?: number;
+	// @IsNumber()
+	// @IsOptional()
+	// meeting_time?: number;
 
 	@ValidateNested()
 	@Type(() => MeetingConfigDto)

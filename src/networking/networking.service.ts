@@ -18,7 +18,9 @@ export class NetworkingService {
 	async create(createNetworkingDto: CreateNetworkingDto) {
 		await this.eventService.findOne(createNetworkingDto.eventId);
 
-		const networkingExist = await this.getByEventId(createNetworkingDto.eventId);
+		const networkingExist = await this.networkingRepository.findOne({
+			where: { event: { id: createNetworkingDto.eventId } },
+		});
 
 		if (networkingExist) {
 			throw new BadRequestException('A networking already exists for this event');
@@ -58,18 +60,21 @@ export class NetworkingService {
 	}
 
 	async update(id: string, updateNetworkingDto: UpdateNetworkingDto) {
+		console.log('1');
 		await this.canEditNetworking(id);
-
+		console.log('updateNetworkingDto', updateNetworkingDto)
 		const { meeting_config, ...rest } = updateNetworkingDto;
+		console.log('meeting_config', meeting_config);
 
 		const currentNetworking = await this.findOne(id);
+		console.log('currentNetworking', currentNetworking);
 
 		const networking = await this.networkingRepository.preload({
 			id,
 			...rest,
 			...(meeting_config && { meeting_config: { ...currentNetworking.meeting_config, ...meeting_config } }),
 		});
-
+		console.log('networking', networking);
 		if (!networking) {
 			throw new NotFoundException(`Networking with ID ${id} not found`);
 		}
@@ -93,6 +98,7 @@ export class NetworkingService {
 	}
 
 	async canEditNetworking(networkingId: string) {
+		console.log('networkingId', networkingId)
 		const networking = await this.findOne(networkingId);
 		if (networking.active) {
 			throw new Error('Cannot edit an active networking session');

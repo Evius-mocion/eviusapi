@@ -25,7 +25,7 @@ export class NetworkingController {
 		return { networking };
 	}
 
-	@Patch(':id')
+	@Patch('changeStatus/:id')
 	async changeActive(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: { active: boolean }) {
 		const networking = await this.networkingService.changeActive(id, body.active);
 		return { networking };
