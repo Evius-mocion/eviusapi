@@ -8,6 +8,7 @@ export enum NetworkingRole {
 	PARTICIPANT = 'participant',
 }
 
+// @Unique(['networking', 'attendee'])
 @Entity('networking_participant')
 export class NetworkingParticipant {
 	@PrimaryGeneratedColumn('uuid')

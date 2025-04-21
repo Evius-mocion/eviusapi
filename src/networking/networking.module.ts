@@ -11,11 +11,14 @@ import { EventModule } from 'src/event/event.module';
 import { NetworkingParticipant } from './entities/networking-participant.entity';
 import { NetworkingParticipantController } from './networking-participant.controller';
 import { NetworkingParticipantService } from './networking-participant.service';
+import { attendeeModule } from 'src/attendee';
+import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Networking, NetworkingSpace, Meeting, MeetingParticipant, RequestOfMeeting, NetworkingParticipant]),
+		TypeOrmModule.forFeature([Networking, NetworkingSpace, Meeting, MeetingParticipant, RequestOfMeeting, NetworkingParticipant,Attendee]),
 		EventModule,
+		attendeeModule,
 	],
 	controllers: [NetworkingController, NetworkingParticipantController],
 	providers: [NetworkingService, NetworkingParticipantService],
