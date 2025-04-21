@@ -40,6 +40,5 @@ export class CreateBingoDto {
     box_styles?: IBoxStyle;
 
     @IsUUID()
-    @IsOptional()
-    eventId?: string;
+    eventId: string;
 }

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { MillionaireOption } from './millionaire_options.entity';
 import { MillionaireAnswer } from './millionaire_answer.entity';
+import { Millionaire } from './millionaire.entity';
 
 @Entity()
 export class MillionaireQuestion {
@@ -22,9 +23,14 @@ export class MillionaireQuestion {
     @Column({ nullable: true})
     image: string; 
 
-    @OneToMany(() => MillionaireOption, option => option.question, { eager: true})
+    //relations 
+
+    @ManyToOne(() => Millionaire, millionaire => millionaire.questions, {cascade: ["remove"], onDelete: 'CASCADE'})
+    millionaire: Millionaire;
+
+    @OneToMany(() => MillionaireOption, option => option.question )
     options: MillionaireOption[];
 
-    @OneToMany(() => MillionaireAnswer, answer => answer.question, {eager: false})
+    @OneToMany(() => MillionaireAnswer, answer => answer.question )
     answers: MillionaireAnswer[];
 }

@@ -23,6 +23,7 @@ import { Collaborator } from 'src/collaborator/entities';
 import { Bingo } from 'src/bingo/entities/bingo.entity';
 import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-game.entity';
 import { Networking } from 'src/networking/entities/networking.entity';
+import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -165,4 +166,10 @@ export class Event {
 		eager: false,
 	})
 	networking: Networking;
+
+	@OneToMany(() => Millionaire, (millionaire) => millionaire.event, {
+		eager: false,
+	})
+	millionaire: Millionaire[];
+
 }
