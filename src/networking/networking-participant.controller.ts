@@ -1,23 +1,19 @@
-import { Controller, Post, Body, Param, ParseUUIDPipe, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Post, Body, Param, ParseUUIDPipe } from '@nestjs/common';
 import { NetworkingParticipantService } from './networking-participant.service';
 import { AssignRoleDto } from './dto/networking-participant.dto';
+import { ImportByAttendeeIdsDto, ImportByEmailsDto } from './dto/networking-participant.dto';
 
 @Controller('networking-participant')
 export class NetworkingParticipantController {
 	constructor(private readonly participantService: NetworkingParticipantService) {}
 
 	@Post('import/attendee-ids/:networkingId')
-	async importByAttendeeIds(
-		@Param('networkingId', new ParseUUIDPipe()) networkingId: string,
-		@Body() body: { attendeeIds: string[] }
-	) {
+	async importByAttendeeIds(@Param('networkingId', new ParseUUIDPipe()) networkingId: string, @Body() body: ImportByAttendeeIdsDto) {
 		return this.participantService.importByAttendeeIds(networkingId, body.attendeeIds);
 	}
 
-	// 2. Import by emails array
 	@Post('import/emails/:networkingId')
-	async importByEmails(@Param('networkingId', new ParseUUIDPipe()) networkingId: string, @Body() body: { emails: string[] }) {
+	async importByEmails(@Param('networkingId', new ParseUUIDPipe()) networkingId: string, @Body() body: ImportByEmailsDto) {
 		return this.participantService.importByEmails(networkingId, body.emails);
 	}
 
