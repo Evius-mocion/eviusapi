@@ -4,7 +4,6 @@ import { Repository, In } from 'typeorm';
 import { NetworkingParticipant, NetworkingRole } from './entities/networking-participant.entity';
 import { Networking } from './entities/networking.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
-import * as XLSX from 'xlsx';
 
 @Injectable()
 export class NetworkingParticipantService {
@@ -28,32 +27,6 @@ export class NetworkingParticipantService {
 		const attendees = await this.attendeeRepo.find({ where: { email: In(emails) } });
 		return this.createParticipants(networkingId, attendees, emails, 'email');
 	}
-
-	/* async importByExcel(networkingId: string, file: Express.Multer.File) {
-		const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-		const sheetName = workbook.SheetNames[0];
-		const sheet = workbook.Sheets[sheetName];
-		const data = XLSX.utils.sheet_to_json(sheet);
-
-		const attendeeIds: string[] = [];
-		const emails: string[] = [];
-
-		for (const row of data) {
-			if ('attendeeId' in row && row['attendeeId']) {
-				attendeeIds.push(row['attendeeId']);
-			} else if ('email' in row && row['email']) {
-				emails.push(row['email']);
-			}
-		}
-
-		if (attendeeIds.length > 0) {
-			return this.importByAttendeeIds(networkingId, attendeeIds);
-		} else if (emails.length > 0) {
-			return this.importByEmails(networkingId, emails);
-		} else {
-			throw new BadRequestException('Excel must contain attendeeId or email columns');
-		}
-	} */
 
 	private async createParticipants(
 		networkingId: string,
@@ -110,7 +83,7 @@ export class NetworkingParticipantService {
 		if (participant) {
 			participant.role = role;
 			await this.participantRepo.save(participant);
-			return { updated: true, participant };
+			return { participant };
 		} else {
 			participant = this.participantRepo.create({
 				networking,
@@ -118,7 +91,7 @@ export class NetworkingParticipantService {
 				role,
 			});
 			await this.participantRepo.save(participant);
-			return { created: true, participant };
+			return { participant };
 		}
 	}
 }

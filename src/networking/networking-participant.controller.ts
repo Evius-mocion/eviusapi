@@ -21,14 +21,6 @@ export class NetworkingParticipantController {
 		return this.participantService.importByEmails(networkingId, body.emails);
 	}
 
-	/* @Post('import/excel/:networkingId')
-	@UseInterceptors(FileInterceptor('file'))
-	async importByExcel(@Param('networkingId', new ParseUUIDPipe()) networkingId: string, @UploadedFile() file: Express.Multer.File) {
-		// return this.participantService.importByExcel(networkingId, file);
-	} */
-
-	// 4. Assign role to a participant (create if not exists)
-
 	@Post('assign-role/:networkingId/:attendeeId')
 	async assignRole(
 		@Param('networkingId', new ParseUUIDPipe()) networkingId: string,
