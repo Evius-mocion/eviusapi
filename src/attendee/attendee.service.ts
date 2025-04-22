@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { AssistantDto, CreateMasiveAssistantDto } from './dto/create-assistant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendee } from './entities/attendee.entity';
-import { FindOptionsOrder, FindOptionsWhere, In, IsNull, Like, Not, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsSelect, FindOptionsWhere, In, IsNull, Like, Not, Repository } from 'typeorm';
 import { FilterAttendeeArgs, PaginationArgs } from 'src/common/dto';
 import { CheckInActivity } from './entities/checkIn.entity';
 import { checkInDto } from './dto/check-in.dto';
@@ -36,7 +36,14 @@ export class AttendeeService {
 	findAll() {
 		return `This action returns all assistant`;
 	}
-
+	async getOnlyById(id: string, documents : FindOptionsSelect<Attendee> ) {
+		return this.attendeeRepository.findOne({
+			select: documents,
+			where: {
+				id,
+			},
+		});
+	}
 	async findOneById(attendeeId: string) {
 		const attendee = await this.attendeeRepository.findOne({
 			where: {

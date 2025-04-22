@@ -8,6 +8,8 @@ import { Bid } from 'src/auction/entities/bid.entity';
 import { SurveyAnswer } from 'src/survey/entities/surveyAnswer.entity';
 import { ElementHuntParticipant } from 'src/element-hunt-game/entities/element-hunt-participants.entity';
 import { BingoCard } from 'src/bingo/entities/bingo_card.entity';
+import { MillionaireAnswer } from 'src/millionaire/entities/millionaire_answer.entity';
+import { MillionaireRanking } from 'src/millionaire/entities/millionaire_ranking.entity';
 
 @Entity('attendees')
 export class Attendee {
@@ -84,6 +86,12 @@ export class Attendee {
 
 	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
 	answers: SurveyAnswer[];
+
+	@OneToMany(() => MillionaireAnswer, (answer) => answer.attendee)
+	millionaireAnswers: MillionaireAnswer[];
+	
+	@OneToMany(() => MillionaireRanking, (answer) => answer.attendee)
+	millionaireRanking: MillionaireRanking[];
 
 	@OneToOne(() => ElementHuntParticipant, (elementHuntParticipant) => elementHuntParticipant.attendee)
 	elementHuntParticipations: ElementHuntParticipant;

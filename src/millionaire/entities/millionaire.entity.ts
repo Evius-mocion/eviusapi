@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, OneToMany, Column, OneToOne, JoinColumn, Index, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, OneToMany, Column, OneToOne, JoinColumn, Index, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { MillionaireQuestion } from './millionaire_question.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Event } from 'src/event/entities/event.entity';
+import { MillionaireRanking } from './millionaire_ranking.entity';
 
 @Entity()
 export class Millionaire {
@@ -25,6 +26,12 @@ export class Millionaire {
 
 	@Column({ nullable: false })
 	rules: string;
+	   
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 
 	//relations
 	@Index()
@@ -37,4 +44,7 @@ export class Millionaire {
 
 	@OneToMany(() => MillionaireQuestion, (question) => question.millionaire, { eager: true })
 	questions: MillionaireQuestion[];
+
+	@OneToMany(() => MillionaireRanking, (ranking) => ranking.millionaire, { eager: false })
+	ranking: MillionaireRanking[];
 }

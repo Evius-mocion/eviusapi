@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { MillionaireOption } from './millionaire_options.entity';
 import { MillionaireAnswer } from './millionaire_answer.entity';
 import { Millionaire } from './millionaire.entity';
@@ -18,13 +18,19 @@ export class MillionaireQuestion {
     points: number;
 
     @Column({ nullable: false})
-    order: number;
+    stage: number;
 
     @Column({ nullable: true})
     image: string; 
+    
+    @CreateDateColumn()
+    created_at: Date;
 
+    @UpdateDateColumn()
+    updated_at: Date;
+    
     //relations 
-
+    @Index()
     @ManyToOne(() => Millionaire, millionaire => millionaire.questions, {cascade: ["remove"], onDelete: 'CASCADE'})
     millionaire: Millionaire;
 
