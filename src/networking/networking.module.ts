@@ -13,6 +13,7 @@ import { NetworkingParticipantController } from './networking-participant.contro
 import { NetworkingParticipantService } from './networking-participant.service';
 import { attendeeModule } from 'src/attendee';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { NetworkingAccessControlService } from './networking-access-control.services';
 
 @Module({
 	imports: [
@@ -29,6 +30,6 @@ import { Attendee } from 'src/attendee/entities/attendee.entity';
 		attendeeModule,
 	],
 	controllers: [NetworkingController, NetworkingParticipantController],
-	providers: [NetworkingService, NetworkingParticipantService],
+	providers: [NetworkingService, NetworkingParticipantService, NetworkingAccessControlService],
 })
 export class NetworkingModule {}

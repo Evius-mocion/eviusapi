@@ -1,4 +1,15 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, OneToMany, PrimaryColumn, JoinColumn, Generated, Index, OneToOne } from 'typeorm';
+import {
+	Entity,
+	Column,
+	ManyToOne,
+	CreateDateColumn,
+	OneToMany,
+	PrimaryColumn,
+	JoinColumn,
+	Generated,
+	Index,
+	OneToOne,
+} from 'typeorm';
 import { Event } from 'src/event/entities/event.entity';
 import { Station } from 'src/stations/entities/station.entity';
 import { User } from 'src/common/entities';
@@ -8,6 +19,7 @@ import { Bid } from 'src/auction/entities/bid.entity';
 import { SurveyAnswer } from 'src/survey/entities/surveyAnswer.entity';
 import { ElementHuntParticipant } from 'src/element-hunt-game/entities/element-hunt-participants.entity';
 import { BingoCard } from 'src/bingo/entities/bingo_card.entity';
+import { NetworkingParticipant } from 'src/networking/entities/networking-participant.entity'; // Import NetworkingParticipant
 
 @Entity('attendees')
 export class Attendee {
@@ -36,7 +48,6 @@ export class Attendee {
 
 	@Column({ nullable: false })
 	email: string;
-
 
 	@Column({ nullable: true })
 	country: string;
@@ -68,7 +79,6 @@ export class Attendee {
 
 	// relations
 
-	
 	@ManyToOne(() => User, (user) => user.attendees, {
 		eager: false,
 	})
@@ -80,7 +90,6 @@ export class Attendee {
 	})
 	@JoinColumn({ name: 'eventId' })
 	event: Event;
-
 
 	@OneToMany(() => SurveyAnswer, (answer) => answer.attendee)
 	answers: SurveyAnswer[];
@@ -98,7 +107,10 @@ export class Attendee {
 
 	@OneToMany(() => Bid, (bids) => bids.attende)
 	bids: Bid[];
-	
+
 	@OneToOne(() => BingoCard, (bingoCard) => bingoCard.attendee)
 	bingoCard: BingoCard;
+
+	@OneToMany(() => NetworkingParticipant, (participation) => participation.attendee)
+	networkingParticipations: NetworkingParticipant[]; 
 }
