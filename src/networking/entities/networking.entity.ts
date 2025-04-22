@@ -1,8 +1,19 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	JoinColumn,
+	OneToMany,
+	OneToOne,
+	PrimaryGeneratedColumn,
+	RelationId,
+	UpdateDateColumn,
+} from 'typeorm';
 import { AdmissionTypes } from '../types/admissionType';
 import { Event } from 'src/event/entities/event.entity';
 import { MeetingConfig } from '../interfaces/networking.interface';
 import { meetingConfigInitial } from '../constants/networking.constants';
+import { NetworkingParticipant } from './networking-participant.entity';
 
 @Entity('networking')
 export class Networking {
@@ -23,11 +34,6 @@ export class Networking {
 
 	@Column({ type: 'timestamp' })
 	closing_date: Date;
-
-	// Fields related to networking participants:
-	// admission_type: Controls who can participate in networking (ALL, SPECIFIC_ROLES, etc.)
-	// role_admission: Specifies which roles are allowed when admission_type is SPECIFIC_ROLES
-	// meeting_config: Contains configuration for participant meetings including duration, max participants, etc.
 
 	@Column({
 		type: 'enum',
@@ -54,4 +60,7 @@ export class Networking {
 
 	@Column('jsonb', { nullable: true, default: () => `'${JSON.stringify(meetingConfigInitial)}'` })
 	meeting_config: MeetingConfig;
+
+	@OneToMany(() => NetworkingParticipant, (participant) => participant.networking)
+	participants: NetworkingParticipant[];
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, RelationId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn, Unique } from 'typeorm';
 import { Networking } from './networking.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
@@ -8,26 +8,30 @@ export enum NetworkingRole {
 	PARTICIPANT = 'participant',
 }
 
-// @Unique(['networking', 'attendee'])
-@Entity('networking_participant')
+@Entity()
+@Unique(['attendeeId', 'networkingId'])
 export class NetworkingParticipant {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@ManyToOne(() => Networking, { nullable: false })
-	@JoinColumn({ name: 'networking_id' })
-	networking: Networking;
+	@Column({ type: 'uuid' })
+	attendeeId: string;
 
-	@RelationId((participant: NetworkingParticipant) => participant.networking)
-	networking_id: string;
+	@Column({ type: 'uuid' })
+	networkingId: string;
 
-	@ManyToOne(() => Attendee, { nullable: false })
-	@JoinColumn({ name: 'attendee_id' })
+	@ManyToOne(() => Attendee, { eager: true })
+	@JoinColumn({ name: 'attendeeId', referencedColumnName: 'id' })
 	attendee: Attendee;
 
-	@RelationId((participant: NetworkingParticipant) => participant.attendee)
-	attendee_id: string;
+	@ManyToOne(() => Networking, (networking) => networking.participants)
+	@JoinColumn({ name: 'networkingId' })
+	networking: Networking;
 
-	@Column({ type: 'enum', enum: NetworkingRole, default: NetworkingRole.PARTICIPANT })
+	@Column({
+		type: 'enum',
+		enum: NetworkingRole,
+		default: NetworkingRole.PARTICIPANT,
+	})
 	role: NetworkingRole;
 }

@@ -16,7 +16,15 @@ import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Networking, NetworkingSpace, Meeting, MeetingParticipant, RequestOfMeeting, NetworkingParticipant,Attendee]),
+		TypeOrmModule.forFeature([
+			Networking,
+			NetworkingSpace,
+			Meeting,
+			MeetingParticipant,
+			RequestOfMeeting,
+			NetworkingParticipant,
+			Attendee,
+		]),
 		EventModule,
 		attendeeModule,
 	],

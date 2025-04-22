@@ -15,7 +15,7 @@ export class NetworkingParticipantController {
 	}
 
 	// 2. Import by emails array
-	@Post('import/emails/:networkingId')
+	/* @Post('import/emails/:networkingId')
 	async importByEmails(@Param('networkingId', new ParseUUIDPipe()) networkingId: string, @Body() body: { emails: string[] }) {
 		return this.participantService.importByEmails(networkingId, body.emails);
 	}
@@ -35,5 +35,5 @@ export class NetworkingParticipantController {
 		@Body() body: { role: string }
 	) {
 		return this.participantService.assignRole(networkingId, attendeeId, body.role);
-	}
+	} */
 }

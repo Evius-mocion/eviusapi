@@ -5,6 +5,7 @@ import { NetworkingParticipant, NetworkingRole } from './entities/networking-par
 import { Networking } from './entities/networking.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
+// ... existing code ...
 @Injectable()
 export class NetworkingParticipantService {
 	constructor(
@@ -13,14 +14,14 @@ export class NetworkingParticipantService {
 		@InjectRepository(Networking)
 		private readonly networkingRepo: Repository<Networking>,
 		@InjectRepository(Attendee)
-		private readonly attendeeService: Repository<Attendee>
+		private readonly attendeeRepo: Repository<Attendee>
 	) {}
 
 	async importByAttendeeIds(networkingId: string, attendeeIds: string[]) {
 		const networking = await this.networkingRepo.findOne({ where: { id: networkingId } });
 		if (!networking) throw new BadRequestException('Networking not found');
 
-		const attendees = await this.attendeeService.find({ where: { id: In(attendeeIds) } });
+		const attendees = await this.attendeeRepo.find({ where: { id: In(attendeeIds) } });
 		const foundIds = attendees.map((a) => a.id);
 
 		const existing = await this.participantRepo.find({
@@ -48,17 +49,5 @@ export class NetworkingParticipantService {
 			skipped: attendeeIds.filter((id) => existingPairs.has(id)),
 			notFound: attendeeIds.filter((id) => !foundIds.includes(id)),
 		};
-	}
-
-	async importByEmails(networkingId: string, emails: string[]) {
-		// Implement logic to find attendeeIds by email and create NetworkingParticipant
-	}
-
-	async importByExcel(networkingId: string, file: Express.Multer.File) {
-		// Implement logic to parse Excel, extract attendeeIds or emails, and create NetworkingParticipant
-	}
-
-	async assignRole(networkingId: string, attendeeId: string, role: string) {
-		// Implement logic to assign or update role, creating NetworkingParticipant if needed
 	}
 }
