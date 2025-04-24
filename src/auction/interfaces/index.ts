@@ -1,9 +1,23 @@
 export type AuctionStatus = 'pending' | 'in-progress' | 'finished' | 'cancelled';
 
 
-export enum AuctionStatusEnum  {
-    PENDING = 'pending',
+export enum AuctionStatusRoundEnum  {
     IN_PROGRESS = 'in-progress',
     FINISHED = 'finished',
-    CANCELLED = 'cancelled'
+}
+
+export enum auctionStatusEnum  {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive'
+    
+}
+
+export enum productStatusEnum  {
+    SOLD = 'sold',
+    AVAILABLE = 'available'
+}
+
+export enum auctionCurrencyEnum  {
+    USD = 'USD',
+    COP = 'COP'
 }

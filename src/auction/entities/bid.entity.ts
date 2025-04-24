@@ -6,7 +6,7 @@ import { Attendee } from "src/attendee/entities/attendee.entity";
 @Entity("auction_bids")
 export class Bid {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({ nullable: false})
     value: number;

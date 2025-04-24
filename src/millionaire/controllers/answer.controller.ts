@@ -3,7 +3,7 @@ import { MillionaireService } from '../services/millionaire.service';
 import { Public } from 'src/common/decorators';
 import { CreateMillionaireAnswerDto } from '../dto/create-millionaire-answer.dto';
 
-@Public()
+
 @Controller('millionaire/answers')
 export class MillionaireResponseController {
   constructor(
