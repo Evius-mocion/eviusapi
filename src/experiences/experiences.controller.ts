@@ -5,7 +5,8 @@ import { ExperiencesService } from './experiences.service';
 export class ExperiencesController {
 	constructor(private readonly experiencesService: ExperiencesService) {}
 	@Get()
-	findAll() {
-		return this.experiencesService.findAll();
+	async findAll() {
+		const experiences = await this.experiencesService.findAll();
+		return { experiences };
 	}
 }
