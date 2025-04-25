@@ -4,7 +4,7 @@ import { CreateMillionaireDto } from '../dto/create-millionaire.dto';
 import { UpdateMillionaireDto } from '../dto/update-millionaire.dto';
 import { Public } from 'src/common/decorators';
 
-@Public()
+
 @Controller('millionaire')
 export class MillionaireController {
   constructor(
