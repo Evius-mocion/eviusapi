@@ -7,10 +7,13 @@ import { AuctionRound } from './entities/auction_round.entity';
 import { Bid } from './entities/bid.entity';
 import { Product } from './entities/product.entity';
 import { Event } from 'src/event/entities/event.entity';
+import { AuctionRoundGateway } from './getways/auction-round.gateway';
+import { AuctionRoundController } from './controllers/round.controller';
+import { AuctionProductController } from './controllers/auction_product.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Auction,AuctionRound,Bid,Product,Event])],
-  controllers: [AuctionController],
+  controllers: [AuctionController,AuctionRoundGateway,AuctionRoundController,AuctionProductController],
   providers: [AuctionService],
 })
 export class AuctionModule {}

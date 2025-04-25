@@ -22,9 +22,10 @@ export class AuctionRoundController {
     return this.auctionService.findOneRound(id);
   }
 
+  //mover al realtime/socket
   @Get('active/:auctionId')
   findOneActive(@Param('auctionId') id: string) {
-    return this.auctionService.findOneRound(id);
+    return this.auctionService.findOneRoundActive(id);
   }
 
 
