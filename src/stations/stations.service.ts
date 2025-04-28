@@ -44,7 +44,7 @@ export class StationsService {
 
 			if (!exp) throw new NotFoundException('experience not found');
 
-			newstation.experience = exp;
+			// newstation.experience = exp;
 		}
 
 		return this.stationRepository.save(newstation);
@@ -75,12 +75,14 @@ export class StationsService {
 		if (!station) {
 			throw new NotFoundException('station not found');
 		}
+		//todo: Limpiar codigo de logica antigua
+
 		if (experienceId) {
 			const exp = await this.experiencesService.findById(experienceId);
 
 			if (!exp) throw new NotFoundException('experience not found');
 
-			station.experience = exp;
+			// station.experience = exp;
 		}
 
 		const updateStation = {

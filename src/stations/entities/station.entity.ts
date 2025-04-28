@@ -1,6 +1,5 @@
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 import { Event } from 'src/event/entities/event.entity';
-import { Participation } from 'src/participation/entities/participation.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('stations')
@@ -34,17 +33,6 @@ export class Station {
 
 	@ManyToOne(() => Event, (event) => event.stations)
 	event: Event;
-	//todo Realizar relacion con event experiences
-	/* @ManyToOne(() => Experience, exp => exp.stations, {
-        eager: true,
-        nullable: true,
-    })
-    experience?: Experience; */
-
-	@OneToMany(() => Participation, (participation) => participation.station, {
-		nullable: true,
-	})
-	participations?: Participation[];
 
 	@OneToMany(() => Attendee, (attendee) => attendee.station, {
 		nullable: true,
