@@ -27,8 +27,8 @@ export class Meeting {
 	@JoinColumn({ name: 'networking_id' })
 	networking: Networking;
 
-	@RelationId((meeting: Meeting) => meeting.networking)
-	networkingId: string;
+/* 	@RelationId((meeting: Meeting) => meeting.networking)
+	networkingId: string; */
 
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;

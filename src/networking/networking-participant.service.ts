@@ -231,7 +231,7 @@ export class NetworkingParticipantService {
 		const networking = await this.networkingService.findOne(networkingId); // Assuming findOne loads the event relation or eventId
 
 		// Ensure the event ID is available. If findOne doesn't load the relation, fetch it separately or adjust findOne.
-		const eventId = networking.event?.id || networking.eventId; // Adjust based on your Networking entity structure
+		const eventId = networking.event?.id || networking.event.id; // Adjust based on your Networking entity structure
 		if (!eventId) {
 			throw new NotFoundException(`Event details not found for networking session ${networkingId}`);
 		}

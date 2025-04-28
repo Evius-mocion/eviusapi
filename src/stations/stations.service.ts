@@ -40,7 +40,7 @@ export class StationsService {
 		});
 
 		if (experienceId) {
-			const exp = await this.experiencesService.findById(experienceId);
+			const exp = await this.experiencesService.findOne(experienceId);
 
 			if (!exp) throw new NotFoundException('experience not found');
 
@@ -78,7 +78,7 @@ export class StationsService {
 		//todo: Limpiar codigo de logica antigua
 
 		if (experienceId) {
-			const exp = await this.experiencesService.findById(experienceId);
+			const exp = await this.experiencesService.findOne(experienceId);
 
 			if (!exp) throw new NotFoundException('experience not found');
 
