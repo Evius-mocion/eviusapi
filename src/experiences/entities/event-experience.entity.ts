@@ -30,18 +30,15 @@ export class EventExperience {
 	@Column({ type: 'varchar', nullable: true })
 	location: string;
 
-	@Column({ type: 'int', nullable: true, name: 'order' })
-	order: number;
-
 	@Column({ type: 'boolean', default: true })
 	active: boolean;
 
+	@OneToMany(() => ExperiencePlayData, (playData) => playData.eventExperience)
+	playData: ExperiencePlayData[];
+	
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
 	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
-
-	@OneToMany(() => ExperiencePlayData, (playData) => playData.eventExperience)
-	playData: ExperiencePlayData[];
 }
