@@ -31,9 +31,8 @@ export class EventExperienceService {
 
 	async findByEventId(eventId: string): Promise<EventExperience[]> {
 		const eventExperiences = await this.eventExperienceRepository.find({
-			where: { id: eventId },
+			where: { event: { id: eventId } },
 		});
-
 		if (eventExperiences.length === 0) {
 			throw new NotFoundException(`No event experiences found for event ID ${eventId}`);
 		}

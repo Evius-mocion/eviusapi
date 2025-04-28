@@ -19,7 +19,6 @@ export class EventExperienceController {
 		return { eventExperience };
 	}
 
-	@Get()
 	@Get('by-event/:eventId')
 	async findByEventId(@Param('eventId', new ParseUUIDPipe()) eventId: string) {
 		const eventExperiences = await this.eventExperienceService.findByEventId(eventId);
