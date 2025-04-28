@@ -113,7 +113,7 @@ export class Attendee {
 	@OneToMany(() => CheckInActivity, (checkInActivity) => checkInActivity.Attendee)
 	checkInActivity: CheckInActivity[];
 
-	@OneToMany(() => Bid, (bids) => bids.attende)
+	@OneToMany(() => Bid, (bids) => bids.attendee)
 	bids: Bid[];
 
 	@OneToOne(() => BingoCard, (bingoCard) => bingoCard.attendee)
