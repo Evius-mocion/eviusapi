@@ -13,7 +13,7 @@ import { AuctionProductController } from './controllers/auction_product.controll
 
 @Module({
   imports: [TypeOrmModule.forFeature([Auction,AuctionRound,Bid,Product,Event])],
-  controllers: [AuctionController,AuctionRoundGateway,AuctionRoundController,AuctionProductController],
-  providers: [AuctionService],
+  controllers: [AuctionController,AuctionRoundController,AuctionProductController],
+  providers: [AuctionService,AuctionRoundGateway],
 })
 export class AuctionModule {}
