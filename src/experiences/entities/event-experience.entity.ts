@@ -30,9 +30,6 @@ export class EventExperience {
 	@Column({ type: 'varchar', nullable: true })
 	location: string;
 
-	@Column({ type: 'int', nullable: true, name: 'order' })
-	order: number;
-
 	@Column({ type: 'boolean', default: true })
 	active: boolean;
 

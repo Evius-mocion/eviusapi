@@ -1,5 +1,4 @@
 import { Participation } from 'src/participation/entities/participation.entity';
-import { Station } from 'src/stations/entities/station.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ExperienceCategoryEnum } from '../types/experience.type';
 
@@ -23,11 +22,6 @@ export class Experience {
 
 	@Column({ type: 'json', nullable: true })
 	structure_definition: any;
-
-	@OneToMany(() => Station, (station) => station.experience, {
-		nullable: true,
-	})
-	stations?: Station[];
 
 	@OneToMany(() => Participation, (participation) => participation.experience, {
 		nullable: true,
