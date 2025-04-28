@@ -1,40 +1,64 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { EventExperience } from './entities/event-experience.entity';
-import { Repository } from 'typeorm';
-import { CreateEventExperienceDto } from './dto/create-event-experience.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExperiencesService } from './experiences.service';
-import { EventService } from 'src/event';
+import { Repository } from 'typeorm';
+import { EventExperience } from './entities/event-experience.entity';
+import { CreateEventExperienceDto } from './dto/create-event-experience.dto';
+import { UpdateEventExperienceDto } from './dto/update-event-experience.dto';
 
 @Injectable()
 export class EventExperienceService {
 	constructor(
 		@InjectRepository(EventExperience)
-		private readonly eventExperienceRepo: Repository<EventExperience>,
-		private readonly eventService: EventService,
-		private readonly experienceService: ExperiencesService
+		private eventExperienceRepository: Repository<EventExperience>
 	) {}
 
-	async createEventExperience(eventExperienceData: CreateEventExperienceDto) {
-		const { eventId, experienceId, location, active } = eventExperienceData;
+	async createEventExperience(createEventExperienceDto: CreateEventExperienceDto): Promise<EventExperience> {
+		const eventExperience = this.eventExperienceRepository.create(createEventExperienceDto);
+		return await this.eventExperienceRepository.save(eventExperience);
+	}
 
-		const { event } = await this.eventService.getOne(eventId);
+	async findOne(id: string): Promise<EventExperience> {
+		const eventExperience = await this.eventExperienceRepository.findOneBy({ id });
+		if (!eventExperience) {
+			throw new NotFoundException(`Event experience with ID ${id} not found`);
+		}
+		return eventExperience;
+	}
 
-		const experience = await this.experienceService.findOne(experienceId);
+	async getAll(): Promise<EventExperience[]> {
+		return await this.eventExperienceRepository.find();
+	}
 
-		const exists = await this.eventExperienceRepo.findOne({
-			where: { event: { id: eventId }, experience: { id: experienceId } },
+	async findByEventId(eventId: string): Promise<EventExperience[]> {
+		const eventExperiences = await this.eventExperienceRepository.find({
+			where: { id: eventId },
 		});
 
-		if (exists) throw new BadRequestException('This event-experience link already exists');
+		if (eventExperiences.length === 0) {
+			throw new NotFoundException(`No event experiences found for event ID ${eventId}`);
+		}
 
-		const eventExperience = this.eventExperienceRepo.create({
-			event,
-			experience,
-			location,
-			active,
+		return eventExperiences;
+	}
+
+	async update(id: string, updateEventExperienceDto: UpdateEventExperienceDto): Promise<EventExperience> {
+		const eventExperience = await this.eventExperienceRepository.preload({
+			id: id,
+			...updateEventExperienceDto,
 		});
 
-		return await this.eventExperienceRepo.save(eventExperience);
+		if (!eventExperience) {
+			throw new NotFoundException(`Event experience with ID ${id} not found`);
+		}
+
+		return await this.eventExperienceRepository.save(eventExperience);
+	}
+
+	async remove(id: string): Promise<void> {
+		const result = await this.eventExperienceRepository.delete(id);
+
+		if (result.affected === 0) {
+			throw new NotFoundException(`Event experience with ID ${id} not found`);
+		}
 	}
 }
