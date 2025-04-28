@@ -20,7 +20,7 @@ export class EventExperienceService {
 
 		const { event } = await this.eventService.getOne(eventId);
 
-		const experience = await this.experienceService.findById(experienceId);
+		const experience = await this.experienceService.findOne(experienceId);
 
 		const exists = await this.eventExperienceRepo.findOne({
 			where: { event: { id: eventId }, experience: { id: experienceId } },
