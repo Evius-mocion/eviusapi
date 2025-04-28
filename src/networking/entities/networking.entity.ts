@@ -46,11 +46,11 @@ export class Networking {
 	role_admission?: string;
 
 	@OneToOne(() => Event, (event) => event.networking)
-	@JoinColumn({ name: 'event_id' })
+	@JoinColumn({ name: 'event_id', referencedColumnName: 'id' })
 	event: Event;
 
-	@RelationId((networking: Networking) => networking.event)
-	eventId: string;
+/* 	@RelationId((networking: Networking) => networking.event)
+	eventId: string; */
 
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;

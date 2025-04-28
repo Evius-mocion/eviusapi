@@ -3,21 +3,17 @@ import { Meeting } from './meeting.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Entity('meeting_participant')
-	export class MeetingParticipant {
-		@PrimaryGeneratedColumn('uuid')
-		id: string;
+export class MeetingParticipant {
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
 	@ManyToOne(() => Meeting, (meeting) => meeting.participants)
 	@JoinColumn({ name: 'meeting_id' })
 	meeting: Meeting;
 
-	
-
-	@ManyToOne(() => Attendee, { eager: false, onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'attendee_id' })
+	@ManyToOne(() => Attendee, (attendee) => attendee.net_meeting_participants)
+	@JoinColumn({ name: 'attendee_id', referencedColumnName: 'id' })
 	attendee: Attendee;
-							
-
 
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;

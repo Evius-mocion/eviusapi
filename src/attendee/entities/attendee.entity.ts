@@ -22,6 +22,8 @@ import { BingoCard } from 'src/bingo/entities/bingo_card.entity';
 import { MillionaireAnswer } from 'src/millionaire/entities/millionaire_answer.entity';
 import { MillionaireRanking } from 'src/millionaire/entities/millionaire_ranking.entity';
 import { NetworkingParticipant } from 'src/networking/entities/networking-participant.entity'; // Import NetworkingParticipant
+import { RequestOfMeeting } from 'src/networking/entities/request-of-meeting.entity';
+import { MeetingParticipant } from 'src/networking/entities/meeting-participant.entity';
 
 @Entity('attendees')
 export class Attendee {
@@ -121,4 +123,15 @@ export class Attendee {
 
 	@OneToMany(() => NetworkingParticipant, (participation) => participation.attendee)
 	networkingParticipations: NetworkingParticipant[]; 
+
+	@OneToMany(() => RequestOfMeeting, (requestOfMeeting) => requestOfMeeting.requester)
+	requesters: RequestOfMeeting[];
+	
+	@OneToMany(() => RequestOfMeeting, (requestOfMeeting) => requestOfMeeting.receiver)
+	receivers: RequestOfMeeting[];
+	
+	@OneToMany(() => MeetingParticipant, (meetingParticipant) => meetingParticipant.attendee)
+	net_meeting_participants: MeetingParticipant[];
+
+
 }

@@ -45,8 +45,8 @@ export class NetworkingSpace {
 	@JoinColumn({ name: 'networking_id' })
 	networking: Networking;
 
-	@RelationId((networkingSpace: NetworkingSpace) => networkingSpace.networking)
-	networkingId: string;
+/* 	@RelationId((networkingSpace: NetworkingSpace) => networkingSpace.networking)
+	networkingId: string; */
 
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;

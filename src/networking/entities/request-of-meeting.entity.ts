@@ -21,22 +21,18 @@ export class RequestOfMeeting {
 	@JoinColumn({ name: 'meeting_id' })
 	meeting: Meeting;
 
-	@RelationId((rom: RequestOfMeeting) => rom.meeting)
-	meetingId: string;
 
-	@ManyToOne(() => Attendee, { nullable: false, onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'requester_id' })
+
+	@ManyToOne(() => Attendee, (attendee) => attendee.requesters)
+	@JoinColumn({ name: 'requester_id', referencedColumnName: 'id' })
 	requester: Attendee; // El asistente que solicita
 
-	@RelationId((rom: RequestOfMeeting) => rom.requester)
-	requesterId: string;
 
-	@ManyToOne(() => Attendee, { nullable: false, onDelete: 'CASCADE' })
-	@JoinColumn({ name: 'receiver_id' })
+	@ManyToOne(() => Attendee,(attendee) => attendee.receivers)
+	@JoinColumn({ name: 'receiver_id', referencedColumnName: 'id' })
 	receiver: Attendee; // El asistente que recibe la solicitud
 
-	@RelationId((rom: RequestOfMeeting) => rom.receiver)
-	receiverId: string;
+
 
 	@Column({
 		type: 'enum',
