@@ -102,7 +102,7 @@ async getRoundById(roundId: string) {
         throw new NotFoundException(`Round with id ${roundId} not found`);
     }
 
-    return "xdd";
+    return round;
 }
 async findOne(id: string) {
     const round = await this.bingoRoundRepository.findOne({

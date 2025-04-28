@@ -3,7 +3,7 @@ import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { Auction } from './entities/auction.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { AuctionRound } from './entities/auction_round.entity';
 import { Bid } from './entities/bid.entity';
@@ -17,6 +17,7 @@ import { CreateRoundDto } from './dto/create-round.dto';
 @Injectable()
 export class AuctionService {
 	constructor(
+    private dataSource: DataSource,
 		@InjectRepository(Auction)
 		private readonly auctionRepository: Repository<Auction>,
 		@InjectRepository(Product)
@@ -67,6 +68,11 @@ export class AuctionService {
 
 	async update(id: string, updateAuctionDto: UpdateAuctionDto) {
     const { status , ...auctionDto } = updateAuctionDto;
+
+    if (status) {
+      throw new UnauthorizedException('you cannot update the status of the auction in this way');
+    }
+
 		const auction = await this.auctionRepository.findOne({
 			where: { id },
 		});
@@ -260,15 +266,18 @@ async	remove(id: string) {
 
   async findOneRoundActive(id: string) {
     const round = await this.roundRepository.findOne({
-      where: { id , status: AuctionStatusRoundEnum.IN_PROGRESS },
+      where: { auction: {id} , status: AuctionStatusRoundEnum.IN_PROGRESS },
       cache: true,
+      relations: {
+        product: true,
+      },
     });
 
     if (!round) {
       throw new NotFoundException(`Round with ID ${id} not found`);
     }
-
-    return { round };
+    
+    return round ;
   }
 
   async updateRound(id: string, updateRoundDto: UpdateRoundAuctionDto) {
@@ -298,5 +307,49 @@ async	remove(id: string) {
     }
     return { message: 'Round deleted successfully' };
   }
+
+// auction.service.ts
+async processBid(roundId: string, attendee_id: string, amount: number): Promise<{ updatedRound: AuctionRound; bids: Bid[] }> {
+  return await this.dataSource.transaction(async (manager) => {
+    const roundRepo = manager.getRepository(AuctionRound);
+    const bidRepo = manager.getRepository(Bid);
+
+    // Obtener la ronda con lock para evitar condiciones de carrera
+    const round = await roundRepo.findOne({ where: { id: roundId }, lock: { mode: 'pessimistic_write' } });
+
+    if (!round) {
+      throw new Error('Round not found');
+    }
+
+    if (amount <= round.current_price) {
+      throw new Error('Bid must be higher than current price');
+    }
+
+    // Crear el nuevo bid
+    const newBid = bidRepo.create({
+      amount,
+      round: { id: roundId },
+      attendee: {id: attendee_id},
+      product: {id: round.product.id},
+      name: round.product.name,      
+      email: '',
+      auction : {id: round.auction.id},
+    });
+    await bidRepo.save(newBid);
+
+    // Actualizar el precio actual del round
+    round.current_price = amount;
+    const updatedRound = await roundRepo.save(round);
+
+    // Obtener los bids actualizados
+    const bids = await bidRepo.find({
+      where: { round: { id: roundId } },
+      order: { created_at: 'DESC' },
+    });
+
+    return { updatedRound, bids };
+  });
+}
+
 
 }

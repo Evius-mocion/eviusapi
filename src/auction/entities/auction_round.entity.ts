@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AuctionStatusRoundEnum } from "../interfaces";
 import { Auction } from "./auction.entity";
 import { Product } from "./product.entity";
+import { Bid } from "./bid.entity";
 
 
 @Entity('auction_rounds')   
@@ -35,4 +36,7 @@ export class AuctionRound {
     @OneToOne(() => Product, (product) => product.round)
     @JoinColumn() // 
     product: Product;
+    
+    @OneToMany(() => Bid, (bid) => bid.round)
+    bids: Bid[];
 }

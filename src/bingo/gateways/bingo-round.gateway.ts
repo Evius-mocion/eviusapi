@@ -17,7 +17,7 @@ import {
     constructor(private readonly bingoRoundService: BingoRoundService) {}
   
     private broadcastRoundUpdate(bingoId: string, roundData: any) {
-      this.server.to(`bingo_round_${bingoId}`).emit('round_update', roundData);
+      this.server.to(`bingo_round_${bingoId}`).emit('round_state', roundData);
     }
     
     @SubscribeMessage('join_round')
@@ -25,8 +25,6 @@ import {
       @ConnectedSocket() client: Socket, 
       @MessageBody() bingoId: string,
     ) {
-      console.log('join_round', bingoId);
-      
       const activeRound = await this.bingoRoundService.getActiveRound(bingoId);
       client.join(`bingo_round_${bingoId}`);
       client.emit('round_state', activeRound);
