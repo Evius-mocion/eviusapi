@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Get, Patch, Delete, Param, ParseUUIDPipe } from '@nestjs/common';
-import { EventExperienceService } from './event-experience.service';
+import { EventExperienceService } from './services/event-experience.service';
 import { CreateEventExperienceDto } from './dto/create-event-experience.dto';
 import { UpdateEventExperienceDto } from './dto/update-event-experience.dto';
 

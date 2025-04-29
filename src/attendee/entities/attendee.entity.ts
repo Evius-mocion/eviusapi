@@ -24,6 +24,7 @@ import { MillionaireRanking } from 'src/millionaire/entities/millionaire_ranking
 import { NetworkingParticipant } from 'src/networking/entities/networking-participant.entity'; // Import NetworkingParticipant
 import { RequestOfMeeting } from 'src/networking/entities/request-of-meeting.entity';
 import { MeetingParticipant } from 'src/networking/entities/meeting-participant.entity';
+import { ExperiencePlayData } from 'src/experiences/entities/experience-play-data.entity';
 
 @Entity('attendees')
 export class Attendee {
@@ -100,7 +101,7 @@ export class Attendee {
 
 	@OneToMany(() => MillionaireAnswer, (answer) => answer.attendee)
 	millionaireAnswers: MillionaireAnswer[];
-	
+
 	@OneToMany(() => MillionaireRanking, (answer) => answer.attendee)
 	millionaireRanking: MillionaireRanking[];
 
@@ -122,16 +123,17 @@ export class Attendee {
 	bingoCard: BingoCard;
 
 	@OneToMany(() => NetworkingParticipant, (participation) => participation.attendee)
-	networkingParticipations: NetworkingParticipant[]; 
+	networkingParticipations: NetworkingParticipant[];
 
 	@OneToMany(() => RequestOfMeeting, (requestOfMeeting) => requestOfMeeting.requester)
 	requesters: RequestOfMeeting[];
-	
+
 	@OneToMany(() => RequestOfMeeting, (requestOfMeeting) => requestOfMeeting.receiver)
 	receivers: RequestOfMeeting[];
-	
+
 	@OneToMany(() => MeetingParticipant, (meetingParticipant) => meetingParticipant.attendee)
 	net_meeting_participants: MeetingParticipant[];
 
-
+	@OneToMany(() => ExperiencePlayData, (experiencePLayData) => experiencePLayData.attendee)
+	experiencePLayData: ExperiencePlayData[];
 }

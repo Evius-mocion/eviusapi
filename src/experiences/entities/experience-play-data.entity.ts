@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Index, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Index, Unique, JoinColumn } from 'typeorm';
 import { EventExperience } from './event-experience.entity';
+import { Event } from 'src/event/entities/event.entity';
+import { Experience } from './experience.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Entity('experience_play_data')
@@ -12,8 +14,23 @@ export class ExperiencePlayData {
 	@Index()
 	eventExperience: EventExperience;
 
+	@Column({ type: 'uuid' })
+	eventExperienceId: string;
+
+	@ManyToOne(() => Event, { nullable: false })
+	event: Event;
+
+	@Column({ type: 'uuid' })
+	eventId: string;
+
+	@ManyToOne(() => Experience, { nullable: false })
+	experience: Experience;
+
+	@Column({ type: 'uuid' })
+	experienceId: string;
+
 	@ManyToOne(() => Attendee, { nullable: false })
-	@Index()
+	@JoinColumn({ name: 'attendeeId', referencedColumnName: 'id' })
 	attendee: Attendee;
 
 	@Column({ type: 'timestamp', nullable: false })

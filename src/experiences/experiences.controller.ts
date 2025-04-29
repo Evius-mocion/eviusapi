@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Param, ParseUUIDPipe, Patch, Delete, HttpCode, HttpStatus } from '@nestjs/common';
-import { ExperiencesService } from './experiences.service';
+import { ExperiencesService } from './services/experiences.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 

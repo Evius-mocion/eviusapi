@@ -11,7 +11,7 @@ import { Station } from './entities/station.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventService } from 'src/event';
-import { ExperiencesService } from 'src/experiences/experiences.service';
+import { ExperiencesService } from 'src/experiences/services/experiences.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EventExperience } from './entities/event-experience.entity';
-import { CreateEventExperienceDto } from './dto/create-event-experience.dto';
-import { UpdateEventExperienceDto } from './dto/update-event-experience.dto';
+import { EventExperience } from '../entities/event-experience.entity';
+import { CreateEventExperienceDto } from '../dto/create-event-experience.dto';
+import { UpdateEventExperienceDto } from '../dto/update-event-experience.dto';
 
 @Injectable()
 export class EventExperienceService {
@@ -33,7 +33,6 @@ export class EventExperienceService {
 		const eventExperiences = await this.eventExperienceRepository.find({
 			where: { event: { id: eventId } },
 		});
-		console.log('eventExperiences', eventExperiences)
 		
 		if (eventExperiences.length === 0) {
 			throw new NotFoundException(`No event experiences found for event ID ${eventId}`);
