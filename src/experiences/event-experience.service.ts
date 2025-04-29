@@ -33,6 +33,8 @@ export class EventExperienceService {
 		const eventExperiences = await this.eventExperienceRepository.find({
 			where: { event: { id: eventId } },
 		});
+		console.log('eventExperiences', eventExperiences)
+		
 		if (eventExperiences.length === 0) {
 			throw new NotFoundException(`No event experiences found for event ID ${eventId}`);
 		}

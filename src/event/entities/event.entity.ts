@@ -24,6 +24,7 @@ import { Bingo } from 'src/bingo/entities/bingo.entity';
 import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-game.entity';
 import { Networking } from 'src/networking/entities/networking.entity';
 import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
+import { EventExperience } from 'src/experiences/entities/event-experience.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -172,4 +173,8 @@ export class Event {
 	})
 	millionaire: Millionaire[];
 
+	@OneToMany(() => EventExperience, (evenExperience) => evenExperience.event, {
+		eager: false,
+	})
+	eventExperiences: EventExperience[];
 }

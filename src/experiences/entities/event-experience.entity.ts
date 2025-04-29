@@ -12,6 +12,7 @@ import {
 import { Event } from 'src/event/entities/event.entity';
 import { Experience } from './experience.entity';
 import { ExperiencePlayData } from './experience-play-data.entity';
+import { JoinColumn } from 'typeorm';
 
 @Entity('event_experience')
 @Unique(['event', 'experience'])
@@ -19,13 +20,22 @@ export class EventExperience {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@ManyToOne(() => Event, (event) => event.id, { nullable: false })
+	// Foreign key for Event
+	@ManyToOne(() => Event, (event) => event.eventExperiences, { nullable: false })
+	@JoinColumn({ name: 'eventId' })
 	@Index()
 	event: Event;
+	@Column({ type: 'uuid' })
+	eventId: string;
 
+	// Foreign key for Experience
 	@ManyToOne(() => Experience, { nullable: false })
+	@JoinColumn({ name: 'experienceId' })
 	@Index()
 	experience: Experience;
+
+	@Column({ type: 'uuid' })
+	experienceId: string;
 
 	@Column({ type: 'varchar', nullable: true })
 	location: string;
@@ -35,7 +45,7 @@ export class EventExperience {
 
 	@OneToMany(() => ExperiencePlayData, (playData) => playData.eventExperience)
 	playData: ExperiencePlayData[];
-	
+
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
 
