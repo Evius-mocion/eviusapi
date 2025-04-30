@@ -136,4 +136,8 @@ export class Attendee {
 
 	@OneToMany(() => ExperiencePlayData, (experiencePLayData) => experiencePLayData.attendee)
 	experiencePLayData: ExperiencePlayData[];
+
+	@OneToMany(() => ExperiencePlayData, (experiencePLayData) => experiencePLayData.attendee)
+	experiencePlayData:ExperiencePlayData[];
+
 }

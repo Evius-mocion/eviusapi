@@ -6,44 +6,45 @@ import { CreateExperiencePlayDataDto } from '../dto/create-experience-play-data.
 import { UpdateExperiencePlayDataDto } from '../dto/update-experience-play-data.dto';
 import { EventExperience } from '../entities/event-experience.entity';
 import { AttendeeService } from 'src/attendee/attendee.service';
+import { EventExperienceService } from './event-experience.service';
+import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Injectable()
 export class ExperiencePlayDataService {
 	constructor(
 		@InjectRepository(ExperiencePlayData)
 		private experiencePlayDataRepo: Repository<ExperiencePlayData>,
-		@InjectRepository(EventExperience)
-		private eventExperienceRepo: Repository<EventExperience>,
+
+		private readonly eventExperienceService: EventExperienceService,
+
 		private readonly attendeeService: AttendeeService
 	) {}
 
 	async create(createExperiencePlayDataDto: CreateExperiencePlayDataDto): Promise<ExperiencePlayData> {
 		const { eventExperienceId, attendeeId, play_timestamp, data } = createExperiencePlayDataDto;
 
-		const eventExperience = await this.eventExperienceRepo.findOne({
-			where: { id: eventExperienceId },
-			relations: ['event', 'experience'],
-		});
-		if (!eventExperience) {
-			throw new NotFoundException('EventExperience not found');
-		}
+		const eventExperience = await this.eventExperienceService.findOne(eventExperienceId);
+
 		if (!eventExperience.active) {
 			throw new BadRequestException('EventExperience is not active');
 		}
 
-		const { attendee } = await this.attendeeService.findOneById(attendeeId);
+		let attendee: Attendee | undefined = undefined;
+		if (attendeeId) {
+			const resp = await this.attendeeService.findOneById(attendeeId);
+			attendee = resp.attendee;
+		}
 
 		const created = this.experiencePlayDataRepo.create({
 			eventExperience,
 			eventExperienceId,
-			event: eventExperience.event,
-			eventId: eventExperience.event.id,
-			experience: eventExperience.experience,
-			experienceId: eventExperience.experience.id,
-			attendee: attendee,
+			event: { id: eventExperience.eventId },
+			experience: { id: eventExperience.experienceId },
+			attendee,
 			play_timestamp,
 			data,
 		});
+        
 		return await this.experiencePlayDataRepo.save(created);
 	}
 

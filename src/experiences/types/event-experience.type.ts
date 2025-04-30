@@ -1,44 +1,44 @@
 export interface ExperiencePlayData {
-	// Datos generales de gamificación
-	totalScore?: number; // Puntuaje total acumulado
-	totalBonusScore?: number; // Puntuaje acumulado de bonificaciones
-	maxSpeed?: number; // Velocidad máxima alcanzada (Ciclismo y carrera)
-	averageSpeed?: number; // Velocidad promedio (Ciclismo y carrera)
-	maxGoals?: number; // Goles máximos por partido (powershot y fútbol tirol)
+	// General gamification data
+	totalScore?: number; // Total accumulated score
+	totalBonusScore?: number; // Accumulated bonus score
+	maxSpeed?: number; // Maximum speed reached (Cycling and running)
+	averageSpeed?: number; // Average speed (Cycling and running)
+	maxGoals?: number; // Maximum goals per match (powershot and soccer shootout)
 
-	// Simuladores
-	distanceTraveled?: number; // Distancia recorrida promedio por usuario
-	maxDistanceTraveled?: number; // Distancia máxima de un usuario
+	// Simulators
+	distanceTraveled?: number; // Average distance traveled per user
+	maxDistanceTraveled?: number; // Maximum distance by a user
 
-	// Virtuales/interactivos - simuladores de conducción
-	reactionTime?: number; // Tiempo promedio de reacción
-	brakingDistance?: number; // Distancia de frenado promedio
+	// Virtual/interactive - driving simulators
+	reactionTime?: number; // Average reaction time
+	brakingDistance?: number; // Average braking distance
 
-	// Descubre objetos 360
-	discoveredObjectsCount?: number; // Cantidad de objetos encontrados
-	searchTimePerObject?: number; // Tiempo promedio de búsqueda por objeto
+	// Discover 360 objects
+	discoveredObjectsCount?: number; // Number of objects found
+	searchTimePerObject?: number; // Average search time per object
 
-	// Creativas/artísticas
-	paintingTime?: number; // Tiempo promedio para crear una pintura
+	// Creative/artistic
+	paintingTime?: number; // Average time to create a painting
 
-	// Realidad aumentada
-	boothPhotosTaken?: number; // Número de fotos tomadas en Photo Booth
-	filtersUsedCount?: number; // Filtros utilizados en experiencias de RA
+	// Augmented reality
+	boothPhotosTaken?: number; // Number of photos taken in Photo Booth
+	filtersUsedCount?: number; // Filters used in AR experiences
 
-	// Exhibiciones o demos
-	productRecommendationsCount?: number; // Productos más recomendados en Holografía/Recomendador de producto
+	// Exhibitions or demos
+	productRecommendationsCount?: number; // Most recommended products in Holography/Product Recommender
 
-	// Encuestas / trivias
-	correctAnswersCount?: number; // Número de respuestas correctas
-	detailedAnswers?: Record<string, any>; // Detalle de respuestas por usuario (puedes definir mejor si quieres tipos específicos)
-	averageResponseTime?: number; // Tiempo promedio de respuesta
+	// Surveys / trivia
+	correctAnswersCount?: number; // Number of correct answers
+	detailedAnswers?: Record<string, any>; // Detailed answers per user (you can define more specific types if you want)
+	averageResponseTime?: number; // Average response time
 
-	// Información demográfica (aunque realmente viene por registro de formulario, la incluyo por contexto)
+	// Demographic information (although it actually comes from the registration form, included here for context)
 	location?: string;
 	gender?: string;
 	age?: number;
 	education?: string;
 
-	// Timestamps generales
+	// General timestamps
 	playTimestamp?: string; // ISO date string
 }

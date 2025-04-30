@@ -5,7 +5,8 @@ export class CreateExperiencePlayDataDto {
 	eventExperienceId: string;
 
 	@IsUUID()
-	attendeeId: string;
+	@IsOptional()
+	attendeeId?: string;
 
 	@IsDateString()
 	play_timestamp: string;
