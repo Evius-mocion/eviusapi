@@ -34,11 +34,15 @@ export class ExperiencePlayDataController {
 		return { experiencePlayData };
 	}
 
-	/* @Delete(':id')
-	@ApiOperation({ summary: 'Delete experience play data' })
-	@ApiResponse({ status: 200, description: 'Experience play data deleted successfully' })
-	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		await this.experiencePlayDataService.remove(id);
-		return {};
-	} */
+	@Get('attendee/:attendeeId')
+	@ApiOperation({ summary: 'Get all play data by attendeeId' })
+	@ApiResponse({ status: 200, description: 'Return all play data for the attendee' })
+	async findByAttendeeId(@Param('attendeeId', new ParseUUIDPipe()) attendeeId: string) {
+		const playData = await this.experiencePlayDataService.findByAttendeeId(attendeeId);
+		return { playData };
+	}
+
+
+
+	
 }

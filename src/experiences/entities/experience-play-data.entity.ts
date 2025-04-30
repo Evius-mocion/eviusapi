@@ -47,6 +47,6 @@ export class ExperiencePlayData {
 	@Column({ type: 'float', nullable: true })
 	bonusScore: number;
 
-	@Column({ type: 'uuid', nullable: true })
+	@Column({ type: 'uuid', nullable: true, unique: true })
 	localId: string;
 }

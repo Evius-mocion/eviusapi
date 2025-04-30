@@ -13,10 +13,8 @@ export class ExperiencePlayDataService {
 	constructor(
 		@InjectRepository(ExperiencePlayData)
 		private experiencePlayDataRepo: Repository<ExperiencePlayData>,
-
-		private readonly eventExperienceService: EventExperienceService,
-
-		private readonly attendeeService: AttendeeService
+		private readonly attendeeService: AttendeeService,
+		private readonly eventExperienceService: EventExperienceService
 	) {}
 
 	async create(createExperiencePlayDataDto: CreateExperiencePlayDataDto): Promise<ExperiencePlayData> {
@@ -68,5 +66,15 @@ export class ExperiencePlayDataService {
 
 	async findByExperienceId(eventExperienceId: string): Promise<ExperiencePlayData[]> {
 		return await this.experiencePlayDataRepo.find({ where: { eventExperience: { id: eventExperienceId } } });
+	}
+
+	async findByAttendeeId(attendeeId: string): Promise<ExperiencePlayData[]> {
+		const { attendee } = await this.attendeeService.findOneById(attendeeId);
+		return this.experiencePlayDataRepo.find({
+			where: {
+				attendee: { id: attendeeId },
+				eventId: attendee.eventId,
+			},
+		});
 	}
 }
