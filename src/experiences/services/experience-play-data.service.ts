@@ -7,6 +7,7 @@ import { UpdateExperiencePlayDataDto } from '../dto/update-experience-play-data.
 import { AttendeeService } from 'src/attendee/attendee.service';
 import { EventExperienceService } from './event-experience.service';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
+import { handleTypeOrmError } from 'src/common/utils/dbErrors';
 
 @Injectable()
 export class ExperiencePlayDataService {
@@ -31,16 +32,19 @@ export class ExperiencePlayDataService {
 			const resp = await this.attendeeService.findOneById(attendeeId);
 			attendee = resp.attendee;
 		}
+		try {
+			const created = this.experiencePlayDataRepo.create({
+				...restPLayData,
+				eventExperience,
+				event: { id: eventExperience.eventId },
+				experience: { id: eventExperience.experienceId },
+				attendee,
+			});
 
-		const created = this.experiencePlayDataRepo.create({
-			...restPLayData,
-			eventExperience,
-			event: { id: eventExperience.eventId },
-			experience: { id: eventExperience.experienceId },
-			attendee,
-		});
-
-		return await this.experiencePlayDataRepo.save(created);
+			return await this.experiencePlayDataRepo.save(created);
+		} catch (error) {
+			handleTypeOrmError(error);
+		}
 	}
 
 	async findAll(): Promise<ExperiencePlayData[]> {

@@ -41,8 +41,4 @@ export class ExperiencePlayDataController {
 		const playData = await this.experiencePlayDataService.findByAttendeeId(attendeeId);
 		return { playData };
 	}
-
-
-
-	
 }
