@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ExperiencePlayData } from '../entities/experience-play-data.entity';
 import { CreateExperiencePlayDataDto } from '../dto/create-experience-play-data.dto';
 import { UpdateExperiencePlayDataDto } from '../dto/update-experience-play-data.dto';
-import { EventExperience } from '../entities/event-experience.entity';
 import { AttendeeService } from 'src/attendee/attendee.service';
 import { EventExperienceService } from './event-experience.service';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
@@ -21,7 +20,7 @@ export class ExperiencePlayDataService {
 	) {}
 
 	async create(createExperiencePlayDataDto: CreateExperiencePlayDataDto): Promise<ExperiencePlayData> {
-		const { eventExperienceId, attendeeId, play_timestamp, data } = createExperiencePlayDataDto;
+		const { eventExperienceId, attendeeId, ...restPLayData } = createExperiencePlayDataDto;
 
 		const eventExperience = await this.eventExperienceService.findOne(eventExperienceId);
 
@@ -36,15 +35,13 @@ export class ExperiencePlayDataService {
 		}
 
 		const created = this.experiencePlayDataRepo.create({
+			...restPLayData,
 			eventExperience,
-			eventExperienceId,
 			event: { id: eventExperience.eventId },
 			experience: { id: eventExperience.experienceId },
 			attendee,
-			play_timestamp,
-			data,
 		});
-        
+
 		return await this.experiencePlayDataRepo.save(created);
 	}
 

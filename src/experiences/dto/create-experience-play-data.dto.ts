@@ -1,12 +1,11 @@
-import { IsUUID, IsOptional, IsDateString, IsObject } from 'class-validator';
+import { IsUUID, IsOptional, IsDateString, IsObject, IsNumber } from 'class-validator';
 
 export class CreateExperiencePlayDataDto {
 	@IsUUID()
 	eventExperienceId: string;
 
 	@IsUUID()
-	@IsOptional()
-	attendeeId?: string;
+	attendeeId: string;
 
 	@IsDateString()
 	play_timestamp: string;
@@ -14,4 +13,15 @@ export class CreateExperiencePlayDataDto {
 	@IsObject()
 	@IsOptional()
 	data?: any;
+
+	@IsNumber()
+	@IsOptional()
+	score?: number;
+
+	@IsNumber()
+	@IsOptional()
+	bonusScore?: number;
+
+	@IsUUID()
+	localId?: string;
 }

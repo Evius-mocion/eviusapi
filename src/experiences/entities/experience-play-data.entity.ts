@@ -5,7 +5,6 @@ import { Experience } from './experience.entity';
 import { Attendee } from 'src/attendee/entities/attendee.entity';
 
 @Entity('experience_play_data')
-// @Unique(['eventExperience', 'attendee', 'play_timestamp'])
 export class ExperiencePlayData {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
@@ -41,4 +40,13 @@ export class ExperiencePlayData {
 
 	@CreateDateColumn({ type: 'timestamp' })
 	created_at: Date;
+
+	@Column({ type: 'float', nullable: true })
+	score: number;
+
+	@Column({ type: 'float', nullable: true })
+	bonusScore: number;
+
+	@Column({ type: 'uuid', nullable: true })
+	localId: string;
 }
