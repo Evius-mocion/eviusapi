@@ -45,32 +45,32 @@ Evius API is a robust backend service that provides comprehensive event manageme
 ## Installation
 
 1. Install dependencies:
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 2. Configure environment:
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 3. Update .env with your database credentials and other configurations
 
 ## Development
 
 Start the development server:
-\`\`\`bash
+```bash
 npm run start:dev
-\`\`\`
+```
 
-The API will be available at \`http://localhost:3000\`
+The API will be available at `http://localhost:3000`
 
 ## API Documentation
 
 Access Swagger documentation at:
-\`\`\`
+```
 http://localhost:3000/api/docs
-\`\`\`
+```
 
 ## Main Features
 
@@ -83,15 +83,19 @@ http://localhost:3000/api/docs
 
 ## Project Structure
 
-\`\`\`
+```
 src/
 ├── attendee/       # Attendee management
 ├── event/         # Event management
 ├── organization/  # Organization management
 ├── common/        # Shared utilities
 └── config/        # Application configuration
-\`\`\`
+```
 
+## Stay in touch
+
+- Author - [carlos rubio]
+- Collaborators - [luis ortiz]
 
 ## Support
 
