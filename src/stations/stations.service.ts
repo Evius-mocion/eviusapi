@@ -11,7 +11,7 @@ import { Station } from './entities/station.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventService } from 'src/event';
-import { ExperiencesService } from 'src/experiences/experiences.service';
+import { ExperiencesService } from 'src/experiences/services/experiences.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -40,11 +40,11 @@ export class StationsService {
 		});
 
 		if (experienceId) {
-			const exp = await this.experiencesService.findById(experienceId);
+			const exp = await this.experiencesService.findOne(experienceId);
 
 			if (!exp) throw new NotFoundException('experience not found');
 
-			newstation.experience = exp;
+			// newstation.experience = exp;
 		}
 
 		return this.stationRepository.save(newstation);
@@ -75,12 +75,14 @@ export class StationsService {
 		if (!station) {
 			throw new NotFoundException('station not found');
 		}
+		//todo: Limpiar codigo de logica antigua
+
 		if (experienceId) {
-			const exp = await this.experiencesService.findById(experienceId);
+			const exp = await this.experiencesService.findOne(experienceId);
 
 			if (!exp) throw new NotFoundException('experience not found');
 
-			station.experience = exp;
+			// station.experience = exp;
 		}
 
 		const updateStation = {

@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { AuctionStatus, AuctionStatusEnum } from "../interfaces";
+import { auctionCurrencyEnum, auctionStatusEnum } from "../interfaces";
 import { Event } from "src/event/entities/event.entity";
 import { Activity } from "src/activities/entities/activity.entity";
 import { AuctionRound } from "./auction_round.entity";
@@ -15,9 +15,15 @@ export class Auction {
 
     @Column({ nullable: false})
     name : string;
+    
+    @Column({ nullable: false})
+    rules : string;
 
-    @Column({ nullable: false, default: 'pending', enum: AuctionStatusEnum})
-    status: AuctionStatus;
+    @Column({ nullable: false, default: auctionStatusEnum.INACTIVE, enum: auctionStatusEnum})
+    status: auctionStatusEnum;
+
+    @Column({ nullable: false, enum: auctionCurrencyEnum, default: auctionCurrencyEnum.COP})
+    currency: auctionCurrencyEnum;
 
     @CreateDateColumn()
     created_at: Date;
@@ -26,7 +32,8 @@ export class Auction {
     updated_at: Date;
 
 
-    //Relaciones  
+    // Relaciones  
+
     @Index()
     @ManyToOne(() => Event, (event) => event.auction)
 	event: Event;

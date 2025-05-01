@@ -1,36 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { ElementHuntGameService } from './element-hunt-game.service';
-import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
-import { UpdateElementHuntGameDto } from './dto/update-element-hunt-game.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateElementHuntGameDto } from './dto/create-element-hunt-game.dto';
+import { UpdateElementHuntGameDto, UpdateElementHuntGameStateDto } from './dto/update-element-hunt-game.dto';
+import { CreateHiddenPointDto } from './dto/create-hidden-point';
 
-@ApiTags('element-hunt-game')
-@Controller('element-hunt-game')
+@ApiTags('element-hunt/games')
+@Controller('element-hunt/games')
 export class ElementHuntGameController {
-	constructor(private readonly elementHuntGameService: ElementHuntGameService) {}
+	constructor(private readonly gameService: ElementHuntGameService) {}
 
 	@Post()
-	create(@Body() createElementHuntGameDto: CreateElementHuntGameDto) {
-		return this.elementHuntGameService.create(createElementHuntGameDto);
-	}
-
-	@Get()
-	findAll() {
-		return this.elementHuntGameService.findAll();
+	create(@Body() createDto: CreateElementHuntGameDto) {
+		return this.gameService.create(createDto);
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.elementHuntGameService.findOne(+id);
+	findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+		return this.gameService.findOne(id);
+	}
+
+	@Get('event/:eventId')
+	findByEvent(@Param('eventId', new ParseUUIDPipe()) eventId: string) {
+		return this.gameService.findByEventId(eventId);
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateElementHuntGameDto: UpdateElementHuntGameDto) {
-		return this.elementHuntGameService.update(+id, updateElementHuntGameDto);
+	update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateDto: UpdateElementHuntGameDto) {
+		return this.gameService.update(id, updateDto);
 	}
 
-	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.elementHuntGameService.remove(+id);
+	@Post(':id/hidden-points')
+	addHiddenPoint(@Param('id', ParseUUIDPipe) id: string, @Body() point: CreateHiddenPointDto) {
+		return this.gameService.addHiddenPoint(id, point);
+	}
+	@Delete(':id/hidden-points/:pointId')
+	removeHiddenPoint(@Param('id', ParseUUIDPipe) id: string, @Param('pointId', ParseUUIDPipe) pointId: string) {
+		return this.gameService.removeHiddenPoint(id, pointId);
+	}
+
+	@Post(':id/state')
+	setGameState(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateElementHuntGameStateDto) {
+		return this.gameService.setGameState(id, body.isPlaying);
 	}
 }

@@ -1,14 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { BingoRound } from './bingo_round.entity';
+import { FigureType } from '../interfaces';
 
 @Entity("figures")
 export class Figure {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @Column()
-  name: string; // Nombre de la figura (por ejemplo, "Cartón Completo", "Esquinas", "L", etc.)
+  @Column({nullable: false})
+  name: string;
 
-  @Column('simple-array')
-  positions: string[]; // Posiciones en el cartón para la figura (por ejemplo, ["1,1", "1,2", "2,2", "3,1"] para esquinas)
+  @Column({nullable: false, enum: FigureType})
+  type: FigureType;
 
+
+  @Column('jsonb')
+  positions: number[]; 
+
+  // relations
+
+  @OneToOne(() => BingoRound, (bingoRound) => bingoRound.figure)
+  round: BingoRound;
 }

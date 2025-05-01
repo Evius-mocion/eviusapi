@@ -11,14 +11,12 @@ import { Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
-import { CollaboratorService } from "src/collaborator";
 import { AttendeeService } from "src/attendee/attendee.service";
 import { CreateAssistantDto } from "src/attendee/dto/create-assistant.dto";
 import { User } from "src/common/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
-import { ExperiencesService } from "src/experiences/experiences.service";
 import { ClientInfo } from "nest-request-ip"
 @Injectable()
 export class EventService {
@@ -28,8 +26,6 @@ export class EventService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly organizationService: OrganizationService,
-    private readonly collaboratorService: CollaboratorService,
-    private readonly experiencisService: ExperiencesService,
     private readonly attendeeService: AttendeeService,
     private readonly jwtService: JwtService,
   ) {}
@@ -55,8 +51,14 @@ export class EventService {
     }
   }
   
+
+  
   async findOneBy(id: string) {
-    return this.eventRepository.findOneBy({ id });
+    const event = await this.eventRepository.findOneBy({ id });
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return event;
   }
 
   async findAll(orgId: string) {

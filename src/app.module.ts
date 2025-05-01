@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 import { OrganizationModule } from "./organization/organization.module";
 import { EventModule } from "./event/event.module";
 import { CollaboratorModule } from "./collaborator/collaborator.module";
@@ -13,12 +13,13 @@ import { StationsModule } from "./stations/stations.module";
 import { LocationModule } from "./location/location.module";
 import * as fs from 'fs';
 import { RequestIpModule } from "nest-request-ip";
-import { ParticipationModule } from './participation/participation.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SurveyModule } from './survey/survey.module';
 import { AuctionModule } from './auction/auction.module';
 import { BingoModule } from './bingo/bingo.module';
 import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.module";
+import { MillionaireModule } from './millionaire/millionaire.module';
+import { NetworkingModule } from './networking/networking.module';
 
 @Module({
   imports: [
@@ -44,7 +45,6 @@ import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.mod
         }
       }),
     }), 
-
     JwtModule.registerAsync({
       global: true,
       useFactory: () => ({
@@ -62,12 +62,13 @@ import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.mod
     ExperiencesModule,
     StationsModule,
     LocationModule,
-    ParticipationModule,
     ActivitiesModule,
     SurveyModule,
     AuctionModule,
     BingoModule,
-    ElementHuntGameModule
+    ElementHuntGameModule,
+    MillionaireModule,
+    NetworkingModule
   ],
   controllers: [],
   providers: [

@@ -2,17 +2,24 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 import { Product } from "./product.entity";
 import { Auction } from "./auction.entity";
 import { Attendee } from "src/attendee/entities/attendee.entity";
+import { AuctionRound } from "./auction_round.entity";
 
 @Entity("auction_bids")
 export class Bid {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({ nullable: false})
-    value: number;
+    name: string;
+    
+    @Column({ nullable: false})
+    email: string;
+
+    @Column({ nullable: false})
+    amount: number;
     
     @CreateDateColumn()
-    date: number;
+    created_at: number;
 
     //Relaciones
     @ManyToOne(() => Product, (product) => product.bids)
@@ -22,6 +29,9 @@ export class Bid {
     auction: Auction;
     
     @ManyToOne(() => Attendee, (attende) => attende.bids)
-    attende: Attendee;
+    attendee: Attendee;
+    
+    @ManyToOne(() => AuctionRound, (round) => round.bids)
+    round: AuctionRound;
 
 }
