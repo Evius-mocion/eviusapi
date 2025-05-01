@@ -19,54 +19,83 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Evius API
+
+API for event management and organization built with NestJS.
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Evius API is a robust backend service that provides comprehensive event management capabilities, including event creation, attendee registration, and organization management.
+
+## Tech Stack
+
+- NestJS
+- TypeScript
+- PostgreSQL
+- TypeORM
+- JWT Authentication
+- Redis (Caching)
+
+## Prerequisites
+
+- Node.js >= 16
+- PostgreSQL
+- Redis
 
 ## Installation
 
-```bash
-$ npm install
-```
+1. Install dependencies:
+\`\`\`bash
+npm install
+\`\`\`
 
-## Running the app
+2. Configure environment:
+\`\`\`bash
+cp .env.example .env
+\`\`\`
 
-```bash
-# development
-$ npm run start
+3. Update .env with your database credentials and other configurations
 
-# watch mode
-$ npm run start:dev
+## Development
 
-# production mode
-$ npm run start:prod
-```
+Start the development server:
+\`\`\`bash
+npm run start:dev
+\`\`\`
 
-## Test
+The API will be available at \`http://localhost:3000\`
 
-```bash
-# unit tests
-$ npm run test
+## API Documentation
 
-# e2e tests
-$ npm run test:e2e
+Access Swagger documentation at:
+\`\`\`
+http://localhost:3000/api/docs
+\`\`\`
 
-# test coverage
-$ npm run test:cov
-```
+## Main Features
+
+- Event Management
+- Attendee Registration
+- Organization Management
+- User Authentication
+- Real-time Updates
+- Performance Caching
+
+## Project Structure
+
+\`\`\`
+src/
+├── attendee/       # Attendee management
+├── event/         # Event management
+├── organization/  # Organization management
+├── common/        # Shared utilities
+└── config/        # Application configuration
+\`\`\`
+
 
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
