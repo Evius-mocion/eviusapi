@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Put, Body, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, ParseUUIDPipe, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateExperiencePlayDataDto } from './dto/create-experience-play-data.dto';
 import { UpdateExperiencePlayDataDto } from './dto/update-experience-play-data.dto';
 
 import { ExperiencePlayDataService } from './services/experience-play-data.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('experience-play-data')
 @Controller('experience-play-data')
@@ -40,5 +41,13 @@ export class ExperiencePlayDataController {
 	async findByAttendeeId(@Param('attendeeId', new ParseUUIDPipe()) attendeeId: string) {
 		const playData = await this.experiencePlayDataService.findByAttendeeId(attendeeId);
 		return { playData };
+	}
+	@Post('import')
+	@ApiOperation({ summary: 'Import experience play data from Excel file' })
+	@ApiResponse({ status: 201, description: 'Experience play data imported successfully' })
+	@UseInterceptors(FileInterceptor('file'))
+	async importFromExcel(@UploadedFile() file: Express.Multer.File) {
+		const importedData = await this.experiencePlayDataService.importFromExcel(file);
+		return importedData;
 	}
 }
