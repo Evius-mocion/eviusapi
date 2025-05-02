@@ -36,7 +36,7 @@ export class AttendeeService {
 	findAll() {
 		return `This action returns all assistant`;
 	}
-	async getOnlyById(id: string, documents : FindOptionsSelect<Attendee> ) {
+	async getOnlyById(id: string, documents: FindOptionsSelect<Attendee>) {
 		return this.attendeeRepository.findOne({
 			select: documents,
 			where: {
@@ -296,5 +296,14 @@ export class AttendeeService {
 			where,
 			order,
 		};
+	}
+
+	async findManyByIds(ids: string[]): Promise<Attendee[]> {
+		if (!ids || ids.length === 0) return [];
+		return this.attendeeRepository.find({
+			where: {
+				id: In(ids),
+			},
+		});
 	}
 }

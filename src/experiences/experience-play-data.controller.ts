@@ -42,12 +42,12 @@ export class ExperiencePlayDataController {
 		const playData = await this.experiencePlayDataService.findByAttendeeId(attendeeId);
 		return { playData };
 	}
-	@Post('import')
+	@Post('import/:eventId')
 	@ApiOperation({ summary: 'Import experience play data from Excel file' })
 	@ApiResponse({ status: 201, description: 'Experience play data imported successfully' })
 	@UseInterceptors(FileInterceptor('file'))
-	async importFromExcel(@UploadedFile() file: Express.Multer.File) {
-		const importedData = await this.experiencePlayDataService.importFromExcel(file);
+	async importFromExcel(@UploadedFile() file: Express.Multer.File, @Param('eventId', new ParseUUIDPipe()) eventId: string) {
+		const importedData = await this.experiencePlayDataService.importFromExcel(file, eventId);
 		return importedData;
 	}
 }

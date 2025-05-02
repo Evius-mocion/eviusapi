@@ -1,10 +1,11 @@
 export interface EventExperiencePlayDataExcel {
 	play_timestamp: string;
-	eventExperienceId: string;
+	eventExperienceId?: string;
+	experienceId: string;
 	score: number;
 	bonusScore: number;
 	local_id: string;
-	data: ExperiencePlayData;
+	data: ExperiencePlayData | string;
 	attendeeId?: string;
 }
 

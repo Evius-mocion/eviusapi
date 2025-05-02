@@ -12,7 +12,6 @@ import { parseExcel } from 'src/common/utils/parser';
 import { validate as isUuid } from 'uuid';
 import { DataSource } from 'typeorm';
 import { EventExperiencePlayDataExcel } from '../types/experience-play-data.type';
-import { EventExperience } from '../entities/event-experience.entity';
 
 @Injectable()
 export class ExperiencePlayDataService {
@@ -75,98 +74,83 @@ export class ExperiencePlayDataService {
 		if (!play_timestamp || isNaN(Date.parse(play_timestamp))) {
 			errors.push('Invalid or missing play_timestamp');
 		}
+
+		if (!item.experienceId || !isUuid(item.experienceId)) {
+			errors.push('Invalid or missing experienceId');
+		}
+
 		if (data !== undefined && data !== null) {
-			if (typeof data !== 'string') {
-				errors.push('data must be a string');
-			} else {
-				try {
-					const parsed = JSON.parse(data);
-					if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) {
-						errors.push('data must be a valid JSON object');
-					}
-				} catch {
-					errors.push('data is not valid JSON');
+			try {
+				const parsed = JSON.parse(data as string);
+				if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) {
+					errors.push('data must be a valid JSON object');
 				}
+			} catch {
+				errors.push('data is not valid JSON');
 			}
 		}
 		return errors;
 	}
 
-	private async transformPlayDataItem(
-		item: EventExperiencePlayDataExcel,
-		manager: Repository<ExperiencePlayData> | any // 'any' for transaction manager
-	): Promise<{ entity?: ExperiencePlayData; errors?: string[] }> {
-		const errors = this.validatePlayDataItem(item);
-		if (errors.length > 0) {
-			return { errors };
-		}
+	private async transformPlayDataItems(
+		playDataList: EventExperiencePlayDataExcel[],
+		manager: Repository<ExperiencePlayData> | any,
+		eventId: string
+	): Promise<{ entities: ExperiencePlayData[]; notImported: any[] }> {
+		const notImported: any[] = [];
+		const entities: ExperiencePlayData[] = [];
 
-		const eventExperience = await manager.findOne(EventExperience, {
-			where: { id: item.eventExperienceId },
-		});
-		if (!eventExperience) {
-			return { errors: ['EventExperience not found'] };
-		}
-		if (!eventExperience.active) {
-			return { errors: ['EventExperience is not active'] };
-		}
-
-		let attendee = undefined;
-		if (item.attendeeId) {
-			const attendeeResp = await this.attendeeService.findOneById(item.attendeeId);
-			attendee = attendeeResp?.attendee;
-			if (!attendee) {
-				return { errors: ['Attendee not found'] };
+		for (const item of playDataList) {
+			const errors = this.validatePlayDataItem(item);
+			if (errors.length > 0) {
+				notImported.push({ ...item, errors });
+				continue;
 			}
-		}
 
-		let parsedData: any = undefined;
-		if (item.data !== undefined && item.data !== null && typeof item.data === 'string') {
-			try {
-				parsedData = JSON.parse(item.data);
-			} catch {
-				// Already validated, so this should not happen
+			let parsedData: any = undefined;
+			if (item.data !== undefined && item.data !== null && typeof item.data === 'string') {
+				try {
+					parsedData = JSON.parse(item.data);
+				} catch {
+					// Already validated, so this should not happen
+				}
 			}
+
+			const entity = manager.create(ExperiencePlayData, {
+				eventExperience: { id: item.eventExperienceId },
+				event: { id: eventId },
+				experience: { id: item.experienceId },
+				attendee: item.attendeeId && { id: item.attendeeId },
+				play_timestamp: new Date(item.play_timestamp),
+				score: item.score !== undefined ? Number(item.score) : undefined,
+				bonusScore: item.bonusScore !== undefined ? Number(item.bonusScore) : undefined,
+				localId: item.local_id,
+				data: parsedData,
+			});
+			entities.push(entity);
 		}
 
-		const entity = manager.create(ExperiencePlayData, {
-			eventExperience,
-			eventExperienceId: item.eventExperienceId,
-			event: { id: eventExperience.eventId },
-			eventId: eventExperience.eventId,
-			experience: { id: eventExperience.experienceId },
-			experienceId: eventExperience.experienceId,
-			attendee,
-			attendeeId: item.attendeeId,
-			play_timestamp: new Date(item.play_timestamp),
-			score: item.score !== undefined ? Number(item.score) : undefined,
-			bonusScore: item.bonusScore !== undefined ? Number(item.bonusScore) : undefined,
-			localId: item.local_id,
-			data: parsedData,
-		});
-		return { entity };
+		return { entities, notImported };
 	}
 
-	async importFromExcel(file: Express.Multer.File): Promise<{ imported: any[]; notImported: any[] }> {
+	async importFromExcel(file: Express.Multer.File, eventId: string): Promise<{ imported: any[]; notImported: any[] }> {
 		const playDataList = parseExcel(file) as EventExperiencePlayDataExcel[];
 
 		const imported: any[] = [];
 		const notImported: any[] = [];
-
+		//todo: Determinar si es necesario usar transaction
 		await this.dataSource.transaction(async (manager) => {
-			for (const item of playDataList) {
-				const { entity, errors } = await this.transformPlayDataItem(item, manager);
-				if (errors && errors.length > 0) {
-					notImported.push({ ...item, errors });
-					continue;
-				}
+			const { entities, notImported: notImportedByValidations } = await this.transformPlayDataItems(playDataList, manager, eventId);
+
+			for (const entity of entities) {
 				try {
 					const saved = await manager.save(ExperiencePlayData, entity);
 					imported.push(saved);
 				} catch (err) {
-					notImported.push({ ...item, errors: [err.message || 'Unknown error'] });
+					notImported.push({ ...entity, errors: [err.message || 'Unknown error'] });
 				}
 			}
+			notImported.push(...notImportedByValidations);
 		});
 
 		return {
