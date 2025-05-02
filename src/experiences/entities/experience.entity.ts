@@ -27,4 +27,7 @@ export class Experience {
 
 	@UpdateDateColumn({ type: 'timestamp' })
 	updated_at: Date;
+
+	@Column({ type: 'boolean', nullable: false, default: true })
+	is_custom: boolean;
 }
