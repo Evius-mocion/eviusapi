@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ExperiencePlayData } from '../entities/experience-play-data.entity';
 import { CreateExperiencePlayDataDto } from '../dto/create-experience-play-data.dto';
 import { UpdateExperiencePlayDataDto } from '../dto/update-experience-play-data.dto';
@@ -100,6 +100,19 @@ export class ExperiencePlayDataService {
 		const notImported: any[] = [];
 		const entities: ExperiencePlayData[] = [];
 
+		const uniqueEmails = Array.from(new Set(playDataList.map((item) => item.email).filter(Boolean)));
+
+		const attendees = await manager.find(Attendee, {
+			where: {
+				email: In(uniqueEmails),
+				event: { id: eventId },
+			},
+			select: ['id', 'email'],
+		});
+
+		const attendeeMap = new Map<string, string>();
+		attendees.forEach((attendee) => attendeeMap.set(attendee.email, attendee.id));
+
 		for (const item of playDataList) {
 			const errors = this.validatePlayDataItem(item);
 			if (errors.length > 0) {
@@ -115,12 +128,13 @@ export class ExperiencePlayDataService {
 					// Already validated, so this should not happen
 				}
 			}
-
+			const attendeeId = item.email ? attendeeMap.get(item.email) : undefined;
 			const entity = manager.create(ExperiencePlayData, {
 				eventExperience: { id: item.eventExperienceId },
 				event: { id: eventId },
 				experience: { id: item.experienceId },
-				attendee: item.attendeeId && { id: item.attendeeId },
+				attendee: attendeeId ? { id: attendeeId } : undefined,
+				// attendee: item.attendeeId && { id: item.attendeeId },
 				play_timestamp: new Date(item.play_timestamp),
 				score: item.score !== undefined ? Number(item.score) : undefined,
 				bonusScore: item.bonusScore !== undefined ? Number(item.bonusScore) : undefined,
@@ -132,7 +146,6 @@ export class ExperiencePlayDataService {
 
 		return { entities, notImported };
 	}
-
 	async importFromExcel(file: Express.Multer.File, eventId: string): Promise<{ imported: any[]; notImported: any[] }> {
 		const playDataList = parseExcel(file) as EventExperiencePlayDataExcel[];
 
@@ -141,7 +154,6 @@ export class ExperiencePlayDataService {
 		//todo: Determinar si es necesario usar transaction
 		await this.dataSource.transaction(async (manager) => {
 			const { entities, notImported: notImportedByValidations } = await this.transformPlayDataItems(playDataList, manager, eventId);
-
 			for (const entity of entities) {
 				try {
 					const saved = await manager.save(ExperiencePlayData, entity);

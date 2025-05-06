@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, ParseUUIDPipe, Patch, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { ExperiencesService } from './services/experiences.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
@@ -28,11 +28,5 @@ export class ExperiencesController {
 	async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateExperienceDto: UpdateExperienceDto) {
 		const experience = await this.experiencesService.update(id, updateExperienceDto);
 		return { experience };
-	}
-
-	@Delete(':id')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		await this.experiencesService.remove(id);
 	}
 }

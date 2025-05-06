@@ -7,6 +7,7 @@ export interface EventExperiencePlayDataExcel {
 	local_id: string;
 	data: ExperiencePlayData | string;
 	attendeeId?: string;
+	email?: string;
 }
 
 export interface ExperiencePlayData {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventExperience } from '../entities/event-experience.entity';
@@ -13,6 +13,15 @@ export class EventExperienceService {
 	) {}
 
 	async createEventExperience(createEventExperienceDto: CreateEventExperienceDto): Promise<EventExperience> {
+		const eventExperienceValidate = await this.eventExperienceRepository.findOneBy({
+			event: { id: createEventExperienceDto.eventId },
+			experience: { id: createEventExperienceDto.experienceId },
+		});
+
+		if (eventExperienceValidate) {
+			throw new ConflictException('Event experience already exists for this event and experience');
+		}
+
 		const eventExperience = this.eventExperienceRepository.create(createEventExperienceDto);
 		return await this.eventExperienceRepository.save(eventExperience);
 	}
@@ -33,7 +42,7 @@ export class EventExperienceService {
 		const eventExperiences = await this.eventExperienceRepository.find({
 			where: { event: { id: eventId } },
 		});
-		
+
 		if (eventExperiences.length === 0) {
 			throw new NotFoundException(`No event experiences found for event ID ${eventId}`);
 		}
