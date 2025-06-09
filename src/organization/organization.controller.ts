@@ -3,7 +3,7 @@ import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserContext } from 'src/types/user.types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Role , ActiveUser, SuperAdmin} from 'src/common/decorators';
+import { Role , ActiveUser, SuperAdmin, Public} from 'src/common/decorators';
 import { Roles } from 'src/constants/constants';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 @ApiTags('organization')
@@ -70,6 +70,12 @@ export class OrganizationController {
   @Get('all')
   findAll() {
     return this.organizationService.findAll();
+  }
+
+  @Public()
+  @Get('stats')
+  getStats() {
+    return this.organizationService.getStats();
   }
 
   @Role(Roles.auditor)

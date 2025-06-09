@@ -86,7 +86,13 @@ export class EventController {
   @Delete(':orgId/delete/:eventId')
   remove(
     @Param('eventId') eventId: string
-) {
+  ) {
     return this.eventService.remove(eventId);
+  }
+
+  @Public()
+  @Get('stats')
+  getStats() {
+    return this.eventService.getStats();
   }
 }

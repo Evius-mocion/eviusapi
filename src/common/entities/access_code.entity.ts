@@ -11,8 +11,8 @@ export class accessCode {
     @Column({nullable: false, unique: true})
     email: string;
     
-    @Column({nullable: false})
-    eventId: string;
+    @Column({nullable: true})
+    eventId?: string;
 
     @Column({nullable: false})
     code: string;

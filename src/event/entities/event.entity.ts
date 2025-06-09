@@ -37,6 +37,10 @@ export class Event {
 	@Column({ nullable: false, default: 'online', enum: ['online', 'onsite', 'payment', 'hibrid'] })
 	type: string;
 
+	// Esto se actualiza segun la fecha de inicio y fin del evento
+	@Column({ nullable: false, default: 'in_process', enum: ['in_process', 'executed', 'canceled'] })
+	state: string;
+
 	@Column({ nullable: false, type: 'jsonb' })
 	dates: IDates[];
 

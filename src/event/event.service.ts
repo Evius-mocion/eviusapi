@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Between, Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
@@ -18,6 +18,10 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ClientInfo } from "nest-request-ip"
+import { startOfMonth } from "date-fns";
+import { subMonths } from "date-fns";
+import { endOfMonth } from "date-fns";
+
 @Injectable()
 export class EventService {
   constructor(
@@ -352,5 +356,41 @@ export class EventService {
     }
     console.log(error);
     throw new BadRequestException("error in event service");
+  }
+
+  async getStats() {
+    const now = new Date();
+    
+    const startOfCurrentMonth = startOfMonth(now);
+    const endOfCurrentMonth = endOfMonth(now);
+    const startOfLastMonth = startOfMonth(subMonths(now, 1));
+    const endOfLastMonth = endOfMonth(subMonths(now, 1));
+
+    const events = await this.eventRepository.find({
+      where: {
+        createAt: Between(startOfCurrentMonth, endOfCurrentMonth),
+      },
+    });
+
+    const lastMonthCount = await this.eventRepository.count({
+      where: {
+        createAt: Between(startOfLastMonth, endOfLastMonth),
+      },
+    });
+
+    const totalEvents = await this.eventRepository.count();
+
+    const eventsInProcess = await events.filter((event) => event.state === 'in_process').length;
+    const eventsExecuted = await events.filter((event) => event.state === 'executed').length;
+    const eventsCanceled = await events.filter((event) => event.state === 'canceled').length;
+
+    return {
+      totalEvents,
+      currentMonthCount: events.length,
+      lastMonthCount,
+      eventsInProcess,
+      eventsExecuted,
+      eventsCanceled,
+    }
   }
 }
