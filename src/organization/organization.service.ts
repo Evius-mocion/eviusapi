@@ -1,7 +1,8 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, Between } from "typeorm";
 import { Organization } from "./entities/organization.entity";
 import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
@@ -126,4 +127,37 @@ export class OrganizationService {
     }
     throw new BadRequestException("Error creating organization");
   }
+
+  async getStats() {
+    const now = new Date();
+  
+    // Rango para el mes actual
+    const startOfCurrentMonth = startOfMonth(now);
+    const endOfCurrentMonth = endOfMonth(now);
+  
+    // Rango para el mes pasado
+    const startOfLastMonth = startOfMonth(subMonths(now, 1));
+    const endOfLastMonth = endOfMonth(subMonths(now, 1));
+  
+    const currentMonthCount = await this.organizationRepository.count({
+      where: {
+        created_at: Between(startOfCurrentMonth, endOfCurrentMonth),
+      },
+    });
+  
+    const lastMonthCount = await this.organizationRepository.count({
+      where: {
+        created_at: Between(startOfLastMonth, endOfLastMonth),
+      },
+    });
+  
+    const totalOrganizations = await this.organizationRepository.count();
+  
+    return {
+      totalOrganizations,
+      currentMonthCount,
+      lastMonthCount,
+    };
+  }
+  
 }
