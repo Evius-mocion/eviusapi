@@ -53,6 +53,9 @@ export class User {
     @Column({nullable: true})
     password: string;
 
+    @Column({nullable: false, default: true})
+    isLoginFirstTime: boolean;
+
     @CreateDateColumn()
     createAt: Date;
 
