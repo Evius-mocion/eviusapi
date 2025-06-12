@@ -95,4 +95,22 @@ export class EventController {
   getStats() {
     return this.eventService.getStats();
   }
+
+  @Public()
+  @Get('last-updated')
+  getLastUpdated() {
+    return this.eventService.getLastUpdated();
+  }
+
+  @Public()
+  @Get('in-process')
+  getInProcess() {
+    return this.eventService.getInProcess();
+  }
+
+  @Public()
+  @Get('upcoming')
+  getUpcoming() {
+    return this.eventService.getUpcoming();
+  }
 }
