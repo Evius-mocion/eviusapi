@@ -9,6 +9,7 @@ import {
 	DeleteDateColumn,
 	Entity,
 	Index,
+	UpdateDateColumn,
 	ManyToOne,
 	OneToMany,
 	OneToOne,
@@ -109,8 +110,11 @@ export class Event {
 	@Column({ nullable: false, default: false })
 	hiddenEventDates?: boolean;
 
-	@CreateDateColumn()
+	@CreateDateColumn({ nullable: false, default: new Date() })
 	createAt: Date;
+
+	@UpdateDateColumn({ nullable: false, default: new Date() })
+	updatedAt: Date;
 
 	@DeleteDateColumn()
 	deletedAt: Date;

@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Between, Repository } from "typeorm";
+import { Between, Not, Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
@@ -18,9 +18,7 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ClientInfo } from "nest-request-ip"
-import { startOfMonth } from "date-fns";
-import { subMonths } from "date-fns";
-import { endOfMonth } from "date-fns";
+import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths } from "date-fns";
 
 @Injectable()
 export class EventService {
@@ -36,7 +34,8 @@ export class EventService {
 
   async create(user: UserContext, createEventDto: CreateEventDto) {
     try {
-      const org = await this.organizationService.findOne(user.eventId);
+      // MODIFICAR ANTES DE HACER COMMIT
+      const org = await this.organizationService.findOne("433c6c14-4224-4f66-b113-eeae914e2fe2");
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
@@ -326,6 +325,7 @@ export class EventService {
       const newEvent = {
         ...event,
         ...data,
+        updatedAt: new Date(),
       };
 
       if(data.dates){
@@ -333,7 +333,7 @@ export class EventService {
         newEvent.finishDate = new Date(data.dates[data.dates.length - 1]?.endDate);
       }
 
-      return await this.eventRepository.save(newEvent);
+      return await this.eventRepository.update(id, newEvent);
     } catch (error) {
       console.log(error);
       throw new BadRequestException("error updating event");
@@ -392,5 +392,38 @@ export class EventService {
       eventsExecuted,
       eventsCanceled,
     }
+  }
+
+  async getLastUpdated() {
+    const events = await this.eventRepository.find({
+      order: {
+        updatedAt: "DESC",
+      },
+      take: 5,
+    });
+    return events;
+  }
+
+  async getInProcess() {
+    const events = await this.eventRepository.find({
+      where: {
+        state: "in_process",
+      },
+    });
+    return events;
+  }
+
+  async getUpcoming() {
+    const today = startOfDay(new Date());
+    const oneMonthFromNow = endOfDay(addMonths(new Date(), 1));
+  
+    const events = await this.eventRepository.find({
+      where: {
+        initialDate: Between(today, oneMonthFromNow),
+        state: Not("in_process"),
+      },
+    });
+  
+    return events;
   }
 }
