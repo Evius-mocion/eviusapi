@@ -56,6 +56,9 @@ export class User {
     @Column({nullable: false, default: true})
     isLoginFirstTime: boolean;
 
+    @Column({ default: 0 })
+    tokenVersion: number;
+
     @CreateDateColumn()
     createAt: Date;
 

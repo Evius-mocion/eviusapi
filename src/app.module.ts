@@ -20,6 +20,7 @@ import { BingoModule } from './bingo/bingo.module';
 import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.module";
 import { MillionaireModule } from './millionaire/millionaire.module';
 import { NetworkingModule } from './networking/networking.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { NetworkingModule } from './networking/networking.module';
     BingoModule,
     ElementHuntGameModule,
     MillionaireModule,
-    NetworkingModule
+    NetworkingModule,
+    UsersModule
   ],
   controllers: [],
   providers: [
