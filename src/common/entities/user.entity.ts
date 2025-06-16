@@ -59,6 +59,9 @@ export class User {
     @Column({ default: 0 })
     tokenVersion: number;
 
+    @Column({ nullable: true })
+    lastPasswordUpdate: Date;
+
     @CreateDateColumn()
     createAt: Date;
 
