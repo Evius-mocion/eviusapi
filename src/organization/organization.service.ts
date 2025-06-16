@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable, InternalServerError
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between } from "typeorm";
+import { Repository, Between, IsNull, ILike, FindOptionsWhere } from "typeorm";
 import { Organization } from "./entities/organization.entity";
 import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
@@ -68,23 +68,52 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   } */
-  
 
-
-  
-  async findAll() {
+  async findAll(search?: string, isActive?: boolean) {
     try {
-      const organizations = await this.organizationRepository.find();
-       return {
-        organizations: organizations,
-       }
+      const query: FindOptionsWhere<Organization> = {
+          deleted_at: IsNull(),
+      }
+
+      if (search) {
+        query.name = ILike(`%${search}%`);
+      }
+      
+      if (isActive !== undefined) {
+        query.isActive = isActive;
+      }
+
+      const organizations = await this.organizationRepository
+      .createQueryBuilder("organization")
+      .leftJoinAndSelect("organization.user", "user")
+      .loadRelationCountAndMap('organization.eventsCount', 'organization.events')
+      .loadRelationCountAndMap(
+        'organization.eventsInProcessCount',
+        'organization.events',
+        'events',
+        (qb) => qb.andWhere('events.state = :state', { state: 'in_process' })
+      )
+      // .loadRelationCountAndMap('organization.collaboratorsCount', 'organization.collaborators')
+      .where(query)
+      .getMany();
+
+      return {
+        organizations,
+      };
     } catch (error) {
+      console.error("Error fetching organizations:", error);
       throw new InternalServerErrorException("Error getting organization's user");
     }
   }
 
   async findOne(organizationID: string) {
-     const organization = await this.organizationRepository.findOneBy({ id: organizationID})
+     const organization = await this.organizationRepository.findOne({
+      where: { id: organizationID },
+      // relations: {
+      //   user: true,
+      //   events: true,
+      // },
+    })
 
      return {
       organization

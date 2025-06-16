@@ -1,4 +1,5 @@
 
+import { Collaborator } from "src/collaborator/entities";
 import { User } from "src/common/entities";
 import { Event } from "src/event/entities/event.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -47,6 +48,9 @@ export class Organization {
 
   @Column({ default: new Date() })
   created_at: Date;
+
+  @Column({ default: true})
+  isActive: boolean;
 
   @Column({ default: new Date() })
   updated_at: Date;

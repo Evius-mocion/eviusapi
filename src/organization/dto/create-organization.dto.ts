@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsString, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateOrganizationDto {
     @Transform(({ value }) => value.trim())
@@ -10,4 +10,8 @@ export class CreateOrganizationDto {
     @Transform(({ value }) => value.trim())
     @IsString()
     avatar: string;
+
+    @IsBoolean()
+    @IsOptional()
+    isActive: boolean;
 }

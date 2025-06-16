@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserContext } from 'src/types/user.types';
@@ -68,8 +68,11 @@ export class OrganizationController {
 
   @SuperAdmin()
   @Get('all')
-  findAll() {
-    return this.organizationService.findAll();
+  findAll(
+    @Query('search') search?: string,
+    @Query('isActive') isActive?: boolean
+  ) {
+    return this.organizationService.findAll(search, isActive);
   }
 
   @Public()
