@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UseGuards } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UserContext } from 'src/types/user.types';
@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role , ActiveUser, SuperAdmin, Public} from 'src/common/decorators';
 import { Roles } from 'src/constants/constants';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { ActiveOrgGuard } from 'src/common/guards/activeOrg.guard';
 @ApiTags('organization')
 @ApiBearerAuth()
 @Controller('organization')
@@ -66,7 +67,7 @@ export class OrganizationController {
     return this.organizationService.invitationStatus(id);
   } */
 
-  @SuperAdmin()
+  @Public()
   @Get('all')
   findAll(
     @Query('search') search?: string,
@@ -98,19 +99,20 @@ export class OrganizationController {
     return this.organizationService.getAccessOrganization(id, user.id);
   } */
 
-
-
   @Role(Roles.owner)
-  @Patch(':id')
+  @UseGuards(ActiveOrgGuard)
+  @Patch(':orgId')
   update(
-    @Param('id') id: string,
+    @Param('orgId') orgId: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto 
   ) {
-    return this.organizationService.update(id,updateOrganizationDto);
+    return this.organizationService.update(orgId, updateOrganizationDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.organizationService.remove(id);
+  @Public()
+  @UseGuards(ActiveOrgGuard)
+  @Delete(':orgId')
+  remove(@Param('orgId') orgId: string) {
+    return this.organizationService.remove(orgId);
   }
 }
