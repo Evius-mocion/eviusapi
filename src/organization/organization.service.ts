@@ -1,12 +1,13 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between } from "typeorm";
+import { Repository, Between, IsNull, ILike, FindOptionsWhere } from "typeorm";
 import { Organization } from "./entities/organization.entity";
 import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { Event } from "src/event/entities/event.entity";
 
 @Injectable()
 export class OrganizationService {
@@ -17,6 +18,8 @@ export class OrganizationService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
   ) {}
 
   async create(
@@ -68,27 +71,71 @@ export class OrganizationService {
         rol: Collaborator.rol,
       }
   } */
-  
 
-
-  
-  async findAll() {
+  async findAll(search?: string, isActive?: boolean) {
     try {
-      const organizations = await this.organizationRepository.find();
-       return {
-        organizations: organizations,
-       }
+      const query: FindOptionsWhere<Organization> = {
+          deleted_at: IsNull(),
+      }
+
+      if (search) {
+        query.name = ILike(`%${search}%`);
+      }
+      
+      if (isActive !== undefined) {
+        query.isActive = isActive;
+      }
+
+      const organizations = await this.organizationRepository
+      .createQueryBuilder("organization")
+      .leftJoinAndSelect("organization.user", "user")
+      .loadRelationCountAndMap('organization.eventsCount', 'organization.events')
+      .loadRelationCountAndMap(
+        'organization.eventsInProcessCount',
+        'organization.events',
+        'events',
+        (qb) => qb.andWhere('events.state = :state', { state: 'in_process' })
+      )
+      // .loadRelationCountAndMap('organization.collaboratorsCount', 'organization.collaborators')
+      .where(query)
+      .getMany();
+
+      return {
+        organizations,
+      };
     } catch (error) {
+      console.error("Error fetching organizations:", error);
       throw new InternalServerErrorException("Error getting organization's user");
     }
   }
 
   async findOne(organizationID: string) {
-     const organization = await this.organizationRepository.findOneBy({ id: organizationID})
-
-     return {
-      organization
-      }
+    const [organization, eventStats] = await Promise.all([
+      // Obtener organización básica
+      this.organizationRepository.findOne({
+        where: { id: organizationID }
+      }),
+      
+      // Obtener estadísticas de eventos en una sola consulta
+      this.eventRepository
+        .createQueryBuilder("event")
+        .select("COUNT(event.id)", "count")
+        .addSelect("MAX(event.initialDate)", "lastDate")
+        .where("event.organizationId = :id", { id: organizationID })
+        .getRawOne()
+    ]);
+  
+    if (!organization) {
+      throw new NotFoundException(`Organización con ID ${organizationID} no encontrada`);
+    }
+  
+    return {
+      organization: {
+        ...organization,
+        eventsCount: parseInt(eventStats?.count) || 0,
+        lastEventDate: eventStats?.lastDate || null
+      },
+    };
   }
 /* 
   async getAccessOrganization(organizationID: string, userID:string) {

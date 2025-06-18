@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, UseGuards, } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -8,7 +8,7 @@ import { Roles } from 'src/constants/constants';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
 import { ClientInfo, GetClientInfo } from 'nest-request-ip';
-
+import { ActiveOrgGuard } from 'src/common/guards/activeOrg.guard';
 
 @ApiTags('events')
 @ApiBearerAuth()
@@ -17,11 +17,14 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Role(Roles.admin)
+  @UseGuards(ActiveOrgGuard)
   @Post("create/:orgId")
   create(
+    @Param('orgId') orgId: string,
     @ActiveUser() user: UserContext,
-    @Body() createEventDto: CreateEventDto) {
-    return this.eventService.create(user,createEventDto);
+    @Body() createEventDto: CreateEventDto
+  ) {
+    return this.eventService.create(user, orgId, createEventDto);
   }
 
   @Role(Roles.auditor)
@@ -53,6 +56,7 @@ export class EventController {
   }
 
   @Role(Roles.editor)
+  @UseGuards(ActiveOrgGuard)
   @Patch('update/:id/:orgId')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(id,updateEventDto);
@@ -83,6 +87,7 @@ export class EventController {
   }
   
   @Role(Roles.owner)
+  @UseGuards(ActiveOrgGuard)
   @Delete(':orgId/delete/:eventId')
   remove(
     @Param('eventId') eventId: string

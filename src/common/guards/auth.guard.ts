@@ -5,6 +5,7 @@ import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { WITHOUT_ACCOUNT } from '../decorators/withoutAccount.decorator';
 import { typeAccount } from 'src/types/user.types';
+import { UsersService } from 'src/users/users.service';
 
 /*
   This guard is responsible for checking if the request has a valid JWT token.
@@ -16,8 +17,10 @@ import { typeAccount } from 'src/types/user.types';
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private reflector: Reflector
+    private reflector: Reflector,
+    private readonly userService: UsersService
   ) {}
+  
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean>  {
@@ -49,22 +52,33 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: process.env.JWT_SECRET,  
+          secret: process.env.JWT_SECRET
         }
       );
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      
+      const user = await this.userService.findById(payload.id);
+
+      if (!user) {
+        throw new UnauthorizedException('user not found');
+      }
+
+      if (payload.tokenVersion !== user.tokenVersion) {
+        throw new UnauthorizedException('Invalid token version');
+      }
+
       request['user'] = payload;
       request['user'].eventId = event
+
+      if(!WithoutAccount && request.user.type !== type_account_client ){
+        throw new UnauthorizedException("Invalid token");
+      }
+
     } catch (error) {
-      console.log(error);
-      
-      throw new UnauthorizedException("Invalid token");
+        console.error('Error verifying token:', error);
+        throw new UnauthorizedException("Invalid token");
     }
-    if(!WithoutAccount && request.user.type !== type_account_client ){
-      throw new UnauthorizedException("Invalid token");
-    }
+
     return true;
   }
 

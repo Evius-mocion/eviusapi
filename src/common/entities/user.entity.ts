@@ -56,6 +56,12 @@ export class User {
     @Column({nullable: false, default: true})
     isLoginFirstTime: boolean;
 
+    @Column({ default: 0 })
+    tokenVersion: number;
+
+    @Column({ nullable: true })
+    lastPasswordUpdate: Date;
+
     @CreateDateColumn()
     createAt: Date;
 

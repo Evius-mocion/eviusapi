@@ -32,10 +32,9 @@ export class EventService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(user: UserContext, createEventDto: CreateEventDto) {
+  async create(user: UserContext, orgId: string, createEventDto: CreateEventDto) {
     try {
-      // MODIFICAR ANTES DE HACER COMMIT
-      const org = await this.organizationService.findOne("433c6c14-4224-4f66-b113-eeae914e2fe2");
+      const org = await this.organizationService.findOne(orgId);
       const newEvent = this.eventRepository.create({
         createdBy: user,
         organization: org.organization,
@@ -316,24 +315,26 @@ export class EventService {
       throw new BadRequestException("No data to update");
     }
     const event = await this.eventRepository.findOneBy({ id });
-      if (!event) {
-        throw new NotFoundException("Event not found");
-      }
+
+    if (!event) {
+      throw new NotFoundException("Event not found");
+    }
 
     try {
-    
-      const newEvent = {
+      const updatedEvent = {
         ...event,
         ...data,
         updatedAt: new Date(),
       };
 
       if(data.dates){
-        newEvent.initialDate = new Date(data.dates[0]?.startDate);
-        newEvent.finishDate = new Date(data.dates[data.dates.length - 1]?.endDate);
+        updatedEvent.initialDate = new Date(data.dates[0]?.startDate);
+        updatedEvent.finishDate = new Date(data.dates[data.dates.length - 1]?.endDate);
       }
 
-      return await this.eventRepository.update(id, newEvent);
+      await this.eventRepository.update(id, updatedEvent);
+
+      return updatedEvent;
     } catch (error) {
       console.log(error);
       throw new BadRequestException("error updating event");
