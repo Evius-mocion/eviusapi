@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Between, Not, Repository } from "typeorm";
+import { Between, Not, Repository, FindOptionsWhere, ILike } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
@@ -18,7 +18,7 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ClientInfo } from "nest-request-ip"
-import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths } from "date-fns";
+import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths, parseISO, isValid } from "date-fns";
 
 @Injectable()
 export class EventService {
@@ -78,9 +78,29 @@ export class EventService {
       this.controlDbErros(error);
     }
   }
-  async findAllEvents() {
+
+  async findAllEvents(orgName?: string, eventName?: string, date?: string) {
     try {
+      const query: FindOptionsWhere<Event> = {}
+
+      if (orgName) {
+        query.organizationAlias = ILike(`%${orgName}%`);
+      }
+
+      if (eventName) {
+        query.name = ILike(`%${eventName}%`);
+      }
+
+      if (date && isValid(parseISO(date))) {
+        const parsedDate = parseISO(date);
+        query.initialDate = Between(
+          startOfDay(parsedDate),
+          endOfDay(parsedDate)
+        );
+      }
+
       const events = await this.eventRepository.find({
+        where: query,
         select: [
           "id",
           "name",
@@ -94,7 +114,7 @@ export class EventService {
           "landingSections",
           "landingDescription"
         ],
-        relations: ["createdBy"], // Incluir la relación con User
+        // relations: ["createdBy"], // Incluir la relación con User
         cache: true,
       });
       return events;
@@ -131,6 +151,7 @@ export class EventService {
       },
     };
   }
+  
   async getOne(id: string) {
     const event = await this.eventRepository.findOne({  where:{
       id

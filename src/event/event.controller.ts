@@ -9,6 +9,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
 import { ClientInfo, GetClientInfo } from 'nest-request-ip';
 import { ActiveOrgGuard } from 'src/common/guards/activeOrg.guard';
+import { FindEventsQueryDto } from './dto/find-events-query.dto';
 
 @ApiTags('events')
 @ApiBearerAuth()
@@ -37,8 +38,11 @@ export class EventController {
 
   @SuperAdmin()
   @Get("admin/all")
-  findAllEvents() {
-    return this.eventService.findAllEvents();
+  findAllEvents(
+    @Query() query: FindEventsQueryDto
+  ) {
+    const { orgName, eventName, date } = query;
+    return this.eventService.findAllEvents(orgName, eventName, date);
   }
 
   @SuperAdmin()
