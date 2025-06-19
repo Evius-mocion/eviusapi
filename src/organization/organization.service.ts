@@ -8,6 +8,7 @@ import { UserContext } from "src/types/user.types";
 import { User } from "src/common/entities/user.entity";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { Event } from "src/event/entities/event.entity";
+import { Collaborator } from "src/collaborator/entities";
 
 @Injectable()
 export class OrganizationService {
@@ -20,6 +21,9 @@ export class OrganizationService {
 
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+
+    @InjectRepository(Collaborator)
+    private readonly collaboratorRepository: Repository<Collaborator>,
   ) {}
 
   async create(
@@ -110,34 +114,59 @@ export class OrganizationService {
   }
 
   async findOne(organizationID: string) {
-    const [organization, eventStats] = await Promise.all([
-      // Obtener organización básica
+    const [organization, eventStats, collaboratorRoleCounts] = await Promise.all([
+      // 1. Obtener organización básica
       this.organizationRepository.findOne({
         where: { id: organizationID }
       }),
-      
-      // Obtener estadísticas de eventos en una sola consulta
+
+      // 2. Obtener estadísticas de eventos
       this.eventRepository
         .createQueryBuilder("event")
         .select("COUNT(event.id)", "count")
         .addSelect("MAX(event.initialDate)", "lastDate")
         .where("event.organizationId = :id", { id: organizationID })
-        .getRawOne()
+        .leftJoin("event.collaborators", "collaborators") // Esta unión sigue siendo para eventos
+        .getRawOne(),
+
+      // 3. ¡Consulta ajustada! Obtener conteo de colaboradores por rol a través de eventos
+      this.collaboratorRepository // Asumiendo que tienes un repositorio para Collaborator
+        .createQueryBuilder("collaborator")
+        .select("collaborator.rol", "rol")
+        .addSelect("COUNT(collaborator.id)", "count")
+        .innerJoin("collaborator.event", "event") // Unir collaborators con su evento
+        .where("event.organizationId = :id", { id: organizationID }) // Filtrar por el ID de la organización del evento
+        .andWhere("collaborator.rol IN (:...roles)", { roles: ["owner", "admin", "editor", "auditor"] })
+        .groupBy("collaborator.rol")
+        .getRawMany()
     ]);
-  
+
     if (!organization) {
       throw new NotFoundException(`Organización con ID ${organizationID} no encontrada`);
     }
-  
+
+    // Formatear los conteos de roles para un fácil acceso
+    const formattedRoleCounts = collaboratorRoleCounts.reduce((acc, current) => {
+      acc[current.rol] = parseInt(current.count, 10);
+      return acc;
+    }, {
+      owner: 0,
+      admin: 0,
+      editor: 0,
+      auditor: 0
+    });
+
     return {
       organization: {
         ...organization,
         eventsCount: parseInt(eventStats?.count) || 0,
-        lastEventDate: eventStats?.lastDate || null
+        lastEventDate: eventStats?.lastDate || null,
+        collaboratorCounts: formattedRoleCounts // Agregamos los conteos de roles aquí
       },
     };
   }
-/* 
+
+/*
   async getAccessOrganization(organizationID: string, userID:string) {
     const organization = await this.organizationRepository.findOneBy({ id: organizationID})
     const collaborator = await this.collaboratorService.findOneByIdAndOrganizationId(userID,organizationID);

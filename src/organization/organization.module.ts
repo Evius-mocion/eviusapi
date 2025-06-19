@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { User } from 'src/common/entities';
 import { Event } from 'src/event/entities/event.entity';
+import { Collaborator } from 'src/collaborator/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Organization,User, Event])],
+  imports: [TypeOrmModule.forFeature([Organization,User, Event, Collaborator])],
   controllers: [OrganizationController],
   providers: [OrganizationService],
   exports: [OrganizationService],
