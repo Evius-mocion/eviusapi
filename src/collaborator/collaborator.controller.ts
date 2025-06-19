@@ -18,6 +18,7 @@ export class CollaboratorController {
     return this.colaboratorService.create(createColaboratorDto);
   }
   
+  @Public()
   @Get("event/:id")
   findAll(@Param('id') id: string) {
     return this.colaboratorService.findAll(id);
