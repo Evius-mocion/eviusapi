@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Between, Not, Repository, FindOptionsWhere, ILike } from "typeorm";
+import { Between, Not, Repository } from "typeorm";
 import { Event } from "./entities/event.entity";
 import { OrganizationService } from "src/organization/organization.service";
 import { UserContext } from "src/types/user.types";
@@ -19,6 +19,7 @@ import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ClientInfo } from "nest-request-ip"
 import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths, parseISO, isValid } from "date-fns";
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class EventService {
@@ -79,45 +80,57 @@ export class EventService {
     }
   }
 
-  async findAllEvents(orgName?: string, eventName?: string, date?: string) {
+  async findAllEvents(
+    pagination: PaginateQuery,
+    orgName?: string,
+    eventName?: string,
+    date?: string
+  ): Promise<Paginated<Event>> {
     try {
-      const query: FindOptionsWhere<Event> = {}
+    const queryBuilder = this.eventRepository.createQueryBuilder('event');
 
-      if (orgName) {
-        query.organizationAlias = ILike(`%${orgName}%`);
-      }
-
-      if (eventName) {
-        query.name = ILike(`%${eventName}%`);
-      }
-
-      if (date && isValid(parseISO(date))) {
-        const parsedDate = parseISO(date);
-        query.initialDate = Between(
-          startOfDay(parsedDate),
-          endOfDay(parsedDate)
-        );
-      }
-
-      const events = await this.eventRepository.find({
-        where: query,
-        select: [
-          "id",
-          "name",
-          "dates",
-          "initialDate",
-          "capacity",
-          "organizationAlias",
-          "appearance",
-          "createdBy",
-          "createAt",
-          "landingSections",
-          "landingDescription"
-        ],
-        // relations: ["createdBy"], // Incluir la relación con User
-        cache: true,
+    // Aplicar filtros dinámicos
+    if (orgName) {
+      queryBuilder.andWhere('event.organizationAlias ILIKE :orgName', { 
+        orgName: `%${orgName}%` 
       });
-      return events;
+    }
+
+    if (eventName) {
+      console.log(eventName);
+      queryBuilder.andWhere('event.name ILIKE :eventName', { 
+        eventName: `%${eventName}%` 
+      });
+    }
+
+    if (date && isValid(parseISO(date))) {
+      const parsedDate = parseISO(date);
+      queryBuilder.andWhere('event.initialDate BETWEEN :startDate AND :endDate', {
+        startDate: startOfDay(parsedDate),
+        endDate: endOfDay(parsedDate)
+      });
+    }
+
+    queryBuilder.select([
+      'event.id',
+      'event.name', 
+      'event.dates',
+      'event.initialDate',
+      'event.capacity',
+      'event.organizationAlias',
+      'event.appearance',
+      'event.createAt',
+      'event.landingSections',
+      'event.landingDescription'
+    ]);
+
+    return paginate(pagination, queryBuilder, {
+      sortableColumns: [
+        "id",
+      ],
+      defaultLimit: 10,
+      maxLimit: 100,
+    });
     } catch (error) {
       this.controlDbErros(error);
     }
