@@ -4621,6 +4621,13 @@ nestjs-firebase@^8.2.2:
   resolved "https://registry.npmjs.org/nestjs-firebase/-/nestjs-firebase-8.2.2.tgz"
   integrity sha512-zlG06JEY2NrFNg5ro6EMTgpBeC06htStizH0tWfEx0ShRSfKuxixHbu2iWApFJDYlY9BK1FfgqJxGHyOAGfVzA==
 
+nestjs-paginate@^12.5.0:
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/nestjs-paginate/-/nestjs-paginate-12.5.0.tgz#403e2ecb9d5ab3a3144939e4fc293696e9bef8eb"
+  integrity sha512-QuUp/oO23ytst3YTdFahQ1qhWcS9LU/sfLnE5YA1B4/k2puQBHHB5b2WVwIHb6Njr8heSG6RyItPzIywq8Rm3A==
+  dependencies:
+    lodash "^4.17.21"
+
 node-abort-controller@^3.0.1:
   version "3.1.1"
   resolved "https://registry.npmjs.org/node-abort-controller/-/node-abort-controller-3.1.1.tgz"

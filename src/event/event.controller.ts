@@ -10,6 +10,8 @@ import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/
 import { ClientInfo, GetClientInfo } from 'nest-request-ip';
 import { ActiveOrgGuard } from 'src/common/guards/activeOrg.guard';
 import { FindEventsQueryDto } from './dto/find-events-query.dto';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { Event } from './entities/event.entity';
 
 @ApiTags('events')
 @ApiBearerAuth()
@@ -39,10 +41,11 @@ export class EventController {
   @SuperAdmin()
   @Get("admin/all")
   findAllEvents(
+    @Paginate() pagination: PaginateQuery,
     @Query() query: FindEventsQueryDto
-  ) {
+  ): Promise<Paginated<Event>> {
     const { orgName, eventName, date } = query;
-    return this.eventService.findAllEvents(orgName, eventName, date);
+    return this.eventService.findAllEvents(pagination, orgName, eventName, date);
   }
 
   @SuperAdmin()
