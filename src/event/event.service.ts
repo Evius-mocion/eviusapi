@@ -344,7 +344,7 @@ export class EventService {
     };
   }
 
-  async update(id: string, data: UpdateEventDto) {
+  async update(id: string, orgId: string, data: UpdateEventDto) {
     if (Object.keys(data).length === 0) {
       throw new BadRequestException("No data to update");
     }

@@ -140,7 +140,7 @@ export class OrganizationService {
     ]);
 
     if (!organization) {
-      throw new NotFoundException(`Organización con ID ${organizationID} no encontrada`);
+      throw new NotFoundException(`Organization with ID ${organizationID} not found.`);
     }
 
     const formattedRoleCounts = collaboratorRoleCounts.reduce((acc, current) => {

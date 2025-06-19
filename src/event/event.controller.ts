@@ -15,7 +15,7 @@ import { Event } from './entities/event.entity';
 
 @ApiTags('events')
 @ApiBearerAuth()
-@Controller('event')
+@Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -64,9 +64,13 @@ export class EventController {
 
   @Role(Roles.editor)
   @UseGuards(ActiveOrgGuard)
-  @Patch('update/:id/:orgId')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(id,updateEventDto);
+  @Patch('update/:orgId/:id')
+  update(
+    @Param('orgId') orgId: string,
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    return this.eventService.update(id, orgId, updateEventDto);
   }
 
   
