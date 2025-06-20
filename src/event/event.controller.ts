@@ -9,10 +9,13 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { SuperAdmin, Role, WithoutAccount, Public, ActiveUser} from 'src/common/decorators';
 import { ClientInfo, GetClientInfo } from 'nest-request-ip';
 import { ActiveOrgGuard } from 'src/common/guards/activeOrg.guard';
+import { FindEventsQueryDto } from './dto/find-events-query.dto';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { Event } from './entities/event.entity';
 
 @ApiTags('events')
 @ApiBearerAuth()
-@Controller('event')
+@Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -37,14 +40,21 @@ export class EventController {
 
   @SuperAdmin()
   @Get("admin/all")
-  findAllEvents() {
-    return this.eventService.findAllEvents();
+  findAllEvents(
+    @Paginate() pagination: PaginateQuery,
+    @Query() query: FindEventsQueryDto
+  ): Promise<Paginated<Event>> {
+    const { orgName, eventName, date } = query;
+    return this.eventService.findAllEvents(pagination, orgName, eventName, date);
   }
 
   @SuperAdmin()
   @Get("admin/:id")
-  getOne(@Param('id') id: string) {
-    return this.eventService.getOne(id);
+  getOne(
+    @Param('id') id: string,
+    @ActiveUser() user: UserContext,
+  ) {
+    return this.eventService.getOne(id, user.id);
   }
 
 
@@ -57,9 +67,13 @@ export class EventController {
 
   @Role(Roles.editor)
   @UseGuards(ActiveOrgGuard)
-  @Patch('update/:id/:orgId')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(id,updateEventDto);
+  @Patch('update/:orgId/:id')
+  update(
+    @Param('orgId') orgId: string,
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    return this.eventService.update(id, orgId, updateEventDto);
   }
 
   

@@ -115,7 +115,6 @@ export class OrganizationService {
 
   async findOne(organizationID: string) {
     const [organization, eventStats, collaboratorRoleCounts] = await Promise.all([
-      // 1. Obtener organización básica
       this.organizationRepository.findOne({
         where: { id: organizationID }
       }),
@@ -129,8 +128,7 @@ export class OrganizationService {
         .leftJoin("event.collaborators", "collaborators") // Esta unión sigue siendo para eventos
         .getRawOne(),
 
-      // 3. ¡Consulta ajustada! Obtener conteo de colaboradores por rol a través de eventos
-      this.collaboratorRepository // Asumiendo que tienes un repositorio para Collaborator
+      this.collaboratorRepository
         .createQueryBuilder("collaborator")
         .select("collaborator.rol", "rol")
         .addSelect("COUNT(collaborator.id)", "count")
@@ -142,10 +140,9 @@ export class OrganizationService {
     ]);
 
     if (!organization) {
-      throw new NotFoundException(`Organización con ID ${organizationID} no encontrada`);
+      throw new NotFoundException(`Organization with ID ${organizationID} not found.`);
     }
 
-    // Formatear los conteos de roles para un fácil acceso
     const formattedRoleCounts = collaboratorRoleCounts.reduce((acc, current) => {
       acc[current.rol] = parseInt(current.count, 10);
       return acc;
@@ -161,7 +158,7 @@ export class OrganizationService {
         ...organization,
         eventsCount: parseInt(eventStats?.count) || 0,
         lastEventDate: eventStats?.lastDate || null,
-        collaboratorCounts: formattedRoleCounts // Agregamos los conteos de roles aquí
+        collaboratorCounts: formattedRoleCounts
       },
     };
   }

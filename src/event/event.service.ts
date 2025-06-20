@@ -18,7 +18,8 @@ import { JwtService } from "@nestjs/jwt";
 import { validateEmail } from "../common/utils/validations.util";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { ClientInfo } from "nest-request-ip"
-import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths } from "date-fns";
+import { startOfMonth, subMonths, endOfMonth, endOfDay, startOfDay, addMonths, parseISO, isValid } from "date-fns";
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class EventService {
@@ -78,26 +79,58 @@ export class EventService {
       this.controlDbErros(error);
     }
   }
-  async findAllEvents() {
+
+  async findAllEvents(
+    pagination: PaginateQuery,
+    orgName?: string,
+    eventName?: string,
+    date?: string
+  ): Promise<Paginated<Event>> {
     try {
-      const events = await this.eventRepository.find({
-        select: [
-          "id",
-          "name",
-          "dates",
-          "initialDate",
-          "capacity",
-          "organizationAlias",
-          "appearance",
-          "createdBy",
-          "createAt",
-          "landingSections",
-          "landingDescription"
-        ],
-        relations: ["createdBy"], // Incluir la relación con User
-        cache: true,
+    const queryBuilder = this.eventRepository.createQueryBuilder('event');
+
+    // Aplicar filtros dinámicos
+    if (orgName) {
+      queryBuilder.andWhere('event.organizationAlias ILIKE :orgName', { 
+        orgName: `%${orgName}%` 
       });
-      return events;
+    }
+
+    if (eventName) {
+      console.log(eventName);
+      queryBuilder.andWhere('event.name ILIKE :eventName', { 
+        eventName: `%${eventName}%` 
+      });
+    }
+
+    if (date && isValid(parseISO(date))) {
+      const parsedDate = parseISO(date);
+      queryBuilder.andWhere('event.initialDate BETWEEN :startDate AND :endDate', {
+        startDate: startOfDay(parsedDate),
+        endDate: endOfDay(parsedDate)
+      });
+    }
+
+    queryBuilder.select([
+      'event.id',
+      'event.name', 
+      'event.dates',
+      'event.initialDate',
+      'event.capacity',
+      'event.organizationAlias',
+      'event.appearance',
+      'event.createAt',
+      'event.landingSections',
+      'event.landingDescription'
+    ]);
+
+    return paginate(pagination, queryBuilder, {
+      sortableColumns: [
+        "id",
+      ],
+      defaultLimit: 10,
+      maxLimit: 100,
+    });
     } catch (error) {
       this.controlDbErros(error);
     }
@@ -131,20 +164,25 @@ export class EventService {
       },
     };
   }
-  async getOne(id: string) {
-    const event = await this.eventRepository.findOne({  where:{
-      id
-    },
-    relations:['stations']});
-    const { totalAttendee } =
-      await this.attendeeService.getTotalAttendeesByEvent(id);
+  
+  async getOne(id: string, userId: string) {
+    const event = await this.eventRepository.findOne({
+      where:{ id },
+      relations:['stations']
+    });
+
     if (!event) {
       throw new BadRequestException("Event not found");
     }
 
+    const { totalAttendee } = await this.attendeeService.getTotalAttendeesByEvent(id);
+
+    const showEventOverview = await this.showEventOverview(userId);
+
     return {
       event,
       totalAttendee,
+      showEventOverview,
     };
   }
 
@@ -310,7 +348,7 @@ export class EventService {
     };
   }
 
-  async update(id: string, data: UpdateEventDto) {
+  async update(id: string, orgId: string, data: UpdateEventDto) {
     if (Object.keys(data).length === 0) {
       throw new BadRequestException("No data to update");
     }
@@ -426,5 +464,33 @@ export class EventService {
     });
   
     return events;
+  }
+
+  private async showEventOverview(userId: string): Promise<boolean> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    if (user.showEventOverview === false) { // Por default es true
+      return false;
+    }
+
+    const countEvents = await this.eventRepository.count({
+      where: {
+        createdBy: {
+          id: userId,
+        },
+      },
+    });
+
+    if (countEvents > 3) {
+      user.showEventOverview = false;
+      await this.userRepository.save(user);
+      return false;
+    }
+
+    return true;
   }
 }

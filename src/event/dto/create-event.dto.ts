@@ -1,8 +1,10 @@
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsObject,
   IsOptional,
+  IsPositive,
   IsString,
 } from "class-validator";
 import {
@@ -16,6 +18,13 @@ class IDates {
   startDate: string;
   @IsString()
   endDate: string;
+}
+
+export enum EventType {
+  ONLINE    = 'online',
+  ONSITE = 'onsite',
+  PAYMENT   = 'payment',
+  HYBRID    = 'hybrid',
 }
 
 export class CreateEventDto {
@@ -40,6 +49,13 @@ export class CreateEventDto {
   @IsArray()
   @IsOptional()
   experiencesId: string[];
+
+  @IsEnum(EventType)
+  type: EventType;
+
+  @IsOptional()
+  @IsPositive()
+  capacity?: number;
 
   @IsOptional()
   @IsArray()
