@@ -50,8 +50,11 @@ export class EventController {
 
   @SuperAdmin()
   @Get("admin/:id")
-  getOne(@Param('id') id: string) {
-    return this.eventService.getOne(id);
+  getOne(
+    @Param('id') id: string,
+    @ActiveUser() user: UserContext,
+  ) {
+    return this.eventService.getOne(id, user.id);
   }
 
 

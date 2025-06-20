@@ -165,20 +165,24 @@ export class EventService {
     };
   }
   
-  async getOne(id: string) {
-    const event = await this.eventRepository.findOne({  where:{
-      id
-    },
-    relations:['stations']});
-    const { totalAttendee } =
-      await this.attendeeService.getTotalAttendeesByEvent(id);
+  async getOne(id: string, userId: string) {
+    const event = await this.eventRepository.findOne({
+      where:{ id },
+      relations:['stations']
+    });
+
     if (!event) {
       throw new BadRequestException("Event not found");
     }
 
+    const { totalAttendee } = await this.attendeeService.getTotalAttendeesByEvent(id);
+
+    const showEventOverview = await this.showEventOverview(userId);
+
     return {
       event,
       totalAttendee,
+      showEventOverview,
     };
   }
 
@@ -460,5 +464,33 @@ export class EventService {
     });
   
     return events;
+  }
+
+  private async showEventOverview(userId: string): Promise<boolean> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    if (user.showEventOverview === false) { // Por default es true
+      return false;
+    }
+
+    const countEvents = await this.eventRepository.count({
+      where: {
+        createdBy: {
+          id: userId,
+        },
+      },
+    });
+
+    if (countEvents > 3) {
+      user.showEventOverview = false;
+      await this.userRepository.save(user);
+      return false;
+    }
+
+    return true;
   }
 }
