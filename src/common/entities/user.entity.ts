@@ -62,6 +62,9 @@ export class User {
     @Column({ nullable: true })
     lastPasswordUpdate: Date;
 
+    @Column({ default: true })
+    showEventOverview: boolean;
+
     @CreateDateColumn()
     createAt: Date;
 
