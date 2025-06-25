@@ -7,11 +7,11 @@ import { OrganizationModule } from 'src/organization/organization.module';
 import { attendeeModule } from 'src/attendee';
 import { CollaboratorModule } from 'src/collaborator';
 import { accessCode, Accounts, RecoveryCode, User } from 'src/common/entities';
-import { Categories } from './entities/category.entity';
+import { EventCategory } from 'src/event-categories/entities/event-category.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Event, User, RecoveryCode, accessCode, Accounts, Categories]),
+		TypeOrmModule.forFeature([Event, User, RecoveryCode, accessCode, Accounts, EventCategory]),
 		OrganizationModule,
 		attendeeModule,
 		CollaboratorModule,

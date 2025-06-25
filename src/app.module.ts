@@ -21,6 +21,7 @@ import { ElementHuntGameModule } from "./element-hunt-game/element-hunt-game.mod
 import { MillionaireModule } from './millionaire/millionaire.module';
 import { NetworkingModule } from './networking/networking.module';
 import { UsersModule } from './users/users.module';
+import { EventCategoriesModule } from './event-categories/event-categories.module';
 
 @Module({
   imports: [
@@ -70,7 +71,8 @@ import { UsersModule } from './users/users.module';
     ElementHuntGameModule,
     MillionaireModule,
     NetworkingModule,
-    UsersModule
+    UsersModule,
+    EventCategoriesModule
   ],
   controllers: [],
   providers: [

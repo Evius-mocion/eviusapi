@@ -14,9 +14,9 @@ import {
 	OneToMany,
 	OneToOne,
 	PrimaryGeneratedColumn,
+	ManyToMany,
 } from 'typeorm';
 import { defaultLandingSections } from '../constants/event.constants';
-import { Categories } from './category.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Survey } from 'src/survey/entities/survey.entity';
 import { Auction } from 'src/auction/entities/auction.entity';
@@ -26,6 +26,7 @@ import { ElementHuntGame } from 'src/element-hunt-game/entities/element-hunt-gam
 import { Networking } from 'src/networking/entities/networking.entity';
 import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
 import { EventExperience } from 'src/experiences/entities/event-experience.entity';
+import { EventCategory } from 'src/event-categories/entities/event-category.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -133,10 +134,10 @@ export class Event {
 	})
 	organization: Organization;
 
-	@OneToMany(() => Categories, (category) => category.event, {
+	@ManyToMany(() => EventCategory, (category) => category.event, {
 		eager: false,
 	})
-	categories: Categories[];
+	categories: EventCategory[];
 
 	@OneToMany(() => Activity, (activity) => activity.event, {
 		eager: false,
