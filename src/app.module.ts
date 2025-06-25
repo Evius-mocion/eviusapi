@@ -22,6 +22,7 @@ import { MillionaireModule } from './millionaire/millionaire.module';
 import { NetworkingModule } from './networking/networking.module';
 import { UsersModule } from './users/users.module';
 import { EventCategoriesModule } from './event-categories/event-categories.module';
+import { EventSectorsModule } from './event-sectors/event-sectors.module';
 
 @Module({
   imports: [
@@ -72,7 +73,8 @@ import { EventCategoriesModule } from './event-categories/event-categories.modul
     MillionaireModule,
     NetworkingModule,
     UsersModule,
-    EventCategoriesModule
+    EventCategoriesModule,
+    EventSectorsModule
   ],
   controllers: [],
   providers: [

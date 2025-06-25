@@ -27,6 +27,7 @@ import { Networking } from 'src/networking/entities/networking.entity';
 import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
 import { EventExperience } from 'src/experiences/entities/event-experience.entity';
 import { EventCategory } from 'src/event-categories/entities/event-category.entity';
+import { EventSector } from 'src/event-sectors/entities/event-sector.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -138,6 +139,11 @@ export class Event {
 		eager: false,
 	})
 	categories: EventCategory[];
+
+	@ManyToMany(() => EventSector, (sector) => sector.event, {
+		eager: false,
+	})
+	sectors: EventSector[];
 
 	@OneToMany(() => Activity, (activity) => activity.event, {
 		eager: false,

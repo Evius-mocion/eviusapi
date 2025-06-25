@@ -17,7 +17,6 @@ export class EventCategoriesController {
     return this.eventCategoriesService.create(createEventCategoryDto);
   }
 
-
   @Public()
   @Get()
   findAll() {
