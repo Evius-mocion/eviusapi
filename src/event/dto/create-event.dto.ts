@@ -1,4 +1,6 @@
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsEnum,
   IsNotEmpty,
@@ -6,6 +8,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
 } from "class-validator";
 import {
   IEventAppearance,
@@ -63,4 +66,16 @@ export class CreateEventDto {
 
   @IsOptional()
   landingDescription?: string;
+
+  @IsArray()
+  @ArrayMinSize(1, { message: 'eventCategories is required' })
+  @ArrayMaxSize(3, { message: 'There can be a maximum of 3 event categories.' })
+  @IsUUID('4', { each: true, message: 'UUID invalid' })
+  eventCategories: string[];
+
+  @IsArray()
+  @ArrayMinSize(1, { message: 'eventSectors is required' })
+  @ArrayMaxSize(3, { message: 'There can be a maximum of 3 event sectors.' })
+  @IsUUID('4', { each: true, message: 'UUID invalid' })
+  eventSectors: string[];
 }
