@@ -23,6 +23,7 @@ import { NetworkingModule } from './networking/networking.module';
 import { UsersModule } from './users/users.module';
 import { EventCategoriesModule } from './event-categories/event-categories.module';
 import { EventSectorsModule } from './event-sectors/event-sectors.module';
+import { EventRolesModule } from './event-roles/event-roles.module';
 
 @Module({
   imports: [
@@ -74,7 +75,8 @@ import { EventSectorsModule } from './event-sectors/event-sectors.module';
     NetworkingModule,
     UsersModule,
     EventCategoriesModule,
-    EventSectorsModule
+    EventSectorsModule,
+    EventRolesModule
   ],
   controllers: [],
   providers: [
