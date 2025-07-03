@@ -28,6 +28,7 @@ import { Millionaire } from 'src/millionaire/entities/millionaire.entity';
 import { EventExperience } from 'src/experiences/entities/event-experience.entity';
 import { EventCategory } from 'src/event-categories/entities/event-category.entity';
 import { EventSector } from 'src/event-sectors/entities/event-sector.entity';
+import { EventRole } from 'src/event-roles/entities/event-role.entity';
 @Entity('events')
 export class Event {
 	@PrimaryGeneratedColumn('uuid')
@@ -192,4 +193,9 @@ export class Event {
 		eager: false,
 	})
 	eventExperiences: EventExperience[];
+
+	@OneToMany(() => EventRole, (eventRoles) => eventRoles.event, {
+		eager: false,
+	})
+	eventRoles: EventRole[];
 }
